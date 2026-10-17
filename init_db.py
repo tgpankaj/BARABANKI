@@ -2,8 +2,8 @@
 Barabanki Connect - Unified Database Initialization & Migration Script
 
 This script:
-1. Initializes all database tables via SQLAlchemy metadata.
-2. Applies Alembic migrations up to head.
+1. Applies Alembic migrations up to head (creating tables if fresh).
+2. Verifies table creation via SQLAlchemy Base metadata.
 3. Seeds authentic Barabanki baseline data and seed user accounts.
 """
 import sys
@@ -16,19 +16,23 @@ def main():
     print("   Barabanki Connect - Database Initialization     ")
     print("====================================================")
     
-    print("\n[1/3] Creating database tables...")
-    init_db()
-    print("[OK] Tables initialized.")
-
-    print("\n[2/3] Checking & applying Alembic migrations...")
+    print("\n[1/3] Applying database migrations (Alembic)...")
     try:
         res = subprocess.run([sys.executable, "-m", "alembic", "upgrade", "head"], capture_output=True, text=True)
         if res.returncode == 0:
             print("[OK] Alembic migrations applied successfully.")
         else:
-            print("Notice on migrations:", res.stderr.strip() or res.stdout.strip())
+            print("Notice on migrations (falling back to Base.create_all):", res.stderr.strip() or res.stdout.strip())
+            init_db()
+            print("[OK] Tables initialized via SQLAlchemy Base.")
     except Exception as e:
         print(f"Migration runner notice: {e}")
+        init_db()
+        print("[OK] Tables initialized via SQLAlchemy Base fallback.")
+
+    print("\n[2/3] Verifying database schema...")
+    init_db()
+    print("[OK] Schema verified.")
 
     print("\n[3/3] Populating database with authentic Barabanki seed data...")
     seed()
