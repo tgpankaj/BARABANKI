@@ -1,0 +1,316 @@
+{% extends "base.html" %}
+
+{% block title %}Barabanki Connect — Home | Local News, Events, Businesses, Jobs & Heritage{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span>✨ Welcome to District Barabanki Portal (UP 41)</span>
+      </div>
+      <h1 class="hero-title">
+        Connecting People, Heritage & Commerce in <span class="text-highlight">Barabanki</span>
+      </h1>
+      <p class="hero-description">
+        Your unified civic platform for local news, cultural fairs, handloom artisans, local business listings, student education guides, and employment vacancies across Nawabganj, Deva, Zaidpur, Ramnagar, and Haidergarh.
+      </p>
+
+      <!-- Global Search Box -->
+      <form action="/search" method="GET" class="search-box-wrapper" role="search">
+        <input 
+          type="text" 
+          name="q" 
+          class="search-input" 
+          placeholder="Search news, events, shops, jobs, colleges in Barabanki..." 
+          aria-label="Search Barabanki Connect"
+          required
+        >
+        <select name="type" class="search-category-select" aria-label="Search filter category">
+          <option value="all">All Categories</option>
+          <option value="businesses">Businesses & Handlooms</option>
+          <option value="jobs">Local Jobs</option>
+          <option value="news">News & Bulletins</option>
+          <option value="events">Events & Fairs</option>
+          <option value="education">Colleges & Coaching</option>
+          <option value="tourism">Heritage & Places</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Search</button>
+      </form>
+
+      <!-- Quick Action Pills -->
+      <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">
+        <span style="font-weight: 600;">Popular searches:</span>
+        <a href="/search?q=Deva+Sharif" class="badge badge-primary">Deva Sharif</a>
+        <a href="/search?q=Zaidpur+Handloom" class="badge badge-accent">Zaidpur Handlooms</a>
+        <a href="/search?q=Polytechnic" class="badge badge-teal">Colleges</a>
+        <a href="/jobs?type=Full-time" class="badge badge-primary">IT & Web Jobs</a>
+        <a href="/events" class="badge badge-accent">Deva Mela</a>
+      </div>
+
+      <!-- Stat Counters -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number">{{ stats.businesses or 4 }}+</div>
+          <div class="stat-label">Local Enterprises</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">{{ stats.news or 4 }}</div>
+          <div class="stat-label">Verified News Articles</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">{{ stats.jobs or 3 }}</div>
+          <div class="stat-label">Active Job Openings</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">{{ stats.institutes or 5 }}</div>
+          <div class="stat-label">Educational Institutes</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Latest News Section -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Civic Bulletins & Local News</h2>
+        <p class="section-subtitle">Factual and verified updates from district administrative bodies and local bureaus.</p>
+      </div>
+      <a href="/news" class="btn btn-outline btn-sm">View All News &rarr;</a>
+    </div>
+
+    <div class="grid-cards">
+      {% for article in news_articles %}
+      <article class="card">
+        <div class="card-img-wrap">
+          <img src="{{ article.image_url or '/static/images/placeholder.svg' }}" alt="{{ article.title }}" class="card-img" loading="lazy">
+          <span class="badge badge-primary card-badge-overlay">{{ article.category }}</span>
+        </div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span>📅 {{ article.created_at.strftime('%d %b %Y') }}</span>
+            <span>👁️ {{ article.views_count }} views</span>
+          </div>
+          <h3 class="card-title">
+            <a href="/news/{{ article.slug }}">{{ article.title }}</a>
+          </h3>
+          <p class="card-text">{{ article.summary }}</p>
+        </div>
+        <div class="card-footer">
+          <span style="font-size: 0.75rem; color: var(--text-muted); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 200px;">
+            Source: {{ article.source_attribution }}
+          </span>
+          <a href="/news/{{ article.slug }}" class="btn btn-primary btn-sm">Read More</a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Upcoming Events & Festivals Section -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Upcoming Fairs & Events</h2>
+        <p class="section-subtitle">Cultural celebrations, educational symposiums, and exhibitions across Barabanki.</p>
+      </div>
+      <a href="/events" class="btn btn-outline btn-sm">Browse All Events &rarr;</a>
+    </div>
+
+    <div class="grid-cards">
+      {% for event in events %}
+      <div class="card">
+        <div class="card-img-wrap">
+          <img src="{{ event.image_url or '/static/images/placeholder.svg' }}" alt="{{ event.title }}" class="card-img" loading="lazy">
+          <span class="badge badge-accent card-badge-overlay">{{ event.category }}</span>
+        </div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span>🗓️ {{ event.start_date.strftime('%d %b %Y, %I:%M %p') }}</span>
+          </div>
+          <h3 class="card-title">
+            <a href="/events/{{ event.slug }}">{{ event.title }}</a>
+          </h3>
+          <p class="card-text">{{ event.description }}</p>
+          <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: auto;">
+            📍 <strong>{{ event.venue_name }}</strong> ({{ event.locality }})
+          </div>
+        </div>
+        <div class="card-footer">
+          <span style="font-size: 0.8rem; color: var(--text-muted);">Organized by {{ event.organizer_name }}</span>
+          <a href="/events/{{ event.slug }}" class="btn btn-outline btn-sm">View Details</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Featured Local Businesses & Handlooms -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Featured Local Businesses & Artisans</h2>
+        <p class="section-subtitle">Discover handcrafted Zaidpur textiles, traditional Awadhi confectioneries, and regional services.</p>
+      </div>
+      <a href="/businesses" class="btn btn-outline btn-sm">Explore Directory &rarr;</a>
+    </div>
+
+    <div class="grid-cards-4">
+      {% for biz in businesses %}
+      <div class="card">
+        <div class="card-body">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+            <span class="badge badge-teal">{{ biz.category }}</span>
+            {% if biz.is_verified %}
+            <span class="badge badge-verified" title="Verified Local Business">✓ Verified</span>
+            {% endif %}
+            {% if biz.is_demo %}
+            <span class="badge badge-demo" title="Demonstration Listing">Demo</span>
+            {% endif %}
+          </div>
+          <h3 class="card-title" style="font-size: 1.1rem;">
+            <a href="/businesses/{{ biz.slug }}">{{ biz.name }}</a>
+          </h3>
+          <p class="card-text" style="-webkit-line-clamp: 2;">{{ biz.description }}</p>
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: auto;">
+            📍 {{ biz.locality }}, Barabanki
+          </div>
+        </div>
+        <div class="card-footer">
+          <span style="font-weight: 700; color: var(--accent);">⭐ {{ biz.rating }}/5.0</span>
+          <a href="/businesses/{{ biz.slug }}" class="btn btn-outline btn-sm">Contact</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Tourism & Heritage Spotlights with Interactive Map Preview -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Historic & Sacred Landmarks</h2>
+        <p class="section-subtitle">Explore historical monuments, spiritual shrines, and ancient wonders across the district.</p>
+      </div>
+      <a href="/tourism" class="btn btn-outline btn-sm">View Heritage Map &rarr;</a>
+    </div>
+
+    <!-- Map container -->
+    <div class="map-container-wrap">
+      <div id="leaflet-map" aria-label="Interactive map of Barabanki heritage landmarks"></div>
+    </div>
+
+    <div class="grid-cards-4">
+      {% for spot in tourism_spots %}
+      <div class="card">
+        <div class="card-img-wrap">
+          <img src="{{ spot.image_url or '/static/images/placeholder.svg' }}" alt="{{ spot.name }}" class="card-img" loading="lazy">
+          <span class="badge badge-accent card-badge-overlay">{{ spot.category }}</span>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title" style="font-size: 1.05rem;">
+            <a href="/tourism/{{ spot.slug }}">{{ spot.name }}</a>
+          </h3>
+          <p class="card-text" style="-webkit-line-clamp: 2;">{{ spot.short_description }}</p>
+        </div>
+        <div class="card-footer">
+          <span style="font-size: 0.8rem; color: var(--text-muted);">📍 {{ spot.locality }}</span>
+          <a href="/tourism/{{ spot.slug }}" class="btn btn-primary btn-sm">Explore</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Local Employment Opportunities -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Latest Local Job Vacancies</h2>
+        <p class="section-subtitle">Career opportunities for graduates, technicians, and educators in Barabanki.</p>
+      </div>
+      <a href="/jobs" class="btn btn-outline btn-sm">View All Jobs &rarr;</a>
+    </div>
+
+    <div class="grid-cards">
+      {% for job in jobs %}
+      <div class="card">
+        <div class="card-body">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+            <span class="badge badge-primary">{{ job.job_type }}</span>
+            {% if job.is_demo %}
+            <span class="badge badge-demo" title="Demonstration Listing">Demo</span>
+            {% endif %}
+          </div>
+          <h3 class="card-title">
+            <a href="/jobs/{{ job.slug }}">{{ job.title }}</a>
+          </h3>
+          <div style="font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem;">
+            🏢 {{ job.company_name }}
+          </div>
+          <p class="card-text" style="-webkit-line-clamp: 2;">{{ job.description }}</p>
+          <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); margin-top: auto;">
+            <span>📍 {{ job.location }}</span>
+            <span style="font-weight: 600; color: var(--teal);">{{ job.salary_range or 'Competitive' }}</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span style="font-size: 0.75rem; color: var(--text-light);">Posted {{ job.created_at.strftime('%d %b %Y') }}</span>
+          <a href="/jobs/{{ job.slug }}" class="btn btn-primary btn-sm">Apply Now</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Community Voice & Engagement Strip -->
+<section class="section section-alt">
+  <div class="container" style="text-align: center; max-width: 720px;">
+    <h2 class="section-title">Have a Voice in Barabanki's Growth</h2>
+    <p class="section-subtitle" style="margin-bottom: 1.5rem;">
+      Join thousands of fellow citizens, students, and entrepreneurs discussing civic topics, sharing student resources, and proposing improvements for our district.
+    </p>
+    <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+      <a href="/community" class="btn btn-primary btn-lg">Join Community Discussions</a>
+      <a href="/businesses/new" class="btn btn-outline btn-lg">List Your Business</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // Tourism spots data passed safely from server
+    const spotsData = [
+      {% for spot in tourism_spots %}
+      {
+        name: {{ spot.name | tojson }},
+        category: {{ spot.category | tojson }},
+        address: {{ spot.address | tojson }},
+        latitude: {{ spot.latitude }},
+        longitude: {{ spot.longitude }},
+        url: "/tourism/{{ spot.slug }}"
+      }{% if not loop.last %},{% endif %}
+      {% endfor %}
+    ];
+
+    if (spotsData.length > 0 && typeof window.initBarabankiMap === "function") {
+      window.initBarabankiMap("leaflet-map", spotsData, [27.0223, 81.2500], 11);
+    }
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Local Creators, Artisans & Weavers — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
+  <div class="section-header">
+    <div>
+      <h1 class="section-title">Barabanki Artisans, Weavers & Creators</h1>
+      <p class="section-subtitle">Celebrating master Jacquard craftsmen, Awadhi writers, traditional embroiderers, and digital creators from our soil.</p>
+    </div>
+  </div>
+
+  <div class="grid-cards">
+    {% for creator in creators %}
+    <div class="card">
+      <div class="card-body">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+          <div style="width: 50px; height: 50px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: bold;">
+            {{ creator.user.full_name[:1].upper() }}
+          </div>
+          <div>
+            <h2 style="font-size: 1.2rem; font-weight: 700; margin: 0;">{{ creator.user.full_name }}</h2>
+            <span class="badge badge-accent" style="margin-top: 0.25rem;">{{ creator.craft_category }}</span>
+          </div>
+        </div>
+
+        <div style="font-weight: 600; color: var(--primary); font-size: 0.95rem; margin-bottom: 0.5rem;">
+          {{ creator.title }}
+        </div>
+
+        <p class="card-text" style="-webkit-line-clamp: 4;">
+          {{ creator.bio }}
+        </p>
+
+        {% if creator.skills %}
+        <div style="margin-top: auto; padding-top: 0.75rem;">
+          <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; margin-bottom: 0.25rem;">SKILLS & CRAFT:</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
+            {% for skill in creator.skills.split(',') %}
+            <span class="badge badge-teal" style="font-size: 0.7rem;">{{ skill.strip() }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="card-footer">
+        {% if creator.portfolio_url %}
+        <a href="{{ creator.portfolio_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm">
+          Portfolio &rarr;
+        </a>
+        {% endif %}
+
+        {% if creator.instagram %}
+        <span style="font-size: 0.8rem; color: var(--text-muted);">{{ creator.instagram }}</span>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

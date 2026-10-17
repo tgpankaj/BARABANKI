@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}{{ event.title }} — Barabanki Events{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
+  <div style="max-width: 860px; margin: 0 auto;">
+    <!-- Breadcrumb -->
+    <nav style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;" aria-label="Breadcrumb">
+      <a href="/">Home</a> &raquo; <a href="/events">Events</a> &raquo; <span>{{ event.category }}</span>
+    </nav>
+
+    <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem;">
+      <span class="badge badge-accent">{{ event.category }}</span>
+      <span class="badge badge-primary">📍 {{ event.locality }}</span>
+    </div>
+
+    <h1 style="font-size: 2.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 1rem;">
+      {{ event.title }}
+    </h1>
+
+    <div class="card" style="margin-bottom: 2rem;">
+      <div class="card-body" style="background: var(--bg-card-hover);">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem;">
+          <div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Starts On:</div>
+            <div style="font-weight: 700; font-size: 1.05rem;">{{ event.start_date.strftime('%A, %d %B %Y') }}</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">{{ event.start_date.strftime('%I:%M %p') }}</div>
+          </div>
+          {% if event.end_date %}
+          <div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Ends On:</div>
+            <div style="font-weight: 700; font-size: 1.05rem;">{{ event.end_date.strftime('%A, %d %B %Y') }}</div>
+          </div>
+          {% endif %}
+          <div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Venue & Location:</div>
+            <div style="font-weight: 700;">{{ event.venue_name }}</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">{{ event.address }}</div>
+          </div>
+          <div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Organized By:</div>
+            <div style="font-weight: 700;">{{ event.organizer_name }}</div>
+            {% if event.organizer_contact %}
+            <div style="font-size: 0.85rem; color: var(--text-muted);">📞 {{ event.organizer_contact }}</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% if event.image_url %}
+    <div style="margin-bottom: 2rem; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-md);">
+      <img src="{{ event.image_url }}" alt="{{ event.title }}" style="width: 100%; max-height: 400px; object-fit: cover;">
+    </div>
+    {% endif %}
+
+    <h2 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 0.75rem;">About This Event</h2>
+    <div style="font-size: 1.05rem; line-height: 1.8; margin-bottom: 2rem; white-space: pre-line;">
+      {{ event.description }}
+    </div>
+
+    {% if event.registration_link %}
+    <div style="margin-bottom: 2.5rem; padding: 1.25rem; background-color: var(--accent-light); border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center; flex-wrap: gap;">
+      <div>
+        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--accent); margin: 0;">Registration / Participation</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0;">Official booking or information page.</p>
+      </div>
+      <a href="{{ event.registration_link }}" target="_blank" rel="noopener noreferrer" class="btn btn-accent">Official Link &rarr;</a>
+    </div>
+    {% endif %}
+
+    <!-- Venue Map Location -->
+    {% if event.latitude and event.longitude %}
+    <h2 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 0.75rem;">Venue Location Map</h2>
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+      Coordinates: {{ event.latitude }}, {{ event.longitude }} {% if event.is_approximate_coords %}(Approximate venue pin){% endif %}
+    </p>
+    <div class="map-container-wrap" style="height: 320px;">
+      <div id="event-map"></div>
+    </div>
+    {% endif %}
+
+    <div style="margin-top: 2rem;">
+      <a href="/events" class="btn btn-outline">&larr; Back to Events</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+{% if event.latitude and event.longitude %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    if (typeof window.initBarabankiMap === "function") {
+      const loc = [{
+        title: {{ event.title | tojson }},
+        category: {{ event.category | tojson }},
+        address: {{ event.venue_name | tojson }},
+        latitude: {{ event.latitude }},
+        longitude: {{ event.longitude }}
+      }];
+      window.initBarabankiMap("event-map", loc, [{{ event.latitude }}, {{ event.longitude }}], 14);
+    }
+  });
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}{{ business.name }} — Barabanki Business Directory{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
+  <div style="max-width: 860px; margin: 0 auto;">
+    <!-- Breadcrumb -->
+    <nav style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;" aria-label="Breadcrumb">
+      <a href="/">Home</a> &raquo; <a href="/businesses">Directory</a> &raquo; <span>{{ business.category }}</span>
+    </nav>
+
+    <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap;">
+      <span class="badge badge-teal">{{ business.category }}</span>
+      <span class="badge badge-primary">📍 {{ business.locality }}</span>
+      {% if business.is_verified %}
+      <span class="badge badge-verified">✓ Verified by Barabanki Connect</span>
+      {% endif %}
+      {% if business.is_demo %}
+      <span class="badge badge-demo">Demonstration Listing</span>
+      {% endif %}
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+      <h1 style="font-size: 2.25rem; font-weight: 800; color: var(--text-main); margin: 0;">
+        {{ business.name }}
+      </h1>
+      <span style="font-size: 1.25rem; font-weight: 700; color: var(--accent); background: var(--accent-light); padding: 0.35rem 0.75rem; border-radius: var(--radius-md);">
+        ⭐ {{ business.rating }} / 5.0
+      </span>
+    </div>
+
+    <!-- Contact & Overview Box -->
+    <div class="card" style="margin-bottom: 2rem;">
+      <div class="card-body" style="background: var(--bg-card-hover);">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem;">
+          <div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Phone Contact:</div>
+            {% if business.phone %}
+            <a href="tel:{{ business.phone }}" style="font-weight: 700; font-size: 1.05rem; color: var(--primary);">📞 {{ business.phone }}</a>
+            {% else %}
+            <span style="color: var(--text-muted);">Not listed</span>
+            {% endif %}
+          </div>
+          <div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Operating Hours:</div>
+            <div style="font-weight: 600;">🕒 {{ business.opening_hours or '10:00 AM - 08:00 PM' }}</div>
+          </div>
+          <div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Address:</div>
+            <div style="font-weight: 600;">📍 {{ business.address }}</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">{{ business.locality }}, Barabanki</div>
+          </div>
+          {% if business.website %}
+          <div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Website:</div>
+            <a href="{{ business.website }}" target="_blank" rel="noopener noreferrer" style="font-weight: 600;">🌐 Visit Website &rarr;</a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- About Section -->
+    <h2 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 0.75rem;">About This Enterprise</h2>
+    <div style="font-size: 1.05rem; line-height: 1.8; margin-bottom: 2rem; white-space: pre-line;">
+      {{ business.description }}
+    </div>
+
+    <!-- Map Section -->
+    {% if business.latitude and business.longitude %}
+    <h2 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 0.75rem;">Shop & Office Location</h2>
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+      Coordinates: {{ business.latitude }}, {{ business.longitude }} {% if business.is_approximate_coords %}(Approximate location){% endif %}
+    </p>
+    <div class="map-container-wrap" style="height: 320px;">
+      <div id="biz-map"></div>
+    </div>
+    {% endif %}
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; flex-wrap: wrap; gap: 1rem;">
+      <a href="/businesses" class="btn btn-outline">&larr; Back to Directory</a>
+      <a href="/contact" class="btn btn-outline btn-sm" style="color: var(--danger);">Report Incorrect Information</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+{% if business.latitude and business.longitude %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    if (typeof window.initBarabankiMap === "function") {
+      const loc = [{
+        name: {{ business.name | tojson }},
+        category: {{ business.category | tojson }},
+        address: {{ business.address | tojson }},
+        latitude: {{ business.latitude }},
+        longitude: {{ business.longitude }}
+      }];
+      window.initBarabankiMap("biz-map", loc, [{{ business.latitude }}, {{ business.longitude }}], 14);
+    }
+  });
+</script>
+{% endif %}
+{% endblock %}

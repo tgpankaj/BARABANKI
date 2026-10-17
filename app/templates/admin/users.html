@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Users — Barabanki Admin{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2.5rem; padding-bottom: 4rem;">
+  <div class="section-header">
+    <div>
+      <h1 class="section-title">User Accounts & Roles</h1>
+      <p class="section-subtitle">Manage user permissions, roles, and account statuses.</p>
+    </div>
+    <a href="/admin" class="btn btn-outline btn-sm">&larr; Back to Dashboard</a>
+  </div>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <h3 style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-light); margin-bottom: 0.75rem; letter-spacing: 0.05em;">Administration</h3>
+      <ul class="admin-nav-list">
+        <li><a href="/admin" class="admin-nav-link">📊 Dashboard & KPIs</a></li>
+        <li><a href="/admin/moderation" class="admin-nav-link">🚩 Moderation Queue</a></li>
+        <li><a href="/admin/listings" class="admin-nav-link">🏬 Business Approvals</a></li>
+        <li><a href="/admin/users" class="admin-nav-link active">👥 User Accounts</a></li>
+      </ul>
+    </aside>
+
+    <div>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Email</th>
+              <th>Current Role</th>
+              <th>Status</th>
+              <th>Joined</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for u in users %}
+            <tr>
+              <td>
+                <div style="font-weight: 700;">{{ u.full_name }}</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">@{{ u.username }}</div>
+              </td>
+              <td>{{ u.email }}</td>
+              <td>
+                <span class="badge badge-primary">{{ u.role }}</span>
+              </td>
+              <td>
+                {% if u.is_active %}
+                <span class="badge badge-verified">Active</span>
+                {% else %}
+                <span class="badge badge-demo">Suspended</span>
+                {% endif %}
+              </td>
+              <td style="font-size: 0.8rem; color: var(--text-light);">{{ u.created_at.strftime('%d %b %Y') }}</td>
+              <td>
+                <form action="/admin/users/{{ u.id }}/role" method="POST" style="display: flex; gap: 0.35rem; align-items: center; margin: 0;">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+                  <select name="new_role" class="form-control" style="padding: 0.25rem 0.5rem; font-size: 0.8rem; width: auto;">
+                    <option value="resident" {% if u.role == 'resident' %}selected{% endif %}>Resident</option>
+                    <option value="moderator" {% if u.role == 'moderator' %}selected{% endif %}>Moderator</option>
+                    <option value="business_owner" {% if u.role == 'business_owner' %}selected{% endif %}>Business Owner</option>
+                    <option value="creator" {% if u.role == 'creator' %}selected{% endif %}>Creator</option>
+                    <option value="admin" {% if u.role == 'admin' %}selected{% endif %}>Admin</option>
+                  </select>
+                  <button type="submit" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Save</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

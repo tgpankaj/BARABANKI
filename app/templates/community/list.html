@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Community Forum & Civic Discussions — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
+  <div class="section-header">
+    <div>
+      <h1 class="section-title">Barabanki Citizen & Student Forum</h1>
+      <p class="section-subtitle">Engage in constructive public dialogue, raise neighborhood ideas, and collaborate on local initiatives.</p>
+    </div>
+    <a href="/community/new" class="btn btn-primary">+ Start a Discussion</a>
+  </div>
+
+  <!-- Filter tabs -->
+  <div style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem; margin-bottom: 2rem;">
+    <a href="/community" class="btn {% if not current_category %}btn-primary{% else %}btn-outline{% endif %} btn-sm">All Threads</a>
+    <a href="/community?category=Civic Issue" class="btn {% if current_category == 'Civic Issue' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Civic Issues</a>
+    <a href="/community?category=Student Hub" class="btn {% if current_category == 'Student Hub' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Student Hub</a>
+    <a href="/community?category=Discussion" class="btn {% if current_category == 'Discussion' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">General Discussion</a>
+  </div>
+
+  {% if posts and posts|length > 0 %}
+  <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+    {% for post in posts %}
+    <div class="card">
+      <div class="card-body">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <span class="badge badge-primary">{{ post.category }}</span>
+          <span style="font-size: 0.8rem; color: var(--text-light);">
+            Posted by <strong>{{ post.author.full_name }}</strong> &bull; {{ post.created_at.strftime('%d %b %Y') }}
+          </span>
+        </div>
+        <h2 class="card-title" style="font-size: 1.25rem; margin-bottom: 0.5rem;">
+          <a href="/community/{{ post.slug }}">{{ post.title }}</a>
+        </h2>
+        <p class="card-text" style="-webkit-line-clamp: 2; margin-bottom: 1rem;">
+          {{ post.content }}
+        </p>
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
+          <div style="display: flex; gap: 1rem; align-items: center; font-size: 0.85rem; color: var(--text-muted);">
+            <span>👍 <strong>{{ post.upvotes }}</strong> Upvotes</span>
+            <span>💬 <strong>{{ post.comments|length }}</strong> Comments</span>
+          </div>
+          <a href="/community/{{ post.slug }}" class="btn btn-outline btn-sm">Join Discussion &rarr;</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-state-icon">💬</div>
+    <h3 class="empty-state-title">No discussion threads yet</h3>
+    <p class="empty-state-desc">Be the first to start a conversation for our Barabanki community!</p>
+    <a href="/community/new" class="btn btn-primary">Create Discussion</a>
+  </div>
+  {% endif %}
+
+  {% include "components/pagination.html" %}
+</div>
+{% endblock %}

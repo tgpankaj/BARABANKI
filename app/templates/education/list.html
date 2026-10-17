@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Colleges, Schools & Coaching Centers — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
+  <div class="section-header">
+    <div>
+      <h1 class="section-title">Educational Institutions in Barabanki</h1>
+      <p class="section-subtitle">A comprehensive guide to technical colleges, polytechnics, premier schools, and competitive coaching centers.</p>
+    </div>
+  </div>
+
+  <!-- Filter tabs -->
+  <div style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem; margin-bottom: 2rem;">
+    <a href="/education" class="btn {% if not current_category %}btn-primary{% else %}btn-outline{% endif %} btn-sm">All Institutes</a>
+    <a href="/education?category=College" class="btn {% if current_category == 'College' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Colleges & Universities</a>
+    <a href="/education?category=Polytechnic / ITI" class="btn {% if current_category == 'Polytechnic / ITI' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Polytechnics & ITIs</a>
+    <a href="/education?category=School" class="btn {% if current_category == 'School' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Schools</a>
+    <a href="/education?category=Coaching Centre" class="btn {% if current_category == 'Coaching Centre' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Coaching Academies</a>
+  </div>
+
+  <div class="grid-cards">
+    {% for inst in institutes %}
+    <div class="card">
+      <div class="card-body">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+          <span class="badge badge-teal">{{ inst.category }}</span>
+          {% if inst.is_verified %}
+          <span class="badge badge-verified">✓ Verified</span>
+          {% endif %}
+        </div>
+        <h2 class="card-title" style="font-size: 1.2rem;">
+          <a href="/education/{{ inst.slug }}">{{ inst.name }}</a>
+        </h2>
+        {% if inst.affiliation %}
+        <div style="font-size: 0.85rem; color: var(--primary); font-weight: 600; margin-bottom: 0.5rem;">
+          🎓 Affiliation: {{ inst.affiliation }}
+        </div>
+        {% endif %}
+        <p class="card-text">{{ inst.description }}</p>
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: auto;">
+          📍 {{ inst.locality }}, Barabanki
+        </div>
+      </div>
+      <div class="card-footer">
+        <span style="font-size: 0.8rem; color: var(--text-muted);">{{ inst.phone or 'Contact Available' }}</span>
+        <a href="/education/{{ inst.slug }}" class="btn btn-primary btn-sm">View Courses</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% include "components/pagination.html" %}
+</div>
+{% endblock %}

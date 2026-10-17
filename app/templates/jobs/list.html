@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Local Jobs & Career Openings — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
+  <div class="section-header">
+    <div>
+      <h1 class="section-title">Local Employment & Vacancies</h1>
+      <p class="section-subtitle">Opportunities for technical graduates, educators, craftsmen, and professionals in Barabanki.</p>
+    </div>
+    <a href="/jobs/new" class="btn btn-primary">+ Post a Vacancy</a>
+  </div>
+
+  <!-- Job Filter Tabs -->
+  <div style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem; margin-bottom: 2rem;">
+    <a href="/jobs" class="btn {% if not current_type %}btn-primary{% else %}btn-outline{% endif %} btn-sm">All Types</a>
+    <a href="/jobs?type=Full-time" class="btn {% if current_type == 'Full-time' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Full-Time</a>
+    <a href="/jobs?type=Part-time" class="btn {% if current_type == 'Part-time' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Part-Time</a>
+    <a href="/jobs?type=Internship" class="btn {% if current_type == 'Internship' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Internships</a>
+  </div>
+
+  {% if jobs and jobs|length > 0 %}
+  <div class="grid-cards">
+    {% for job in jobs %}
+    <div class="card">
+      <div class="card-body">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+          <span class="badge badge-primary">{{ job.job_type }}</span>
+          {% if job.is_demo %}
+          <span class="badge badge-demo" title="Demonstration Listing">Demo</span>
+          {% endif %}
+        </div>
+        <h2 class="card-title" style="font-size: 1.2rem;">
+          <a href="/jobs/{{ job.slug }}">{{ job.title }}</a>
+        </h2>
+        <div style="font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem;">
+          🏢 {{ job.company_name }}
+        </div>
+        <p class="card-text" style="-webkit-line-clamp: 2;">{{ job.description }}</p>
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); margin-top: auto;">
+          <span>📍 {{ job.location }}</span>
+          <span style="font-weight: 600; color: var(--teal);">{{ job.salary_range or 'Competitive' }}</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span style="font-size: 0.75rem; color: var(--text-light);">Posted {{ job.created_at.strftime('%d %b %Y') }}</span>
+        <a href="/jobs/{{ job.slug }}" class="btn btn-primary btn-sm">View Vacancy</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-state-icon">💼</div>
+    <h3 class="empty-state-title">No job openings found</h3>
+    <p class="empty-state-desc">There are no active listings under this category at the moment.</p>
+    <a href="/jobs" class="btn btn-primary">View All Jobs</a>
+  </div>
+  {% endif %}
+
+  {% include "components/pagination.html" %}
+</div>
+{% endblock %}

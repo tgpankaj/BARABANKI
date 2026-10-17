@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Events & Fairs — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
+  <div class="section-header">
+    <div>
+      <h1 class="section-title">Events, Fairs & Festivals</h1>
+      <p class="section-subtitle">Discover historical melas, technical conferences, and cultural celebrations in Barabanki.</p>
+    </div>
+  </div>
+
+  <div class="grid-cards">
+    {% for event in events %}
+    <div class="card">
+      <div class="card-img-wrap">
+        <img src="{{ event.image_url or '/static/images/placeholder.svg' }}" alt="{{ event.title }}" class="card-img" loading="lazy">
+        <span class="badge badge-accent card-badge-overlay">{{ event.category }}</span>
+      </div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span>🗓️ {{ event.start_date.strftime('%d %b %Y, %I:%M %p') }}</span>
+        </div>
+        <h2 class="card-title" style="font-size: 1.2rem;">
+          <a href="/events/{{ event.slug }}">{{ event.title }}</a>
+        </h2>
+        <p class="card-text">{{ event.description }}</p>
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: auto;">
+          📍 <strong>{{ event.venue_name }}</strong> ({{ event.locality }})
+        </div>
+      </div>
+      <div class="card-footer">
+        <span style="font-size: 0.8rem; color: var(--text-muted);">Organized by {{ event.organizer_name }}</span>
+        <a href="/events/{{ event.slug }}" class="btn btn-primary btn-sm">Event Details</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% include "components/pagination.html" %}
+</div>
+{% endblock %}

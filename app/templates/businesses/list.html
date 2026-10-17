@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Local Business & Artisan Directory — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
+  <div class="section-header">
+    <div>
+      <h1 class="section-title">Barabanki Business & Artisan Directory</h1>
+      <p class="section-subtitle">Discover local shops, authentic handloom weavers, healthcare providers, and services across District Barabanki.</p>
+    </div>
+    <a href="/businesses/new" class="btn btn-primary">+ List Your Business</a>
+  </div>
+
+  <!-- Filters Row -->
+  <div style="background-color: var(--bg-card); padding: 1.25rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color); margin-bottom: 2rem;">
+    <form action="/businesses" method="GET" style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;">
+      <div style="flex: 2; min-width: 200px;">
+        <label for="q" class="form-label">Search by Business Name</label>
+        <input type="text" id="q" name="q" value="{{ q or '' }}" class="form-control" placeholder="e.g. Zaidpur Handloom or Sweets">
+      </div>
+
+      <div style="flex: 1; min-width: 160px;">
+        <label for="category" class="form-label">Category</label>
+        <select id="category" name="category" class="form-control">
+          <option value="">All Categories</option>
+          <option value="Handloom & Textiles" {% if current_category == 'Handloom & Textiles' %}selected{% endif %}>Handloom & Textiles</option>
+          <option value="Dining & Sweets" {% if current_category == 'Dining & Sweets' %}selected{% endif %}>Dining & Sweets</option>
+          <option value="Healthcare" {% if current_category == 'Healthcare' %}selected{% endif %}>Healthcare & Clinics</option>
+          <option value="Agro & Fertilizers" {% if current_category == 'Agro & Fertilizers' %}selected{% endif %}>Agro & Fertilizers</option>
+          <option value="Retail & Groceries" {% if current_category == 'Retail & Groceries' %}selected{% endif %}>Retail & Groceries</option>
+          <option value="Services" {% if current_category == 'Services' %}selected{% endif %}>Services & Tech</option>
+        </select>
+      </div>
+
+      <div style="flex: 1; min-width: 140px;">
+        <label for="locality" class="form-label">Tehsil / Locality</label>
+        <select id="locality" name="locality" class="form-control">
+          <option value="">All Localities</option>
+          <option value="Nawabganj" {% if current_locality == 'Nawabganj' %}selected{% endif %}>Nawabganj (HQ)</option>
+          <option value="Zaidpur" {% if current_locality == 'Zaidpur' %}selected{% endif %}>Zaidpur</option>
+          <option value="Haidergarh" {% if current_locality == 'Haidergarh' %}selected{% endif %}>Haidergarh</option>
+          <option value="Ramnagar" {% if current_locality == 'Ramnagar' %}selected{% endif %}>Ramnagar</option>
+          <option value="Fatehpur" {% if current_locality == 'Fatehpur' %}selected{% endif %}>Fatehpur</option>
+          <option value="Deva" {% if current_locality == 'Deva' %}selected{% endif %}>Deva</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="height: 42px;">Filter</button>
+      {% if q or current_category or current_locality %}
+      <a href="/businesses" class="btn btn-outline" style="height: 42px;">Reset</a>
+      {% endif %}
+    </form>
+  </div>
+
+  {% if businesses and businesses|length > 0 %}
+  <div class="grid-cards-4">
+    {% for biz in businesses %}
+    <div class="card">
+      <div class="card-body">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+          <span class="badge badge-teal">{{ biz.category }}</span>
+          {% if biz.is_verified %}
+          <span class="badge badge-verified" title="Verified Business">✓ Verified</span>
+          {% endif %}
+          {% if biz.is_demo %}
+          <span class="badge badge-demo" title="Demonstration Listing">Demo</span>
+          {% endif %}
+        </div>
+        <h2 class="card-title" style="font-size: 1.15rem;">
+          <a href="/businesses/{{ biz.slug }}">{{ biz.name }}</a>
+        </h2>
+        <p class="card-text" style="-webkit-line-clamp: 3;">{{ biz.description }}</p>
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: auto;">
+          📍 {{ biz.locality }}, Barabanki
+        </div>
+      </div>
+      <div class="card-footer">
+        <span style="font-weight: 700; color: var(--accent);">⭐ {{ biz.rating }}/5.0</span>
+        <a href="/businesses/{{ biz.slug }}" class="btn btn-primary btn-sm">View Profile</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-state-icon">🏬</div>
+    <h3 class="empty-state-title">No businesses found</h3>
+    <p class="empty-state-desc">Try clearing your filters or search terms.</p>
+    <a href="/businesses" class="btn btn-outline">Clear Filters</a>
+  </div>
+  {% endif %}
+
+  {% include "components/pagination.html" %}
+</div>
+{% endblock %}

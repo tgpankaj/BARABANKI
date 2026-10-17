@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:18-alpine
+    container_name: barabanki_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: barabanki_secure_db_pass_2026
+      POSTGRES_DB: barabanki_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d barabanki_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    container_name: barabanki_web
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql+psycopg2://postgres:barabanki_secure_db_pass_2026@db:5432/barabanki_db
+      - SECRET_KEY=production_barabanki_secret_key_random_seed_9918237
+      - CSRF_SECRET=production_barabanki_csrf_secret_seed_8827361
+      - ENVIRONMENT=production
+      - DEBUG=False
+      - HOST=0.0.0.0
+      - PORT=8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app/static:/app/app/static:ro
+
+volumes:
+  postgres_data:

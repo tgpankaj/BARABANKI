@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Listings & Verifications — Barabanki Admin{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2.5rem; padding-bottom: 4rem;">
+  <div class="section-header">
+    <div>
+      <h1 class="section-title">Business & Vacancy Verifications</h1>
+      <p class="section-subtitle">Grant verified trust badges to legitimate local shops and handloom collectives.</p>
+    </div>
+    <a href="/admin" class="btn btn-outline btn-sm">&larr; Back to Dashboard</a>
+  </div>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <h3 style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-light); margin-bottom: 0.75rem; letter-spacing: 0.05em;">Administration</h3>
+      <ul class="admin-nav-list">
+        <li><a href="/admin" class="admin-nav-link">📊 Dashboard & KPIs</a></li>
+        <li><a href="/admin/moderation" class="admin-nav-link">🚩 Moderation Queue</a></li>
+        <li><a href="/admin/listings" class="admin-nav-link active">🏬 Business Approvals</a></li>
+        <li><a href="/admin/users" class="admin-nav-link">👥 User Accounts</a></li>
+      </ul>
+    </aside>
+
+    <div>
+      <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Registered Local Businesses</h2>
+      <div class="table-responsive" style="margin-bottom: 2.5rem;">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Business Name</th>
+              <th>Category</th>
+              <th>Locality</th>
+              <th>Status</th>
+              <th>Verification</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for biz in businesses %}
+            <tr>
+              <td>
+                <div style="font-weight: 700;">{{ biz.name }}</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">{{ biz.phone or 'No phone' }}</div>
+              </td>
+              <td><span class="badge badge-teal">{{ biz.category }}</span></td>
+              <td>{{ biz.locality }}</td>
+              <td>
+                {% if biz.is_demo %}
+                <span class="badge badge-demo">Demo</span>
+                {% else %}
+                <span class="badge badge-primary">Authentic</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if biz.is_verified %}
+                <span class="badge badge-verified">✓ Verified</span>
+                {% else %}
+                <span class="badge badge-demo">Unverified</span>
+                {% endif %}
+              </td>
+              <td>
+                <form action="/admin/businesses/{{ biz.id }}/toggle-verify" method="POST" style="margin: 0;">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+                  <button type="submit" class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                    {% if biz.is_verified %}Revoke Badge{% else %}Grant Verification{% endif %}
+                  </button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Local Job Vacancies</h2>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Job Designation</th>
+              <th>Company</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for job in jobs %}
+            <tr>
+              <td style="font-weight: 700;">{{ job.title }}</td>
+              <td>{{ job.company_name }}</td>
+              <td><span class="badge badge-primary">{{ job.job_type }}</span></td>
+              <td>
+                {% if job.is_active %}
+                <span class="badge badge-verified">Active</span>
+                {% else %}
+                <span class="badge badge-demo">Closed</span>
+                {% endif %}
+              </td>
+              <td>
+                <form action="/admin/jobs/{{ job.id }}/toggle-active" method="POST" style="margin: 0;">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+                  <button type="submit" class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                    {% if job.is_active %}Close Listing{% else %}Re-activate{% endif %}
+                  </button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

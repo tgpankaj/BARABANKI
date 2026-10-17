@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}List Your Local Business — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
+  <div style="max-width: 680px; margin: 0 auto;">
+    <nav style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;" aria-label="Breadcrumb">
+      <a href="/">Home</a> &raquo; <a href="/businesses">Directory</a> &raquo; <span>Submit Business</span>
+    </nav>
+
+    <div class="card" style="box-shadow: var(--shadow-md);">
+      <div class="card-body" style="padding: 2rem;">
+        <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem;">
+          Register Your Business / Artisan Workshop
+        </h1>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+          Promote your enterprise to local customers across Barabanki. Verified listings receive enhanced trust badges.
+        </p>
+
+        {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <form action="/businesses/new" method="POST">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+
+          <div class="form-group">
+            <label for="name" class="form-label">Business / Shop Name *</label>
+            <input type="text" id="name" name="name" class="form-control" required placeholder="e.g. Awadh Handloom Weavers">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label for="category" class="form-label">Category *</label>
+              <select id="category" name="category" class="form-control" required>
+                <option value="Handloom & Textiles">Handloom & Textiles</option>
+                <option value="Dining & Sweets">Dining & Sweets</option>
+                <option value="Healthcare">Healthcare & Pharmacy</option>
+                <option value="Agro & Fertilizers">Agro & Fertilizers</option>
+                <option value="Retail & Groceries">Retail & Groceries</option>
+                <option value="Services">Services & Repair</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="locality" class="form-label">Tehsil / Locality *</label>
+              <select id="locality" name="locality" class="form-control" required>
+                <option value="Nawabganj">Nawabganj (HQ)</option>
+                <option value="Zaidpur">Zaidpur</option>
+                <option value="Deva">Deva</option>
+                <option value="Ramnagar">Ramnagar</option>
+                <option value="Fatehpur">Fatehpur</option>
+                <option value="Haidergarh">Haidergarh</option>
+                <option value="Rudauli">Rudauli</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="address" class="form-label">Complete Street Address *</label>
+            <input type="text" id="address" name="address" class="form-control" required placeholder="e.g. Near Ghanta Ghar, Nawabganj Market">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label for="phone" class="form-label">Contact Phone</label>
+              <input type="tel" id="phone" name="phone" class="form-control" placeholder="+91-XXXXXXXXXX">
+            </div>
+            <div class="form-group">
+              <label for="email" class="form-label">Business Email</label>
+              <input type="email" id="email" name="email" class="form-control" placeholder="contact@example.com">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label for="website" class="form-label">Website (Optional)</label>
+              <input type="url" id="website" name="website" class="form-control" placeholder="https://example.com">
+            </div>
+            <div class="form-group">
+              <label for="opening_hours" class="form-label">Business Hours</label>
+              <input type="text" id="opening_hours" name="opening_hours" class="form-control" value="10:00 AM - 08:00 PM">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="description" class="form-label">Description & Specialties *</label>
+            <textarea id="description" name="description" class="form-control" required placeholder="Describe what makes your business unique, your products, and services..."></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem;">
+            Submit Listing for Verification
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

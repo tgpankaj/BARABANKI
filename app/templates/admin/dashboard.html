@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard & Analytics — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2.5rem; padding-bottom: 4rem;">
+  <div class="section-header">
+    <div>
+      <h1 class="section-title">Administrative Dashboard</h1>
+      <p class="section-subtitle">Real-time platform metrics, content moderation, and verified business workflows.</p>
+    </div>
+    <div style="display: flex; gap: 0.5rem;">
+      <a href="/admin/moderation" class="btn btn-outline btn-sm">Moderation Queue ({{ stats.pending_reports or 0 }})</a>
+      <a href="/admin/listings" class="btn btn-primary btn-sm">Manage Listings</a>
+    </div>
+  </div>
+
+  <div class="admin-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="admin-sidebar">
+      <h3 style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-light); margin-bottom: 0.75rem; letter-spacing: 0.05em;">Administration</h3>
+      <ul class="admin-nav-list">
+        <li><a href="/admin" class="admin-nav-link active">📊 Dashboard & KPIs</a></li>
+        <li><a href="/admin/moderation" class="admin-nav-link">🚩 Moderation Queue ({{ stats.pending_reports or 0 }})</a></li>
+        <li><a href="/admin/listings" class="admin-nav-link">🏬 Business Approvals</a></li>
+        <li><a href="/admin/users" class="admin-nav-link">👥 User Accounts</a></li>
+        <li><a href="/businesses/new" class="admin-nav-link">+ Add Business</a></li>
+        <li><a href="/jobs/new" class="admin-nav-link">+ Add Job Vacancy</a></li>
+        <li><a href="/community/new" class="admin-nav-link">+ Add Discussion</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Admin Content -->
+    <div>
+      <!-- KPI Metric Cards -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+        <div class="card" style="border-left: 4px solid var(--primary);">
+          <div class="card-body" style="padding: 1.25rem;">
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Total Users</div>
+            <div style="font-size: 1.75rem; font-weight: 800; color: var(--text-main);">{{ stats.total_users }}</div>
+          </div>
+        </div>
+        <div class="card" style="border-left: 4px solid var(--accent);">
+          <div class="card-body" style="padding: 1.25rem;">
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Listed Businesses</div>
+            <div style="font-size: 1.75rem; font-weight: 800; color: var(--text-main);">{{ stats.businesses }}</div>
+          </div>
+        </div>
+        <div class="card" style="border-left: 4px solid var(--teal);">
+          <div class="card-body" style="padding: 1.25rem;">
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Active Job Vacancies</div>
+            <div style="font-size: 1.75rem; font-weight: 800; color: var(--text-main);">{{ stats.jobs }}</div>
+          </div>
+        </div>
+        <div class="card" style="border-left: 4px solid var(--danger);">
+          <div class="card-body" style="padding: 1.25rem;">
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Pending Reports</div>
+            <div style="font-size: 1.75rem; font-weight: 800; color: var(--danger);">{{ stats.pending_reports or 0 }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart.js Visualizations -->
+      <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+        <style>
+          @media (min-width: 768px) {
+            .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+          }
+        </style>
+        <div class="charts-grid">
+          <!-- Doughnut Chart -->
+          <div class="card">
+            <div class="card-body">
+              <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-main);">Listing Distribution</h3>
+              <div style="position: relative; height: 260px;">
+                <canvas id="distributionChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bar Chart -->
+          <div class="card">
+            <div class="card-body">
+              <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-main);">Monthly Civic Engagement</h3>
+              <div style="position: relative; height: 260px;">
+                <canvas id="activityChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Action Shortcuts -->
+      <div class="card">
+        <div class="card-body">
+          <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.75rem;">Platform Quick Actions</h3>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+            <a href="/admin/moderation" class="btn btn-outline btn-sm">Inspect Flagged Reports</a>
+            <a href="/admin/users" class="btn btn-outline btn-sm">Manage User Roles</a>
+            <a href="/admin/listings" class="btn btn-outline btn-sm">Toggle Business Verification</a>
+            <a href="/contact" class="btn btn-outline btn-sm">Check Citizen Messages</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const statsData = {
+      businesses: {{ stats.businesses or 0 }},
+      jobs: {{ stats.jobs or 0 }},
+      news: {{ stats.news or 0 }},
+      events: {{ stats.events or 0 }},
+      education: {{ stats.institutes or 0 }},
+      posts: {{ stats.posts or 0 }}
+    };
+
+    if (typeof window.initAdminDashboardCharts === "function") {
+      window.initAdminDashboardCharts(statsData);
+    }
+  });
+</script>
+{% endblock %}

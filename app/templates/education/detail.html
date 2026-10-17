@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}{{ institute.name }} — Barabanki Education Directory{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
+  <div style="max-width: 860px; margin: 0 auto;">
+    <!-- Breadcrumb -->
+    <nav style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;" aria-label="Breadcrumb">
+      <a href="/">Home</a> &raquo; <a href="/education">Education</a> &raquo; <span>{{ institute.category }}</span>
+    </nav>
+
+    <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem;">
+      <span class="badge badge-teal">{{ institute.category }}</span>
+      {% if institute.is_verified %}
+      <span class="badge badge-verified">✓ Verified Institute</span>
+      {% endif %}
+    </div>
+
+    <h1 style="font-size: 2.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem;">
+      {{ institute.name }}
+    </h1>
+
+    {% if institute.affiliation %}
+    <div style="font-size: 1.1rem; font-weight: 600; color: var(--primary); margin-bottom: 1.5rem;">
+      🎓 Affiliated with: {{ institute.affiliation }}
+    </div>
+    {% endif %}
+
+    <!-- Info Overview -->
+    <div class="card" style="margin-bottom: 2rem;">
+      <div class="card-body" style="background: var(--bg-card-hover);">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem;">
+          <div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Campus Location:</div>
+            <div style="font-weight: 600;">📍 {{ institute.address }}</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">{{ institute.locality }}, Barabanki</div>
+          </div>
+          {% if institute.phone %}
+          <div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Admissions Phone:</div>
+            <a href="tel:{{ institute.phone }}" style="font-weight: 700; color: var(--primary);">📞 {{ institute.phone }}</a>
+          </div>
+          {% endif %}
+          {% if institute.email %}
+          <div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Office Email:</div>
+            <a href="mailto:{{ institute.email }}" style="font-weight: 600;">✉️ {{ institute.email }}</a>
+          </div>
+          {% endif %}
+          {% if institute.website %}
+          <div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Official Portal:</div>
+            <a href="{{ institute.website }}" target="_blank" rel="noopener noreferrer" style="font-weight: 600;">🌐 Visit Website &rarr;</a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <h2 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 0.75rem;">About the Institute</h2>
+    <div style="font-size: 1.05rem; line-height: 1.8; margin-bottom: 2rem; white-space: pre-line;">
+      {{ institute.description }}
+    </div>
+
+    <!-- Courses Offered -->
+    <h2 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 0.75rem;">Courses & Academic Programs</h2>
+    <div class="card" style="margin-bottom: 2rem; border-left: 4px solid var(--primary);">
+      <div class="card-body">
+        <p style="font-size: 1rem; line-height: 1.8; margin: 0; color: var(--text-main);">
+          {{ institute.courses_offered }}
+        </p>
+      </div>
+    </div>
+
+    {% if institute.admission_info %}
+    <!-- Admission Procedure -->
+    <h2 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 0.75rem;">Admission Guidelines & Eligibility</h2>
+    <div class="card" style="margin-bottom: 2rem;">
+      <div class="card-body">
+        <p style="font-size: 0.95rem; line-height: 1.7; margin: 0; color: var(--text-muted);">
+          {{ institute.admission_info }}
+        </p>
+      </div>
+    </div>
+    {% endif %}
+
+    <div>
+      <a href="/education" class="btn btn-outline">&larr; Back to Institutes Directory</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

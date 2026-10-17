@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Privacy Policy — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
+  <div style="max-width: 800px; margin: 0 auto;">
+    <h1 style="font-size: 2.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 1rem;">
+      Privacy Policy
+    </h1>
+    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 2rem;">
+      Last Updated: October 2026 | Barabanki Connect Civic Platform
+    </p>
+
+    <div class="card">
+      <div class="card-body" style="font-size: 0.95rem; line-height: 1.8;">
+        <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--primary); margin-top: 1rem; margin-bottom: 0.5rem;">
+          1. Information We Collect
+        </h2>
+        <p>
+          Barabanki Connect collects only minimal, necessary information required to deliver civic and community features:
+        </p>
+        <ul style="padding-left: 1.5rem; margin-bottom: 1rem;">
+          <li><strong>Account Details:</strong> When you register, we collect your username, email address, display name, and securely hashed password. Passwords are never stored in plaintext.</li>
+          <li><strong>Submitted Content:</strong> Community forum discussions, comments, local business information, and job vacancy submissions.</li>
+          <li><strong>Feedback Inquiries:</strong> Messages sent via the civic contact form to respond to citizen requests.</li>
+        </ul>
+
+        <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--primary); margin-top: 1.5rem; margin-bottom: 0.5rem;">
+          2. How Information is Used
+        </h2>
+        <p>
+          We use your data solely to manage user authentication, display user profiles for community discussions, prevent automated abuse, and connect job seekers with local enterprises. We do not sell or monetize personal data with third-party advertising networks.
+        </p>
+
+        <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--primary); margin-top: 1.5rem; margin-bottom: 0.5rem;">
+          3. Security Practices
+        </h2>
+        <p>
+          All account credentials are protected using industry-standard bcrypt key-stretching. Sessions utilize HTTP-only cookies and CSRF tokens to safeguard against cross-site attacks.
+        </p>
+
+        <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--primary); margin-top: 1.5rem; margin-bottom: 0.5rem;">
+          4. Contacting Support
+        </h2>
+        <p>
+          For data inquiries, profile deletion, or corrections, contact us directly via our <a href="/contact">Civic Contact Form</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

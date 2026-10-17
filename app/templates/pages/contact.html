@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us & Emergency Helplines — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
+  <div style="max-width: 980px; margin: 0 auto;">
+    <nav style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;" aria-label="Breadcrumb">
+      <a href="/">Home</a> &raquo; <span>Contact & Civic Helplines</span>
+    </nav>
+
+    <div class="section-header">
+      <div>
+        <h1 style="font-size: 2.25rem; font-weight: 800; color: var(--text-main);">
+          Civic Inquiries & Emergency Directory
+        </h1>
+        <p class="section-subtitle">
+          Submit feedback, request listing verifications, or reach local emergency services across District Barabanki.
+        </p>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr; gap: 2rem; margin-top: 1.5rem;">
+      <style>
+        @media (min-width: 768px) {
+          .contact-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 2rem; }
+        }
+      </style>
+      <div class="contact-grid">
+        <!-- Contact Form -->
+        <div class="card">
+          <div class="card-body">
+            <h2 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 1rem; color: var(--primary);">
+              Send a Message to Platform Support
+            </h2>
+
+            <form action="/contact" method="POST">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+
+              <div class="form-group">
+                <label for="name" class="form-label">Your Full Name *</label>
+                <input type="text" id="name" name="name" class="form-control" required placeholder="e.g. Ramesh Chandra">
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                  <label for="email" class="form-label">Email Address *</label>
+                  <input type="email" id="email" name="email" class="form-control" required placeholder="name@example.com">
+                </div>
+                <div class="form-group">
+                  <label for="phone" class="form-label">Contact Number (Optional)</label>
+                  <input type="tel" id="phone" name="phone" class="form-control" placeholder="+91-9876543210">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="subject" class="form-label">Subject *</label>
+                <input type="text" id="subject" name="subject" class="form-control" required placeholder="e.g. Business Listing Verification Request">
+              </div>
+
+              <div class="form-group">
+                <label for="message" class="form-label">Message / Details *</label>
+                <textarea id="message" name="message" class="form-control" required placeholder="Please describe your inquiry or feedback..."></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="width: 100%;">
+                Submit Inquiry
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Emergency Helplines & Office Info -->
+        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+          <div class="card" style="border-left: 4px solid var(--danger);">
+            <div class="card-body">
+              <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--danger); margin-bottom: 0.75rem;">
+                🚨 Emergency Contacts
+              </h3>
+              <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem;">
+                <div><strong>Police Response (All-UP):</strong> <a href="tel:112" style="font-weight: bold; color: var(--danger);">112</a></div>
+                <div><strong>Ambulance (Emergency):</strong> <a href="tel:108" style="font-weight: bold; color: var(--danger);">108</a> / <a href="tel:102" style="font-weight: bold; color: var(--danger);">102</a></div>
+                <div><strong>Women Powerline:</strong> <a href="tel:1090" style="font-weight: bold; color: var(--danger);">1090</a></div>
+                <div><strong>Childline Helpline:</strong> <a href="tel:1098" style="font-weight: bold; color: var(--danger);">1098</a></div>
+                <div><strong>Cyber Financial Fraud:</strong> <a href="tel:1930" style="font-weight: bold; color: var(--danger);">1930</a></div>
+                <div><strong>Chief Medical Officer (CMO):</strong> 05248-222045</div>
+                <div><strong>District Disaster Cell:</strong> 05248-222001</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--primary); margin-bottom: 0.75rem;">
+                🏛️ Administrative Offices
+              </h3>
+              <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6;">
+                <strong>District Collectorate:</strong><br>
+                Civil Lines, Nawabganj, Barabanki, UP 225001<br>
+                Working Hours: 10:00 AM – 05:00 PM (Monday to Saturday)
+              </p>
+              <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 0.75rem 0;">
+              <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6;">
+                <strong>Municipal Council (Nagar Palika):</strong><br>
+                Station Road, Nawabganj, Barabanki, UP 225001
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Content Moderation Queue — Barabanki Admin{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2.5rem; padding-bottom: 4rem;">
+  <div class="section-header">
+    <div>
+      <h1 class="section-title">Moderation Queue & Reports</h1>
+      <p class="section-subtitle">Review flagged posts, comments, and community reports to maintain a respectful civic platform.</p>
+    </div>
+    <a href="/admin" class="btn btn-outline btn-sm">&larr; Back to Dashboard</a>
+  </div>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <h3 style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-light); margin-bottom: 0.75rem; letter-spacing: 0.05em;">Administration</h3>
+      <ul class="admin-nav-list">
+        <li><a href="/admin" class="admin-nav-link">📊 Dashboard & KPIs</a></li>
+        <li><a href="/admin/moderation" class="admin-nav-link active">🚩 Moderation Queue</a></li>
+        <li><a href="/admin/listings" class="admin-nav-link">🏬 Business Approvals</a></li>
+        <li><a href="/admin/users" class="admin-nav-link">👥 User Accounts</a></li>
+      </ul>
+    </aside>
+
+    <div>
+      {% if reports and reports|length > 0 %}
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Report ID</th>
+              <th>Target</th>
+              <th>Reason</th>
+              <th>Details</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for rep in reports %}
+            <tr>
+              <td>#{{ rep.id }}</td>
+              <td>
+                <span class="badge badge-primary">{{ rep.target_type }} #{{ rep.target_id }}</span>
+              </td>
+              <td style="font-weight: 600;">{{ rep.reason }}</td>
+              <td style="font-size: 0.85rem; color: var(--text-muted); max-width: 200px;">
+                {{ rep.details or 'No additional details provided' }}
+              </td>
+              <td>
+                {% if rep.status == 'pending' %}
+                <span class="badge badge-demo">Pending</span>
+                {% elif rep.status == 'resolved' %}
+                <span class="badge badge-verified">Resolved</span>
+                {% else %}
+                <span class="badge badge-accent">Dismissed</span>
+                {% endif %}
+              </td>
+              <td style="font-size: 0.8rem; color: var(--text-light);">{{ rep.created_at.strftime('%d %b %Y') }}</td>
+              <td>
+                <div style="display: flex; gap: 0.35rem;">
+                  <form action="/admin/moderation/{{ rep.id }}/resolve" method="POST" style="margin:0;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+                    <button type="submit" class="btn btn-primary btn-sm" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">Resolve</button>
+                  </form>
+                  <form action="/admin/moderation/{{ rep.id }}/dismiss" method="POST" style="margin:0;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+                    <button type="submit" class="btn btn-outline btn-sm" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">Dismiss</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <div class="empty-state-icon">✅</div>
+        <h3 class="empty-state-title">All Caught Up!</h3>
+        <p class="empty-state-desc">There are no pending reports or moderation flags at this time.</p>
+        <a href="/admin" class="btn btn-primary">Return to Admin Overview</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

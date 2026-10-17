@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Create an Account — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3.5rem; padding-bottom: 4rem;">
+  <div style="max-width: 500px; margin: 0 auto;">
+    <div class="card" style="box-shadow: var(--shadow-lg);">
+      <div class="card-body" style="padding: 2rem;">
+        <div style="text-align: center; margin-bottom: 1.5rem;">
+          <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--text-main);">Join Barabanki Connect</h1>
+          <p style="font-size: 0.9rem; color: var(--text-muted);">Create your profile to discuss, post listings, or showcase your craft</p>
+        </div>
+
+        {% if error %}
+        <div class="alert alert-danger" role="alert" style="margin-bottom: 1rem;">
+          <span>{{ error }}</span>
+        </div>
+        {% endif %}
+
+        <form action="/auth/register" method="POST">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+
+          <div class="form-group">
+            <label for="full_name" class="form-label">Full Name *</label>
+            <input type="text" id="full_name" name="full_name" class="form-control" required placeholder="e.g. Anand Srivastava">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label for="username" class="form-label">Username *</label>
+              <input type="text" id="username" name="username" class="form-control" required placeholder="letters & numbers only">
+            </div>
+            <div class="form-group">
+              <label for="email" class="form-label">Email Address *</label>
+              <input type="email" id="email" name="email" class="form-control" required placeholder="name@example.com">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label for="password" class="form-label">Password *</label>
+              <input type="password" id="password" name="password" class="form-control" required minlength="6" placeholder="Min. 6 characters">
+            </div>
+            <div class="form-group">
+              <label for="phone" class="form-label">Phone Number (Optional)</label>
+              <input type="tel" id="phone" name="phone" class="form-control" placeholder="+91-9876543210">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="role" class="form-label">I am registering as a:</label>
+            <select id="role" name="role" class="form-control">
+              <option value="resident">Resident / Citizen</option>
+              <option value="resident">Student (School / College)</option>
+              <option value="business_owner">Local Business Owner / Shopkeeper</option>
+              <option value="creator">Artisan / Weaver / Creator</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem; padding: 0.75rem;">
+            Create Account
+          </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
+          Already registered? <a href="/auth/login" style="font-weight: 600;">Log in here</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

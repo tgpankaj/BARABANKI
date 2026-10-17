@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Local News & Civic Bulletins — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
+  <div class="section-header">
+    <div>
+      <h1 class="section-title">Civic News & Bulletins</h1>
+      <p class="section-subtitle">Verified district updates, administrative notices, and regional developments across Barabanki.</p>
+    </div>
+  </div>
+
+  <!-- Category Filter Tabs -->
+  <div style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem; margin-bottom: 2rem;">
+    <a href="/news" class="btn {% if not current_category %}btn-primary{% else %}btn-outline{% endif %} btn-sm">All News</a>
+    <a href="/news?category=Administration" class="btn {% if current_category == 'Administration' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Administration</a>
+    <a href="/news?category=Development" class="btn {% if current_category == 'Development' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Development</a>
+    <a href="/news?category=Education" class="btn {% if current_category == 'Education' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Education</a>
+    <a href="/news?category=Agro" class="btn {% if current_category == 'Agro' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Agriculture & Mentha</a>
+    <a href="/news?category=Culture" class="btn {% if current_category == 'Culture' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Culture & Fairs</a>
+  </div>
+
+  {% if articles and articles|length > 0 %}
+  <div class="grid-cards">
+    {% for article in articles %}
+    <article class="card">
+      <div class="card-img-wrap">
+        <img src="{{ article.image_url or '/static/images/placeholder.svg' }}" alt="{{ article.title }}" class="card-img" loading="lazy">
+        <span class="badge badge-primary card-badge-overlay">{{ article.category }}</span>
+      </div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span>📅 {{ article.created_at.strftime('%d %b %Y') }}</span>
+          <span>👁️ {{ article.views_count }} views</span>
+        </div>
+        <h2 class="card-title" style="font-size: 1.15rem;">
+          <a href="/news/{{ article.slug }}">{{ article.title }}</a>
+        </h2>
+        <p class="card-text">{{ article.summary }}</p>
+      </div>
+      <div class="card-footer">
+        <span style="font-size: 0.75rem; color: var(--text-muted); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 180px;">
+          Source: {{ article.source_attribution }}
+        </span>
+        <a href="/news/{{ article.slug }}" class="btn btn-primary btn-sm">Read Full</a>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-state-icon">📰</div>
+    <h3 class="empty-state-title">No articles found</h3>
+    <p class="empty-state-desc">There are currently no published articles in this category.</p>
+    <a href="/news" class="btn btn-primary">View All News</a>
+  </div>
+  {% endif %}
+
+  {% include "components/pagination.html" %}
+</div>
+{% endblock %}

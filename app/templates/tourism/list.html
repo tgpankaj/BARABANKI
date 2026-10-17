@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Tourism & Cultural Heritage Sites — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
+  <div class="section-header">
+    <div>
+      <h1 class="section-title">Historic, Spiritual & Botanical Heritage</h1>
+      <p class="section-subtitle">Explore the sacred shrines, legendary trees, and historical landmarks that define District Barabanki.</p>
+    </div>
+  </div>
+
+  <!-- Interactive Leaflet Map for all heritage landmarks -->
+  <div class="map-container-wrap" style="height: 480px; margin-bottom: 2.5rem;">
+    <div id="tourism-full-map" aria-label="Interactive map of District Barabanki landmarks"></div>
+  </div>
+
+  <div class="grid-cards">
+    {% for spot in spots %}
+    <div class="card">
+      <div class="card-img-wrap">
+        <img src="{{ spot.image_url or '/static/images/placeholder.svg' }}" alt="{{ spot.name }}" class="card-img" loading="lazy">
+        <span class="badge badge-accent card-badge-overlay">{{ spot.category }}</span>
+      </div>
+      <div class="card-body">
+        <h2 class="card-title" style="font-size: 1.25rem;">
+          <a href="/tourism/{{ spot.slug }}">{{ spot.name }}</a>
+        </h2>
+        <p class="card-text">{{ spot.short_description }}</p>
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: auto; display: flex; flex-direction: column; gap: 0.25rem;">
+          <div>📍 {{ spot.locality }} ({{ spot.distance_from_headquarters or 'Within District' }})</div>
+          <div>🕒 {{ spot.visiting_hours }}</div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span style="font-weight: 600; color: var(--teal); font-size: 0.85rem;">{{ spot.entry_fee }}</span>
+        <a href="/tourism/{{ spot.slug }}" class="btn btn-primary btn-sm">Read History &rarr;</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const locations = [
+      {% for spot in spots %}
+      {
+        name: {{ spot.name | tojson }},
+        category: {{ spot.category | tojson }},
+        address: {{ spot.address | tojson }},
+        latitude: {{ spot.latitude }},
+        longitude: {{ spot.longitude }},
+        url: "/tourism/{{ spot.slug }}"
+      }{% if not loop.last %},{% endif %}
+      {% endfor %}
+    ];
+
+    if (locations.length > 0 && typeof window.initBarabankiMap === "function") {
+      window.initBarabankiMap("tourism-full-map", locations, [27.0223, 81.2500], 11);
+    }
+  });
+</script>
+{% endblock %}

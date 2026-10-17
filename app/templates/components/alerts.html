@@ -1,0 +1,6 @@
+{% if message %}
+<div class="alert alert-{{ alert_type or 'info' }}" role="alert">
+  <span>{{ message }}</span>
+  <button type="button" class="alert-close" aria-label="Close alert">&times;</button>
+</div>
+{% endif %}
