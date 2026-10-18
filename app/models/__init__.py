@@ -7,7 +7,7 @@ from app.models.education import EducationInstitute
 from app.models.community import CommunityPost, Comment, PostLike
 from app.models.report import Report, ModerationAudit
 from app.models.contact import ContactMessage
-from app.models.creator import CreatorProfile
+from app.models.creator import CreatorProfile, BusinessCollaboration
 from app.models.tourism import TourismSpot
 from app.models.notification import Notification
 from app.models.civic_issue import CivicIssue, CivicIssueUpvote, IssueStatusHistory
@@ -28,6 +28,7 @@ __all__ = [
     "ModerationAudit",
     "ContactMessage",
     "CreatorProfile",
+    "BusinessCollaboration",
     "TourismSpot",
     "Notification",
     "CivicIssue",

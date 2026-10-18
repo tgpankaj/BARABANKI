@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+
+{% block title %}Collaborations Dashboard — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+  <!-- Header -->
+  <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+    <div>
+      <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--navy); margin-bottom: 0.25rem;">
+        Collaborations & Brand Partnerships
+      </h1>
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">
+        Manage campaigns, deliverables, and commercial partnership requests between local businesses and creators.
+      </p>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <a href="/creators" class="btn btn-outline" style="border-radius: var(--radius-full); padding: 0.5rem 1.25rem;">
+        Explore Creators
+      </a>
+      <a href="/businesses" class="btn btn-outline" style="border-radius: var(--radius-full); padding: 0.5rem 1.25rem;">
+        Local Businesses
+      </a>
+    </div>
+  </div>
+
+  {% if request.query_params.get("sent") %}
+  <div class="alert alert-success" style="margin-bottom: 1.5rem;">
+    ✓ Collaboration proposal submitted successfully! The creator has been notified.
+  </div>
+  {% endif %}
+
+  {% if request.query_params.get("msg") == "status_updated" %}
+  <div class="alert alert-info" style="margin-bottom: 1.5rem;">
+    ✓ Collaboration proposal status updated successfully.
+  </div>
+  {% endif %}
+
+  <!-- Incoming Requests (for Creators) -->
+  {% if current_user.creator_profile %}
+  <div style="margin-bottom: 3rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--navy); margin: 0;">
+        📥 Incoming Proposals for You ({{ incoming | length }})
+      </h2>
+      <span style="font-size: 0.8rem; color: var(--text-muted);">
+        Creator Profile: <strong>{{ current_user.creator_profile.title }}</strong>
+      </span>
+    </div>
+
+    {% if incoming %}
+    <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+      {% for req in incoming %}
+      <div class="card" style="padding: 1.5rem; border-radius: var(--radius-md); border-left: 4px solid {% if req.status == 'accepted' %}#16a34a{% elif req.status == 'declined' %}#dc2626{% elif req.status == 'cancelled' %}#94a3b8{% else %}var(--primary){% endif %};">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.75rem;">
+          <div>
+            <span style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); letter-spacing: 0.05em;">
+              From: {{ req.business.name if req.business else 'Local Enterprise' }} ({{ req.business.locality if req.business else 'Barabanki' }})
+            </span>
+            <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--navy); margin: 0.2rem 0;">
+              {{ req.campaign_title }}
+            </h3>
+            <div style="font-size: 0.82rem; color: var(--text-muted);">
+              Submitted on {{ req.created_at.strftime('%d %b %Y, %I:%M %p') }} &bull; Budget: <strong>{{ req.budget_range or 'Open / To Discuss' }}</strong>
+            </div>
+          </div>
+
+          <div>
+            {% if req.status == 'pending' %}
+            <span class="badge" style="background: #fef3c7; color: #b45309; font-weight: 700; font-size: 0.82rem; padding: 0.35rem 0.75rem;">
+              ⏳ Pending Decision
+            </span>
+            {% elif req.status == 'accepted' %}
+            <span class="badge" style="background: #dcfce7; color: #166534; font-weight: 700; font-size: 0.82rem; padding: 0.35rem 0.75rem;">
+              ✓ Accepted
+            </span>
+            {% elif req.status == 'declined' %}
+            <span class="badge" style="background: #fee2e2; color: #991b1b; font-weight: 700; font-size: 0.82rem; padding: 0.35rem 0.75rem;">
+              ✕ Declined
+            </span>
+            {% elif req.status == 'cancelled' %}
+            <span class="badge" style="background: #f1f5f9; color: #64748b; font-weight: 700; font-size: 0.82rem; padding: 0.35rem 0.75rem;">
+              Cancelled by Sender
+            </span>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Scope & Deliverables -->
+        <div style="background: var(--bg-main); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 1rem; font-size: 0.88rem;">
+          <div style="margin-bottom: 0.5rem;">
+            <strong style="color: var(--navy);">Scope & Overview:</strong>
+            <p style="margin: 0.2rem 0 0 0; color: var(--text-main); line-height: 1.5;">
+              {{ req.campaign_description }}
+            </p>
+          </div>
+          <div>
+            <strong style="color: var(--navy);">Required Deliverables:</strong>
+            <p style="margin: 0.2rem 0 0 0; color: var(--text-main); line-height: 1.5;">
+              {{ req.proposed_deliverables }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Contact & Dates -->
+        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+          <span>🗓️ Timeline: <strong>{{ req.start_date or 'Immediate' }} &mdash; {{ req.end_date or 'Ongoing' }}</strong></span>
+          <span>📞 Contact ({{ req.contact_preference }}): <strong>{{ req.contact_details }}</strong></span>
+        </div>
+
+        {% if req.creator_response_notes %}
+        <div style="font-size: 0.85rem; font-style: italic; color: var(--text-muted); margin-bottom: 1rem;">
+          Your response notes: "{{ req.creator_response_notes }}"
+        </div>
+        {% endif %}
+
+        <!-- Decision Form for Pending Proposals -->
+        {% if req.status == 'pending' %}
+        <div style="border-top: 1px solid var(--border-color); padding-top: 1rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+          <form method="POST" action="/collaborations/{{ req.id }}/status" style="display: flex; gap: 0.5rem; align-items: center; margin: 0;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+            <input type="hidden" name="action" value="accept">
+            <input type="text" name="notes" placeholder="Optional notes for business (e.g. ready to begin next Monday)" class="form-control" style="font-size: 0.82rem; width: 320px; padding: 0.35rem 0.65rem;">
+            <button type="submit" class="btn btn-primary btn-sm" style="background: #16a34a; border-color: #16a34a; font-weight: 700;">
+              ✓ Accept Proposal
+            </button>
+          </form>
+
+          <form method="POST" action="/collaborations/{{ req.id }}/status" style="display: flex; gap: 0.5rem; align-items: center; margin: 0;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+            <input type="hidden" name="action" value="decline">
+            <button type="submit" class="btn btn-outline btn-sm" style="color: #dc2626; border-color: #dc2626; font-weight: 700;">
+              ✕ Decline
+            </button>
+          </form>
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="card" style="padding: 2rem; text-align: center; color: var(--text-muted);">
+      <div style="font-size: 2rem; margin-bottom: 0.5rem;">📬</div>
+      <p style="margin: 0;">You have no incoming collaboration requests right now. As local businesses discover your profile, proposals will appear here.</p>
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <!-- Outgoing Requests (Sent by You or Your Businesses) -->
+  <div>
+    <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--navy); margin-bottom: 1rem;">
+      📤 Sent Collaboration Requests ({{ outgoing | length }})
+    </h2>
+
+    {% if outgoing %}
+    <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+      {% for req in outgoing %}
+      <div class="card" style="padding: 1.5rem; border-radius: var(--radius-md);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.75rem;">
+          <div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">
+              Target Creator: <a href="/creators/{{ req.creator_id }}" style="color: var(--primary); text-decoration: none; font-weight: 700;">{{ req.creator.user.full_name if req.creator and req.creator.user else 'Creator' }}</a> ({{ req.creator.title if req.creator else '' }})
+            </div>
+            <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--navy); margin: 0.2rem 0;">
+              {{ req.campaign_title }}
+            </h3>
+            <div style="font-size: 0.82rem; color: var(--text-muted);">
+              From Business: <strong>{{ req.business.name if req.business else 'Your Enterprise' }}</strong> &bull; Sent {{ req.created_at.strftime('%d %b %Y') }}
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            {% if req.status == 'pending' %}
+            <span class="badge" style="background: #fef3c7; color: #b45309; font-weight: 700; font-size: 0.82rem; padding: 0.35rem 0.75rem;">
+              ⏳ Awaiting Creator Response
+            </span>
+            <form method="POST" action="/collaborations/{{ req.id }}/status" style="margin: 0;">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+              <input type="hidden" name="action" value="cancel">
+              <button type="submit" class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; color: #64748b;">
+                Cancel Request
+              </button>
+            </form>
+            {% elif req.status == 'accepted' %}
+            <span class="badge" style="background: #dcfce7; color: #166534; font-weight: 700; font-size: 0.82rem; padding: 0.35rem 0.75rem;">
+              ✓ Accepted by Creator
+            </span>
+            {% elif req.status == 'declined' %}
+            <span class="badge" style="background: #fee2e2; color: #991b1b; font-weight: 700; font-size: 0.82rem; padding: 0.35rem 0.75rem;">
+              ✕ Declined
+            </span>
+            {% elif req.status == 'cancelled' %}
+            <span class="badge" style="background: #f1f5f9; color: #64748b; font-weight: 700; font-size: 0.82rem; padding: 0.35rem 0.75rem;">
+              Cancelled
+            </span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div style="background: var(--bg-main); border-radius: var(--radius-sm); padding: 0.85rem 1rem; font-size: 0.85rem; color: var(--text-main); margin-bottom: 0.75rem;">
+          <div><strong>Deliverables:</strong> {{ req.proposed_deliverables }}</div>
+          <div style="margin-top: 0.25rem;"><strong>Budget:</strong> {{ req.budget_range or 'To Discuss' }}</div>
+        </div>
+
+        {% if req.creator_response_notes %}
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: var(--radius-sm); padding: 0.75rem 1rem; font-size: 0.82rem; color: #166534;">
+          <strong>Creator Response:</strong> {{ req.creator_response_notes }}
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="card" style="padding: 2rem; text-align: center; color: var(--text-muted);">
+      <div style="font-size: 2rem; margin-bottom: 0.5rem;">🤝</div>
+      <p style="margin: 0 0 1rem 0;">You have not sent any collaboration requests yet.</p>
+      <a href="/creators" class="btn btn-primary btn-sm" style="border-radius: var(--radius-full); padding: 0.4rem 1.25rem;">
+        Browse Barabanki Creators
+      </a>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Admin System Overview (if Admin) -->
+  {% if current_user.role == 'admin' and all_collaborations %}
+  <div style="margin-top: 3.5rem; border-top: 2px dashed var(--border-color); padding-top: 2rem;">
+    <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--navy); margin-bottom: 1rem;">
+      🛡️ Administrative Collaboration Audit (Recent 50)
+    </h2>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Business</th>
+            <th>Creator</th>
+            <th>Campaign Title</th>
+            <th>Budget</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ac in all_collaborations %}
+          <tr>
+            <td>#{{ ac.id }}</td>
+            <td>{{ ac.business.name if ac.business else 'N/A' }}</td>
+            <td>{{ ac.creator.user.full_name if ac.creator and ac.creator.user else 'N/A' }}</td>
+            <td style="font-weight: 600;">{{ ac.campaign_title }}</td>
+            <td>{{ ac.budget_range or 'N/A' }}</td>
+            <td><span class="badge badge-primary">{{ ac.status }}</span></td>
+            <td>{{ ac.created_at.strftime('%d %b %Y') }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

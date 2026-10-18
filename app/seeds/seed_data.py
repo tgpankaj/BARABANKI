@@ -15,6 +15,7 @@ from app.models import (
     Comment,
     TourismSpot,
     CreatorProfile,
+    BusinessCollaboration,
     CivicIssue,
     CivicIssueUpvote,
     IssueStatusHistory,
@@ -89,29 +90,151 @@ def seed():
                 full_name="Mohammad Rafiq Ansari",
                 phone="+91-9839001122",
                 role="creator",
+                locality="Zaidpur",
                 bio="3rd generation Jacquard and Handloom weaver from Zaidpur, Barabanki.",
                 is_active=True,
             )
             db.add(artisan_user)
 
+        rohit_user = db.query(User).filter(User.username == "rohitvlogs").first()
+        if not rohit_user:
+            rohit_user = User(
+                username="rohitvlogs",
+                email="rohit@barabanki.local",
+                hashed_password=get_password_hash("Creator@123456"),
+                full_name="Rohit Tiwari",
+                phone="+91-9839112233",
+                role="creator",
+                locality="Nawabganj",
+                bio="Documenting rustic heritage, ancient baobabs, and daily cultural moments of Barabanki.",
+                is_active=True,
+            )
+            db.add(rohit_user)
+
+        neha_user = db.query(User).filter(User.username == "nehadance").first()
+        if not neha_user:
+            neha_user = User(
+                username="nehadance",
+                email="neha@barabanki.local",
+                hashed_password=get_password_hash("Creator@123456"),
+                full_name="Neha Sharma",
+                phone="+91-9839223344",
+                role="creator",
+                locality="Nawabganj",
+                bio="Trained Kathak dancer and Awadhi folk revivalist teaching youth across Barabanki.",
+                is_active=True,
+            )
+            db.add(neha_user)
+
+        aman_user = db.query(User).filter(User.username == "aman_dev").first()
+        if not aman_user:
+            aman_user = User(
+                username="aman_dev",
+                email="aman@barabanki.local",
+                hashed_password=get_password_hash("Creator@123456"),
+                full_name="Aman Verma",
+                phone="+91-9839334455",
+                role="creator",
+                locality="Fatehpur",
+                bio="Open-source civic technologist and polytechnic mentor in Barabanki.",
+                is_active=True,
+            )
+            db.add(aman_user)
+
         db.commit()
         db.refresh(admin_user)
         db.refresh(citizen_user)
         db.refresh(artisan_user)
+        db.refresh(rohit_user)
+        db.refresh(neha_user)
+        db.refresh(aman_user)
 
-        # 2. Seed Creator Profile
-        if not db.query(CreatorProfile).filter(CreatorProfile.user_id == artisan_user.id).first():
-            creator = CreatorProfile(
-                user_id=artisan_user.id,
-                title="Master Jacquard & Silk Weaver",
-                craft_category="Handloom & Textiles",
-                bio="Preserving the centuries-old handloom legacy of Zaidpur. Crafting high-count cotton stoles, linen scarves, and brocade yardages using traditional wooden frame looms.",
-                skills="Jacquard Looms, Natural Dyeing, Traditional Motifs, Warp Sizing",
-                portfolio_url="https://zaidpurweaves.example.in",
-                instagram="@zaidpur_handlooms",
-                is_featured=True,
-            )
-            db.add(creator)
+        # 2. Seed Creator Profiles
+        creators_to_seed = [
+            {
+                "user_id": artisan_user.id,
+                "title": "Master Jacquard & Silk Weaver",
+                "craft_category": "Handloom & Textiles",
+                "bio": "Preserving the centuries-old handloom legacy of Zaidpur. Crafting high-count cotton stoles, linen scarves, and brocade yardages using traditional wooden frame looms.",
+                "skills": "Jacquard Looms, Natural Dyeing, Traditional Motifs, Warp Sizing",
+                "locality": "Zaidpur",
+                "languages": "Hindi, Awadhi, Urdu",
+                "content_categories": "Traditional Handloom Weaving, Jacquard Tutorials",
+                "portfolio_url": "https://zaidpurweaves.example.in",
+                "instagram": "https://www.instagram.com/zaidpur_handlooms",
+                "youtube": "https://www.youtube.com/@zaidpurweaves",
+                "is_featured": True,
+                "is_verified": True,
+                "verification_badge": "Master Artisan",
+                "verification_notes": "Recognized by District Handloom Board as Master Weaver of Zaidpur cluster.",
+                "profile_views": 185,
+            },
+            {
+                "user_id": rohit_user.id,
+                "title": "Barabanki Heritage & Travel Documentarian",
+                "craft_category": "Photography",
+                "bio": "Documenting the rustic heritage, ancient baobab trees, and daily cultural moments of Barabanki district through visual storytelling.",
+                "skills": "4K Videography, Drone Piloting, Historical Storytelling",
+                "locality": "Nawabganj",
+                "languages": "Hindi, Awadhi, English",
+                "content_categories": "Heritage Walk Reels, Deva Mela Vlogs",
+                "profile_photo": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80",
+                "instagram": "https://www.instagram.com/rohitvlogs",
+                "youtube": "https://www.youtube.com/@barabankivlogs",
+                "is_featured": True,
+                "is_verified": True,
+                "verification_badge": "Community Voice",
+                "verification_notes": "Civic documentarian chronicling Barabanki historical landmarks.",
+                "profile_views": 320,
+            },
+            {
+                "user_id": neha_user.id,
+                "title": "Kathak & Awadhi Folk Performing Artist",
+                "craft_category": "Music & Folk",
+                "bio": "Trained Kathak dancer and Awadhi folk revivalist teaching youth in Barabanki and performing at district cultural festivals.",
+                "skills": "Kathak, Awadhi Folk Dance, Stage Choreography",
+                "locality": "Nawabganj",
+                "languages": "Hindi, Awadhi",
+                "content_categories": "Folk Dance Reels, Classical Training",
+                "profile_photo": "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=300&q=80",
+                "instagram": "https://www.instagram.com/nehadance",
+                "youtube": "https://www.youtube.com/@nehadance_bbk",
+                "is_featured": True,
+                "is_verified": True,
+                "verification_badge": "Verified Creator",
+                "verification_notes": "Identity verified by District Cultural Committee.",
+                "profile_views": 240,
+            },
+            {
+                "user_id": aman_user.id,
+                "title": "Full Stack Software Engineer & Tech Educator",
+                "craft_category": "Digital Art & Code",
+                "bio": "Building open-source tools for rural digital literacy, tutoring polytechnic students in Python and web technologies in Barabanki.",
+                "skills": "Python, FastAPI, React, IoT for Agriculture",
+                "locality": "Fatehpur",
+                "languages": "Hindi, English",
+                "content_categories": "Civic Tech Tutorials, Coding for Rural Youth",
+                "portfolio_url": "https://amanverma.dev",
+                "github": "https://github.com/amanverma-bbk",
+                "linkedin": "https://www.linkedin.com/in/amanverma-bbk",
+                "is_featured": False,
+                "is_verified": True,
+                "verification_badge": "Official Partner",
+                "verification_notes": "Open-source civic contributor and local polytechnic mentor.",
+                "profile_views": 165,
+            },
+        ]
+
+        for c_data in creators_to_seed:
+            existing_c = db.query(CreatorProfile).filter(CreatorProfile.user_id == c_data["user_id"]).first()
+            if not existing_c:
+                c_obj = CreatorProfile(**c_data)
+                db.add(c_obj)
+            else:
+                for k, v in c_data.items():
+                    setattr(existing_c, k, v)
+
+        db.commit()
 
         # 3. Seed Tourism & Heritage Spots
         tourism_data = [
@@ -335,6 +458,32 @@ def seed():
             if not db.query(Business).filter(Business.slug == slug).first():
                 biz = Business(**item, slug=slug, created_by_id=admin_user.id)
                 db.add(biz)
+        db.commit()
+
+        # Seed Sample Business Collaboration
+        zaidpur_biz = db.query(Business).filter(Business.name.ilike("%Zaidpur Handloom%")).first()
+        rohit_creator = db.query(CreatorProfile).join(User).filter(User.username == "rohitvlogs").first()
+        if zaidpur_biz and rohit_creator:
+            if not db.query(BusinessCollaboration).filter(
+                BusinessCollaboration.business_id == zaidpur_biz.id,
+                BusinessCollaboration.creator_id == rohit_creator.id,
+            ).first():
+                sample_collab = BusinessCollaboration(
+                    business_id=zaidpur_biz.id,
+                    creator_id=rohit_creator.id,
+                    sender_user_id=admin_user.id,
+                    campaign_title="Diwali Heritage Handloom Reel Showcase",
+                    campaign_description="Produce a cinematic 60-second video reel highlighting the wooden Jacquard looms and artisan weaving families of Zaidpur ahead of the festive season.",
+                    proposed_deliverables="1 Instagram 4K Reel, 3 story highlights, raw footage licensing for cooperative catalog",
+                    start_date="20 Oct 2026",
+                    end_date="5 Nov 2026",
+                    budget_range="₹8,000 - ₹12,000",
+                    contact_preference="email",
+                    contact_details="contact@zaidpurweaves.example.in",
+                    status="pending",
+                )
+                db.add(sample_collab)
+                db.commit()
 
         # 6. Seed News Articles (With explicit source attribution)
         news_data = [

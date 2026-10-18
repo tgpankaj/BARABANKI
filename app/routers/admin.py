@@ -17,6 +17,7 @@ from app.models.community import CommunityPost
 from app.models.report import Report, ModerationAudit
 from app.models.civic_issue import CivicIssue, IssueStatusHistory
 from app.models.notification import Notification
+from app.models.creator import CreatorProfile, BusinessCollaboration, VERIFICATION_BADGES
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
@@ -44,6 +45,8 @@ def admin_dashboard_view(
         "institutes": db.query(EducationInstitute).count(),
         "posts": db.query(CommunityPost).count(),
         "civic_issues": db.query(CivicIssue).count(),
+        "creators": db.query(CreatorProfile).count(),
+        "collaborations": db.query(BusinessCollaboration).count(),
         "pending_reports": db.query(Report).filter(Report.status == "pending").count(),
     }
 
@@ -305,6 +308,7 @@ def admin_listings_view(
     businesses = db.query(Business).order_by(Business.created_at.desc()).all()
     jobs = db.query(JobListing).order_by(JobListing.created_at.desc()).all()
     events = db.query(Event).order_by(Event.created_at.desc()).all()
+    creators = db.query(CreatorProfile).order_by(CreatorProfile.created_at.desc()).all()
     csrf_token = generate_csrf_token(request.client.host if request.client else "bbk_admin")
 
     return templates.TemplateResponse(
@@ -317,6 +321,8 @@ def admin_listings_view(
             "businesses": businesses,
             "jobs": jobs,
             "events": events,
+            "creators": creators,
+            "verification_badges": VERIFICATION_BADGES,
             "csrf_token": csrf_token,
         },
     )
@@ -401,6 +407,8 @@ def api_admin_stats(
         "institutes": db.query(EducationInstitute).count(),
         "posts": db.query(CommunityPost).count(),
         "civic_issues": db.query(CivicIssue).count(),
+        "creators": db.query(CreatorProfile).count(),
+        "collaborations": db.query(BusinessCollaboration).count(),
         "pending_reports": db.query(Report).filter(Report.status == "pending").count(),
     }
 

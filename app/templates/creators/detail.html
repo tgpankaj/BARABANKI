@@ -1,0 +1,322 @@
+{% extends "base.html" %}
+
+{% block title %}{{ creator.user.full_name if creator.user else 'Creator' }} — {{ creator.title }} | Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+  <!-- Breadcrumb & Back -->
+  <div style="margin-bottom: 1.25rem;">
+    <a href="/creators" style="font-size: 0.88rem; color: var(--text-muted); text-decoration: none;">
+      &larr; Back to Creator Hub
+    </a>
+  </div>
+
+  {% if request.query_params.get("updated") %}
+  <div class="alert alert-success" style="margin-bottom: 1.5rem;">
+    ✓ Your creator profile has been updated successfully!
+  </div>
+  {% endif %}
+
+  <!-- Main Profile Card -->
+  <div class="card" style="padding: 2rem; margin-bottom: 2rem; border-radius: var(--radius-lg); position: relative; overflow: hidden;">
+    <!-- Profile Background Accent Header -->
+    <div style="position: absolute; top: 0; left: 0; right: 0; height: 120px; background: linear-gradient(135deg, var(--navy) 0%, var(--primary) 100%);"></div>
+
+    <div style="position: relative; padding-top: 50px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1.5rem;">
+      <div style="display: flex; gap: 1.5rem; align-items: flex-end; flex-wrap: wrap;">
+        <!-- Avatar Photo / Initials -->
+        {% if creator.profile_photo %}
+        <img 
+          src="{{ creator.profile_photo }}" 
+          alt="{{ creator.user.full_name if creator.user else 'Creator' }}" 
+          class="creator-avatar-circle" 
+          style="width: 100px; height: 100px; object-fit: cover; border: 4px solid #fff; box-shadow: var(--shadow-md); background: #fff;"
+        >
+        {% else %}
+        <div 
+          class="creator-avatar-circle" 
+          style="width: 100px; height: 100px; background: var(--navy); color: #fff; font-size: 2.2rem; font-weight: 800; border: 4px solid #fff; box-shadow: var(--shadow-md);"
+        >
+          {{ creator.user.full_name[:1].upper() if creator.user else 'C' }}
+        </div>
+        {% endif %}
+
+        <div>
+          <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+            <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--navy); margin: 0;">
+              {{ creator.user.full_name if creator.user else 'Local Creator' }}
+            </h1>
+            {% if creator.is_verified %}
+            <span class="badge badge-verified" style="font-size: 0.8rem; padding: 0.25rem 0.65rem;" title="{{ badge_description or 'Verified Identity' }}">
+              ✓ {{ creator.verification_badge or 'Verified Creator' }}
+            </span>
+            {% endif %}
+            {% if creator.is_featured %}
+            <span class="badge" style="background: #fef3c7; color: #b45309; font-weight: 700; font-size: 0.75rem;">
+              ★ FEATURED SPOTLIGHT
+            </span>
+            {% endif %}
+          </div>
+
+          <div style="font-size: 1.1rem; color: var(--text-main); font-weight: 600; margin-top: 0.25rem;">
+            {{ creator.title }}
+          </div>
+
+          <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; margin-top: 0.4rem; font-size: 0.88rem; color: var(--text-muted);">
+            <span>📍 {{ creator.locality }}, Barabanki</span>
+            <span>&bull;</span>
+            <span>🎨 {{ creator.craft_category }}</span>
+            {% if creator.languages %}
+            <span>&bull;</span>
+            <span>🗣️ {{ creator.languages }}</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Follow & Actions -->
+      <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+        {% if is_owner %}
+        <a href="/creators/edit" class="btn btn-outline" style="border-radius: var(--radius-full); font-weight: 700;">
+          ✏️ Edit Profile
+        </a>
+        {% else %}
+        <form action="/creators/{{ creator.id }}/follow" method="POST" style="margin: 0;">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+          <button 
+            type="submit" 
+            class="btn {% if is_following %}btn-outline{% else %}btn-primary{% endif %}" 
+            style="border-radius: var(--radius-full); padding: 0.5rem 1.4rem; font-weight: 700;"
+          >
+            {% if is_following %}Following{% else %}+ Follow{% endif %}
+          </button>
+        </form>
+
+        <a 
+          href="/creators/{{ creator.id }}/collaborate" 
+          class="btn btn-accent" 
+          style="border-radius: var(--radius-full); padding: 0.5rem 1.4rem; font-weight: 700; color: var(--navy); display: inline-flex; align-items: center; gap: 0.4rem;"
+        >
+          💼 Collaborate
+        </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Authentic Local Engagement Metrics Bar -->
+    <div style="display: flex; gap: 2rem; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 1rem 0; margin-top: 2rem; flex-wrap: wrap;">
+      <div>
+        <div style="font-size: 1.4rem; font-weight: 800; color: var(--navy);">{{ followers_count }}</div>
+        <div style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 600;">Followers</div>
+      </div>
+      <div>
+        <div style="font-size: 1.4rem; font-weight: 800; color: var(--navy);">{{ posts_count }}</div>
+        <div style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 600;">Posts & Discussions</div>
+      </div>
+      <div>
+        <div style="font-size: 1.4rem; font-weight: 800; color: var(--navy);">{{ creator.profile_views }}</div>
+        <div style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 600;">Profile Views</div>
+      </div>
+    </div>
+
+    <!-- Verification Badge Info Banner (if verified) -->
+    {% if creator.is_verified and badge_description %}
+    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: var(--radius-md); padding: 1rem 1.25rem; margin-top: 1.5rem; display: flex; gap: 0.75rem; align-items: flex-start;">
+      <span style="font-size: 1.25rem; color: #16a34a;">🛡️</span>
+      <div>
+        <div style="font-weight: 700; color: #166534; font-size: 0.95rem;">
+          {{ creator.verification_badge }}
+        </div>
+        <div style="font-size: 0.85rem; color: #15803d; margin-top: 0.15rem;">
+          {{ badge_description }}
+        </div>
+        {% if creator.verification_notes %}
+        <div style="font-size: 0.8rem; color: #166534; margin-top: 0.35rem; font-style: italic;">
+          Administration Notes: "{{ creator.verification_notes }}"
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Bio & Details Grid -->
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-top: 2rem;">
+      <!-- Left Column: Biography & Specialties -->
+      <div>
+        <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--navy); margin-bottom: 0.75rem;">
+          About the Creator
+        </h2>
+        <div style="font-size: 0.95rem; color: var(--text-main); line-height: 1.65; white-space: pre-line; margin-bottom: 1.5rem;">
+          {{ creator.bio }}
+        </div>
+
+        {% if creator.content_categories %}
+        <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--navy); margin-bottom: 0.5rem;">
+          Content & Creation Themes
+        </h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+          {{ creator.content_categories }}
+        </p>
+        {% endif %}
+
+        {% if creator.skills %}
+        <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--navy); margin-bottom: 0.5rem;">
+          Craftsmanship & Key Skills
+        </h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.45rem; margin-bottom: 1.5rem;">
+          {% for sk in creator.skills.split(',') %}
+          <span class="badge badge-teal" style="font-size: 0.82rem; padding: 0.35rem 0.75rem;">
+            {{ sk.strip() }}
+          </span>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Recent Community Posts by Creator -->
+        {% if recent_posts %}
+        <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--navy); margin-top: 2rem; margin-bottom: 1rem;">
+          Recent Posts by {{ creator.user.full_name if creator.user else 'Creator' }}
+        </h3>
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          {% for post in recent_posts %}
+          <div class="card" style="padding: 1rem 1.25rem; border-left: 3px solid var(--primary);">
+            <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.25rem;">
+              <a href="/community/post/{{ post.slug }}" style="color: var(--navy); text-decoration: none;">
+                {{ post.title }}
+              </a>
+            </div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 0.5rem;">
+              {{ post.content }}
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-light);">
+              {{ post.created_at.strftime('%d %b %Y') }} &bull; {{ post.upvotes }} likes
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Right Column: Validated Social Channels & Business Action -->
+      <div>
+        <!-- Public Social Channels Card (Domain Allowlist Validated & Safe External Links) -->
+        <div class="card" style="padding: 1.5rem; margin-bottom: 1.5rem; background: var(--bg-main);">
+          <h3 style="font-size: 1.05rem; font-weight: 800; color: var(--navy); margin-bottom: 1rem;">
+            Public Channels & Profiles
+          </h3>
+
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            {% if creator.instagram %}
+            <a 
+              href="{{ creator.instagram }}" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              style="display: flex; align-items: center; gap: 0.65rem; color: #e1306c; text-decoration: none; font-weight: 700; font-size: 0.9rem;"
+            >
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+              <span>Instagram Profile</span>
+            </a>
+            {% endif %}
+
+            {% if creator.youtube %}
+            <a 
+              href="{{ creator.youtube }}" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              style="display: flex; align-items: center; gap: 0.65rem; color: #ef4444; text-decoration: none; font-weight: 700; font-size: 0.9rem;"
+            >
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              <span>YouTube Channel</span>
+            </a>
+            {% endif %}
+
+            {% if creator.facebook %}
+            <a 
+              href="{{ creator.facebook }}" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              style="display: flex; align-items: center; gap: 0.65rem; color: #1877f2; text-decoration: none; font-weight: 700; font-size: 0.9rem;"
+            >
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+              <span>Facebook Page</span>
+            </a>
+            {% endif %}
+
+            {% if creator.linkedin %}
+            <a 
+              href="{{ creator.linkedin }}" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              style="display: flex; align-items: center; gap: 0.65rem; color: #0a66c2; text-decoration: none; font-weight: 700; font-size: 0.9rem;"
+            >
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+              <span>LinkedIn Profile</span>
+            </a>
+            {% endif %}
+
+            {% if creator.twitter_x %}
+            <a 
+              href="{{ creator.twitter_x }}" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              style="display: flex; align-items: center; gap: 0.65rem; color: #0f1419; text-decoration: none; font-weight: 700; font-size: 0.9rem;"
+            >
+              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              <span>X (Twitter) Profile</span>
+            </a>
+            {% endif %}
+
+            {% if creator.github %}
+            <a 
+              href="{{ creator.github }}" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              style="display: flex; align-items: center; gap: 0.65rem; color: #24292e; text-decoration: none; font-weight: 700; font-size: 0.9rem;"
+            >
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+              <span>GitHub Projects</span>
+            </a>
+            {% endif %}
+
+            {% if creator.portfolio_url %}
+            <a 
+              href="{{ creator.portfolio_url }}" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              style="display: flex; align-items: center; gap: 0.65rem; color: var(--primary); text-decoration: none; font-weight: 700; font-size: 0.9rem;"
+            >
+              <span>🌐</span>
+              <span>Portfolio Website &rarr;</span>
+            </a>
+            {% endif %}
+
+            {% if not creator.instagram and not creator.youtube and not creator.facebook and not creator.linkedin and not creator.twitter_x and not creator.github and not creator.portfolio_url %}
+            <div style="font-size: 0.82rem; color: var(--text-muted); font-style: italic;">
+              No public social links shared yet.
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Business Collaboration Proposal Card -->
+        <div class="card" style="padding: 1.5rem; border-top: 4px solid var(--accent);">
+          <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--navy); margin-bottom: 0.5rem;">
+            Propose Collaboration
+          </h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.45; margin-bottom: 1.25rem;">
+            Are you a local business, cooperative, or agency? Send a campaign proposal with deliverable goals and custom timeline.
+          </p>
+
+          <a 
+            href="/creators/{{ creator.id }}/collaborate" 
+            class="btn btn-primary" 
+            style="width: 100%; text-align: center; font-weight: 700; padding: 0.65rem;"
+          >
+            Send Collaboration Request
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -32,6 +32,7 @@ class Business(Base):
 
     # Relationships
     owner = relationship("User", back_populates="businesses")
+    collaborations = relationship("BusinessCollaboration", back_populates="business", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<Business {self.name} ({self.locality})>"

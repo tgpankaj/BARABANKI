@@ -45,6 +45,16 @@ from app.schemas.civic_issue import (
     IssueStatusHistoryOut,
     CivicIssueOut,
 )
+from app.schemas.creator import (
+    CreatorProfileBase,
+    CreatorProfileCreate,
+    CreatorProfileUpdate,
+    CreatorProfileOut,
+    CreatorVerificationUpdate,
+    BusinessCollaborationCreate,
+    BusinessCollaborationStatusUpdate,
+    BusinessCollaborationOut,
+)
 
 __all__ = [
     "UserRegister",

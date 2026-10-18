@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}Collaborate with {{ creator.user.full_name if creator.user else 'Creator' }} — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem; max-width: 760px;">
+  <!-- Breadcrumb -->
+  <div style="margin-bottom: 1.25rem;">
+    <a href="/creators/{{ creator.id }}" style="font-size: 0.88rem; color: var(--text-muted); text-decoration: none;">
+      &larr; Back to {{ creator.user.full_name if creator.user else 'Creator' }}'s Profile
+    </a>
+  </div>
+
+  <div class="card" style="padding: 2.25rem; border-radius: var(--radius-lg);">
+    <!-- Creator Summary Header -->
+    <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem;">
+      {% if creator.profile_photo %}
+      <img src="{{ creator.profile_photo }}" alt="{{ creator.user.full_name }}" class="creator-avatar-circle" style="width: 60px; height: 60px; object-fit: cover;">
+      {% else %}
+      <div class="creator-avatar-circle" style="width: 60px; height: 60px; background: var(--navy); color: #fff; font-size: 1.4rem; font-weight: 700;">
+        {{ creator.user.full_name[:1].upper() if creator.user else 'C' }}
+      </div>
+      {% endif %}
+
+      <div>
+        <h1 style="font-size: 1.5rem; font-weight: 800; color: var(--navy); margin-bottom: 0.2rem;">
+          Business Collaboration Proposal
+        </h1>
+        <div style="font-size: 0.9rem; color: var(--text-muted);">
+          Recipient: <strong style="color: var(--text-main);">{{ creator.user.full_name if creator.user else 'Creator' }}</strong> &bull; {{ creator.title }} ({{ creator.locality }})
+        </div>
+      </div>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-danger" style="margin-bottom: 1.5rem;">
+      ⚠️ {{ error }}
+    </div>
+    {% endif %}
+
+    {% if not user_businesses %}
+    <!-- No Registered Business Notice -->
+    <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: var(--radius-md); padding: 1.5rem; text-align: center;">
+      <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🏬</div>
+      <h3 style="font-size: 1.15rem; font-weight: 800; color: #92400e; margin-bottom: 0.35rem;">
+        Business Registration Required
+      </h3>
+      <p style="font-size: 0.88rem; color: #b45309; line-height: 1.5; margin-bottom: 1.25rem;">
+        To maintain professional accountability and authentic creator compensation, collaboration proposals must be sent on behalf of a registered local enterprise or commercial listing.
+      </p>
+      <a href="/businesses/create" class="btn btn-primary" style="font-weight: 700; border-radius: var(--radius-full); padding: 0.5rem 1.5rem;">
+        Register Your Business First &rarr;
+      </a>
+    </div>
+
+    {% else %}
+
+    <form method="POST" action="/creators/{{ creator.id }}/collaborate">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+
+      <div class="form-group" style="margin-bottom: 1.25rem;">
+        <label style="font-weight: 700; font-size: 0.88rem; color: var(--navy); display: block; margin-bottom: 0.35rem;">
+          Select Your Business / Enterprise *
+        </label>
+        <select name="business_id" required class="form-control">
+          {% for biz in user_businesses %}
+          <option value="{{ biz.id }}">{{ biz.name }} ({{ biz.category }} &bull; {{ biz.locality }})</option>
+          {% endfor %}
+        </select>
+        <span style="font-size: 0.75rem; color: var(--text-light); margin-top: 0.2rem; display: block;">
+          The creator will receive this proposal from the chosen enterprise profile.
+        </span>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1.25rem;">
+        <label style="font-weight: 700; font-size: 0.88rem; color: var(--navy); display: block; margin-bottom: 0.35rem;">
+          Campaign Title *
+        </label>
+        <input 
+          type="text" 
+          name="campaign_title" 
+          required 
+          minlength="5"
+          placeholder="e.g. Diwali Handloom Collection Launch Reel & Promotion" 
+          class="form-control"
+        >
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1.25rem;">
+        <label style="font-weight: 700; font-size: 0.88rem; color: var(--navy); display: block; margin-bottom: 0.35rem;">
+          Campaign Description & Scope *
+        </label>
+        <textarea 
+          name="campaign_description" 
+          rows="4" 
+          required 
+          minlength="20"
+          placeholder="Describe the campaign background, target audience in Barabanki, key messaging, and expectations..." 
+          class="form-control"
+        ></textarea>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1.25rem;">
+        <label style="font-weight: 700; font-size: 0.88rem; color: var(--navy); display: block; margin-bottom: 0.35rem;">
+          Proposed Deliverables *
+        </label>
+        <textarea 
+          name="proposed_deliverables" 
+          rows="3" 
+          required 
+          minlength="10"
+          placeholder="e.g. 1 dedicated high-resolution Instagram reel, 2 story mentions, photo rights for shop catalog..." 
+          class="form-control"
+        ></textarea>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+        <div class="form-group">
+          <label style="font-weight: 700; font-size: 0.88rem; color: var(--navy); display: block; margin-bottom: 0.35rem;">
+            Estimated Start Date
+          </label>
+          <input 
+            type="text" 
+            name="start_date" 
+            placeholder="e.g. 1 Nov 2026 or Immediate" 
+            class="form-control"
+          >
+        </div>
+
+        <div class="form-group">
+          <label style="font-weight: 700; font-size: 0.88rem; color: var(--navy); display: block; margin-bottom: 0.35rem;">
+            Expected Completion Date
+          </label>
+          <input 
+            type="text" 
+            name="end_date" 
+            placeholder="e.g. 15 Nov 2026" 
+            class="form-control"
+          >
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+        <div class="form-group">
+          <label style="font-weight: 700; font-size: 0.88rem; color: var(--navy); display: block; margin-bottom: 0.35rem;">
+            Proposed Budget / Compensation
+          </label>
+          <input 
+            type="text" 
+            name="budget_range" 
+            placeholder="e.g. ₹5,000 - ₹10,000 or Barter & Product Samples" 
+            class="form-control"
+          >
+        </div>
+
+        <div class="form-group">
+          <label style="font-weight: 700; font-size: 0.88rem; color: var(--navy); display: block; margin-bottom: 0.35rem;">
+            Preferred Contact Method *
+          </label>
+          <select name="contact_preference" class="form-control">
+            <option value="email">Email</option>
+            <option value="whatsapp">WhatsApp</option>
+            <option value="phone">Phone Call</option>
+            <option value="in_app">In-App Notification</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1.75rem;">
+        <label style="font-weight: 700; font-size: 0.88rem; color: var(--navy); display: block; margin-bottom: 0.35rem;">
+          Business Contact Details *
+        </label>
+        <input 
+          type="text" 
+          name="contact_details" 
+          required 
+          value="{{ current_user.email or current_user.phone or '' }}" 
+          placeholder="Email address or WhatsApp phone number" 
+          class="form-control"
+        >
+      </div>
+
+      <!-- Submit Actions -->
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+        <a href="/creators/{{ creator.id }}" class="btn btn-outline" style="border-radius: var(--radius-full); padding: 0.6rem 1.5rem;">
+          Cancel
+        </a>
+        <button type="submit" class="btn btn-primary" style="border-radius: var(--radius-full); padding: 0.6rem 2rem; font-weight: 700;">
+          Submit Proposal
+        </button>
+      </div>
+    </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

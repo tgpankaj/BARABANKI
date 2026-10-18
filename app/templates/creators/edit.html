@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Creator Profile — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem; max-width: 800px;">
+  <!-- Breadcrumb -->
+  <div style="margin-bottom: 1.25rem;">
+    <a href="/creators" style="font-size: 0.88rem; color: var(--text-muted); text-decoration: none;">
+      &larr; Back to Creator Hub
+    </a>
+  </div>
+
+  <div class="card" style="padding: 2.25rem; border-radius: var(--radius-lg);">
+    <div style="margin-bottom: 1.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.25rem;">
+      <h1 style="font-size: 1.65rem; font-weight: 800; color: var(--navy); margin-bottom: 0.35rem;">
+        {% if profile %}Edit Creator Profile{% else %}Join Barabanki Creator Directory{% endif %}
+      </h1>
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">
+        Showcase your local craft, connect with community members, and accept business collaboration requests.
+      </p>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-danger" style="margin-bottom: 1.5rem;">
+      ⚠️ {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="POST" action="/creators/edit">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+
+      <!-- Core Details Section -->
+      <h3 style="font-size: 1.05rem; font-weight: 800; color: var(--navy); margin-bottom: 1rem;">
+        1. Creator Basics
+      </h3>
+
+      <div class="form-group" style="margin-bottom: 1.25rem;">
+        <label style="font-weight: 700; font-size: 0.88rem; color: var(--navy); display: block; margin-bottom: 0.35rem;">
+          Professional Title / Headline *
+        </label>
+        <input 
+          type="text" 
+          name="title" 
+          value="{{ profile.title if profile else '' }}" 
+          required 
+          placeholder="e.g. Master Jacquard Weaver, Tech Educator, Bhojpuri Folk Singer" 
+          class="form-control"
+        >
+        <span style="font-size: 0.75rem; color: var(--text-light); margin-top: 0.2rem; display: block;">
+          A concise title describing your craftsmanship or discipline.
+        </span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+        <div class="form-group">
+          <label style="font-weight: 700; font-size: 0.88rem; color: var(--navy); display: block; margin-bottom: 0.35rem;">
+            Craft Category *
+          </label>
+          <select name="craft_category" required class="form-control">
+            {% for cat in categories %}
+            <option value="{{ cat }}" {% if profile and profile.craft_category == cat %}selected{% endif %}>{{ cat }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label style="font-weight: 700; font-size: 0.88rem; color: var(--navy); display: block; margin-bottom: 0.35rem;">
+            Primary Locality *
+          </label>
+          <select name="locality" required class="form-control">
+            {% for loc in localities %}
+            <option value="{{ loc }}" {% if profile and profile.locality == loc %}selected{% elif not profile and loc == 'Barabanki' %}selected{% endif %}>{{ loc }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1.25rem;">
+        <label style="font-weight: 700; font-size: 0.88rem; color: var(--navy); display: block; margin-bottom: 0.35rem;">
+          Biography & Background *
+        </label>
+        <textarea 
+          name="bio" 
+          rows="5" 
+          required 
+          class="form-control" 
+          placeholder="Share your story, artisanal traditions, achievements, and the work you do in Barabanki..."
+        >{{ profile.bio if profile else '' }}</textarea>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+        <div class="form-group">
+          <label style="font-weight: 700; font-size: 0.88rem; color: var(--navy); display: block; margin-bottom: 0.35rem;">
+            Spoken Languages
+          </label>
+          <input 
+            type="text" 
+            name="languages" 
+            value="{{ profile.languages if profile else 'Hindi, Awadhi' }}" 
+            placeholder="e.g. Hindi, Awadhi, Urdu, English" 
+            class="form-control"
+          >
+        </div>
+
+        <div class="form-group">
+          <label style="font-weight: 700; font-size: 0.88rem; color: var(--navy); display: block; margin-bottom: 0.35rem;">
+            Key Skills (comma separated)
+          </label>
+          <input 
+            type="text" 
+            name="skills" 
+            value="{{ profile.skills if profile else '' }}" 
+            placeholder="e.g. Handloom Weaving, Dyeing, Python, 4K Videography" 
+            class="form-control"
+          >
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1.25rem;">
+        <label style="font-weight: 700; font-size: 0.88rem; color: var(--navy); display: block; margin-bottom: 0.35rem;">
+          Content Themes & Specializations
+        </label>
+        <input 
+          type="text" 
+          name="content_categories" 
+          value="{{ profile.content_categories if profile else '' }}" 
+          placeholder="e.g. Traditional Handloom Reels, Folk Music Covers, Agro Innovations" 
+          class="form-control"
+        >
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1.75rem;">
+        <label style="font-weight: 700; font-size: 0.88rem; color: var(--navy); display: block; margin-bottom: 0.35rem;">
+          Profile Photo URL
+        </label>
+        <input 
+          type="url" 
+          name="profile_photo" 
+          value="{{ profile.profile_photo if profile else '' }}" 
+          placeholder="https://example.com/photo.jpg" 
+          class="form-control"
+        >
+      </div>
+
+      <!-- Public Social Channels Section -->
+      <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 1.75rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+          <h3 style="font-size: 1.05rem; font-weight: 800; color: var(--navy); margin: 0;">
+            2. Public Social Media Channels
+          </h3>
+          <span style="font-size: 0.75rem; background: #e0f2fe; color: #0369a1; padding: 0.2rem 0.5rem; border-radius: var(--radius-sm); font-weight: 700;">
+            🔒 Safe Domain Validated
+          </span>
+        </div>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+          Enter your public profile handle (e.g. <code>@artisan_zaidpur</code>) or full URL. We strictly validate domains against allowlisted official platforms and <strong>never ask for or store passwords</strong>.
+        </p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label style="font-weight: 700; font-size: 0.82rem; color: #e1306c; display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.35rem;">
+              Instagram
+            </label>
+            <input 
+              type="text" 
+              name="instagram" 
+              value="{{ profile.instagram if profile else '' }}" 
+              placeholder="@username or https://instagram.com/..." 
+              class="form-control"
+            >
+          </div>
+
+          <div class="form-group">
+            <label style="font-weight: 700; font-size: 0.82rem; color: #ef4444; display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.35rem;">
+              YouTube
+            </label>
+            <input 
+              type="text" 
+              name="youtube" 
+              value="{{ profile.youtube if profile else '' }}" 
+              placeholder="@channel or https://youtube.com/..." 
+              class="form-control"
+            >
+          </div>
+
+          <div class="form-group">
+            <label style="font-weight: 700; font-size: 0.82rem; color: #1877f2; display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.35rem;">
+              Facebook
+            </label>
+            <input 
+              type="text" 
+              name="facebook" 
+              value="{{ profile.facebook if profile else '' }}" 
+              placeholder="https://facebook.com/..." 
+              class="form-control"
+            >
+          </div>
+
+          <div class="form-group">
+            <label style="font-weight: 700; font-size: 0.82rem; color: #0a66c2; display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.35rem;">
+              LinkedIn
+            </label>
+            <input 
+              type="text" 
+              name="linkedin" 
+              value="{{ profile.linkedin if profile else '' }}" 
+              placeholder="https://linkedin.com/in/..." 
+              class="form-control"
+            >
+          </div>
+
+          <div class="form-group">
+            <label style="font-weight: 700; font-size: 0.82rem; color: #0f1419; display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.35rem;">
+              X (formerly Twitter)
+            </label>
+            <input 
+              type="text" 
+              name="twitter_x" 
+              value="{{ profile.twitter_x if profile else '' }}" 
+              placeholder="@handle or https://x.com/..." 
+              class="form-control"
+            >
+          </div>
+
+          <div class="form-group">
+            <label style="font-weight: 700; font-size: 0.82rem; color: #24292e; display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.35rem;">
+              GitHub
+            </label>
+            <input 
+              type="text" 
+              name="github" 
+              value="{{ profile.github if profile else '' }}" 
+              placeholder="username or https://github.com/..." 
+              class="form-control"
+            >
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 1rem;">
+          <label style="font-weight: 700; font-size: 0.82rem; color: var(--navy); display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.35rem;">
+            Personal Portfolio / Website URL
+          </label>
+          <input 
+            type="url" 
+            name="portfolio_url" 
+            value="{{ profile.portfolio_url if profile else '' }}" 
+            placeholder="https://yourdomain.com" 
+            class="form-control"
+          >
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+        <a href="/creators{% if profile %}/{{ profile.id }}{% endif %}" class="btn btn-outline" style="border-radius: var(--radius-full); padding: 0.6rem 1.5rem;">
+          Cancel
+        </a>
+        <button type="submit" class="btn btn-primary" style="border-radius: var(--radius-full); padding: 0.6rem 2rem; font-weight: 700;">
+          Save Creator Profile
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
