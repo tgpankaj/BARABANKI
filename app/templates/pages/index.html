@@ -180,6 +180,43 @@
   </div>
 </section>
 
+<!-- Sponsored Ad Spotlight (When Active) -->
+{% if sponsored_ads %}
+<div class="container" style="margin-bottom: 2rem;">
+  {% for ad in sponsored_ads %}
+  <div style="background: linear-gradient(135deg, #082D50 0%, #06233F 100%); border-radius: 12px; padding: 1.25rem 1.75rem; color: white; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; box-shadow: 0 4px 12px rgba(8, 45, 80, 0.15); border-left: 5px solid #FFC928; margin-bottom: 0.75rem;">
+    <div style="flex: 1; min-width: 280px; display: flex; align-items: center; gap: 1.25rem;">
+      {% if ad.image_url %}
+      <img src="{{ ad.image_url }}" alt="Sponsored" style="width: 76px; height: 76px; border-radius: 8px; object-fit: cover; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.2);">
+      {% endif %}
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+          <span style="font-size: 0.68rem; font-weight: 800; background: #FFC928; color: #082D50; padding: 0.15rem 0.45rem; border-radius: 3px; text-transform: uppercase;">
+            Sponsored • Ad
+          </span>
+          <span style="font-size: 0.78rem; color: #94A3B8;">{{ ad.business.name if ad.business else 'Barabanki Business' }} • {{ ad.target_locality }}</span>
+        </div>
+        <h3 style="font-size: 1.12rem; font-weight: 800; color: white; margin: 0 0 0.25rem 0;">
+          {{ ad.headline }}
+        </h3>
+        <p style="font-size: 0.84rem; color: #CBD5E1; margin: 0; line-height: 1.35; -webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden;">
+          {{ ad.description }}
+        </p>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <a href="/ads/{{ ad.id }}/click" target="_blank" style="background: #FFC928; color: #082D50; font-weight: 800; border-radius: 9999px; padding: 0.5rem 1.25rem; font-size: 0.85rem; text-decoration: none; white-space: nowrap; display: inline-block;">
+        {{ ad.contact_action|replace('_', ' ')|title }} →
+      </a>
+      <a href="/ads/{{ ad.id }}/report" title="Report this advertisement" style="color: #94A3B8; font-size: 0.75rem; text-decoration: none;">
+        Report
+      </a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
 <!-- 4. Main 2-Column Section (Left: News & Events, Right: Popular Creators) -->
 <div class="container">
   <div class="home-main-layout">

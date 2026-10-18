@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}Advertiser Portal & Campaign Manager — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+
+  <!-- Header -->
+  <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+    <div>
+      <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: #e0f2fe; color: #0369a1; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem;">
+        <span>📢</span> Local Business Advertising Marketplace
+      </div>
+      <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--navy, #082D50); margin-bottom: 0.25rem;">
+        Advertiser Dashboard
+      </h1>
+      <p style="font-size: 0.9rem; color: var(--text-muted, #64748B); margin: 0;">
+        Promote your local enterprise across Barabanki with targeted, transparent, and verified community placements.
+      </p>
+    </div>
+    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+      <a href="/advertising/policy" class="btn btn-outline" style="border-radius: var(--radius-full, 9999px); padding: 0.5rem 1.25rem;">
+        Advertising Policies
+      </a>
+      <a href="/advertiser/campaigns/new" class="btn btn-primary" style="background: var(--primary-blue, #0878F9); color: white; border-radius: var(--radius-full, 9999px); padding: 0.5rem 1.25rem; font-weight: 600; text-decoration: none;">
+        + Create New Campaign
+      </a>
+    </div>
+  </div>
+
+  <!-- KPI Metrics Cards -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+    <div class="card" style="background: white; border-radius: var(--radius-lg, 12px); border: 1px solid #E2E8F0; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted, #64748B); text-transform: uppercase;">Total Campaigns</div>
+      <div style="font-size: 1.85rem; font-weight: 800; color: var(--navy, #082D50); margin-top: 0.25rem;">{{ total_campaigns }}</div>
+      <div style="font-size: 0.75rem; color: #10b981; margin-top: 0.25rem; font-weight: 600;">{{ active_campaigns }} currently active</div>
+    </div>
+
+    <div class="card" style="background: white; border-radius: var(--radius-lg, 12px); border: 1px solid #E2E8F0; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted, #64748B); text-transform: uppercase;">Total Impressions</div>
+      <div style="font-size: 1.85rem; font-weight: 800; color: var(--primary-blue, #0878F9); margin-top: 0.25rem;">{{ total_impressions }}</div>
+      <div style="font-size: 0.75rem; color: var(--text-muted, #64748B); margin-top: 0.25rem;">Internal resident views</div>
+    </div>
+
+    <div class="card" style="background: white; border-radius: var(--radius-lg, 12px); border: 1px solid #E2E8F0; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted, #64748B); text-transform: uppercase;">Total Clicks</div>
+      <div style="font-size: 1.85rem; font-weight: 800; color: #8b5cf6; margin-top: 0.25rem;">{{ total_clicks }}</div>
+      <div style="font-size: 0.75rem; color: var(--text-muted, #64748B); margin-top: 0.25rem;">Direct customer engagements</div>
+    </div>
+
+    <div class="card" style="background: white; border-radius: var(--radius-lg, 12px); border: 1px solid #E2E8F0; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted, #64748B); text-transform: uppercase;">Average CTR</div>
+      <div style="font-size: 1.85rem; font-weight: 800; color: #f59e0b; margin-top: 0.25rem;">{{ avg_ctr }}%</div>
+      <div style="font-size: 0.75rem; color: var(--text-muted, #64748B); margin-top: 0.25rem;">Click-through rate</div>
+    </div>
+  </div>
+
+  <!-- Campaigns Section -->
+  <div class="card" style="background: white; border-radius: var(--radius-lg, 12px); border: 1px solid #E2E8F0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow: hidden;">
+    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center;">
+      <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--navy, #082D50); margin: 0;">
+        Your Advertising Campaigns
+      </h2>
+      <span style="font-size: 0.85rem; color: var(--text-muted, #64748B);">
+        Showing {{ campaigns|length }} campaigns
+      </span>
+    </div>
+
+    {% if campaigns %}
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem;">
+        <thead>
+          <tr style="background: #F8FAFC; border-bottom: 1px solid #E2E8F0; color: var(--text-muted, #64748B); font-weight: 600;">
+            <th style="padding: 0.75rem 1rem;">Campaign & Business</th>
+            <th style="padding: 0.75rem 1rem;">Placement</th>
+            <th style="padding: 0.75rem 1rem;">Dates & Plan</th>
+            <th style="padding: 0.75rem 1rem;">Approval Status</th>
+            <th style="padding: 0.75rem 1rem;">Payment</th>
+            <th style="padding: 0.75rem 1rem;">Metrics</th>
+            <th style="padding: 0.75rem 1rem; text-align: right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in campaigns %}
+          <tr style="border-bottom: 1px solid #F1F5F9;">
+            <td style="padding: 1rem;">
+              <div style="font-weight: 700; color: var(--navy, #082D50); font-size: 0.95rem;">
+                <a href="/advertiser/campaigns/{{ c.id }}" style="color: inherit; text-decoration: none;">
+                  {{ c.name }}
+                </a>
+              </div>
+              <div style="font-size: 0.8rem; color: var(--text-muted, #64748B); margin-top: 0.15rem;">
+                {{ c.business.name if c.business else 'Local Business' }} • {{ c.objective|replace('_', ' ')|title }}
+              </div>
+            </td>
+
+            <td style="padding: 1rem;">
+              <span style="display: inline-block; padding: 0.2rem 0.55rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; background: #EEF2F6; color: var(--navy, #082D50);">
+                {% if c.placement == 'homepage_sponsored' %}
+                  ⭐ Homepage Sponsored
+                {% elif c.placement == 'directory_featured' %}
+                  🏢 Directory Featured
+                {% elif c.placement == 'category_banner' %}
+                  🏷️ Category Promotion
+                {% else %}
+                  👥 Community Sponsored
+                {% endif %}
+              </span>
+            </td>
+
+            <td style="padding: 1rem;">
+              <div style="font-size: 0.85rem; font-weight: 600; color: #1E293B;">
+                {{ c.start_date.strftime('%b %d') }} – {{ c.end_date.strftime('%b %d, %Y') }}
+              </div>
+              <div style="font-size: 0.78rem; color: var(--text-muted, #64748B);">
+                ₹{{ "%.2f"|format(c.budget_amount) }} ({{ c.pricing_plan|replace('_', ' ')|title }})
+              </div>
+            </td>
+
+            <td style="padding: 1rem;">
+              {% if c.status == 'active' %}
+                <span style="display: inline-block; padding: 0.25rem 0.6rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background: #DCFCE7; color: #15803D;">
+                  ● Active
+                </span>
+              {% elif c.status == 'approved' %}
+                <span style="display: inline-block; padding: 0.25rem 0.6rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background: #DBEAFE; color: #1E40AF;">
+                  ✓ Approved
+                </span>
+              {% elif c.status == 'pending_review' %}
+                <span style="display: inline-block; padding: 0.25rem 0.6rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background: #FEF3C7; color: #B45309;">
+                  ⏳ Pending Review
+                </span>
+              {% elif c.status == 'rejected' %}
+                <span style="display: inline-block; padding: 0.25rem 0.6rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background: #FEE2E2; color: #B91C1C;">
+                  ✕ Rejected
+                </span>
+              {% elif c.status == 'paused' %}
+                <span style="display: inline-block; padding: 0.25rem 0.6rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background: #F1F5F9; color: #475569;">
+                  ⏸️ Paused
+                </span>
+              {% else %}
+                <span style="display: inline-block; padding: 0.25rem 0.6rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background: #F3F4F6; color: #6B7280;">
+                  {{ c.status|title }}
+                </span>
+              {% endif %}
+
+              {% if c.is_paused and c.status == 'approved' %}
+                <div style="font-size: 0.72rem; color: #94A3B8; margin-top: 0.2rem;">(Manually paused)</div>
+              {% endif %}
+            </td>
+
+            <td style="padding: 1rem;">
+              {% if c.payment_status == 'verified' %}
+                <span style="display: inline-block; padding: 0.2rem 0.55rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background: #DCFCE7; color: #15803D;">
+                  Paid & Verified
+                </span>
+              {% elif c.payment_status == 'proof_submitted' %}
+                <span style="display: inline-block; padding: 0.2rem 0.55rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background: #E0E7FF; color: #4338CA;">
+                  Proof Submitted
+                </span>
+              {% elif c.payment_status == 'waived' %}
+                <span style="display: inline-block; padding: 0.2rem 0.55rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background: #F3F4F6; color: #4B5563;">
+                  Waived (Partner)
+                </span>
+              {% else %}
+                <a href="/advertiser/campaigns/{{ c.id }}/payment" style="display: inline-block; padding: 0.2rem 0.55rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; background: #FEF3C7; color: #B45309; text-decoration: none;">
+                  Payment Pending ↗
+                </a>
+              {% endif %}
+            </td>
+
+            <td style="padding: 1rem;">
+              <div style="font-weight: 600; color: #1E293B; font-size: 0.85rem;">
+                {{ c.impression_count }} views • {{ c.click_count }} clicks
+              </div>
+              <div style="font-size: 0.75rem; color: var(--text-muted, #64748B);">
+                CTR: {{ c.ctr }}%
+              </div>
+            </td>
+
+            <td style="padding: 1rem; text-align: right;">
+              <div style="display: inline-flex; gap: 0.4rem; justify-content: flex-end;">
+                <a href="/advertiser/campaigns/{{ c.id }}" class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.65rem; border-radius: 6px; text-decoration: none;">
+                  View
+                </a>
+
+                {% if c.status in ['approved', 'active'] %}
+                <form action="/advertiser/campaigns/{{ c.id }}/toggle-pause" method="POST" style="margin: 0; display: inline;">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                  <button type="submit" class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.65rem; border-radius: 6px; cursor: pointer;">
+                    {{ 'Resume' if c.is_paused else 'Pause' }}
+                  </button>
+                </form>
+                {% endif %}
+
+                {% if c.payment_status == 'pending' %}
+                <a href="/advertiser/campaigns/{{ c.id }}/payment" class="btn btn-primary" style="font-size: 0.78rem; padding: 0.35rem 0.65rem; border-radius: 6px; background: #0878F9; color: white; text-decoration: none;">
+                  Pay
+                </a>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 3.5rem 1.5rem;">
+      <div style="font-size: 3rem; margin-bottom: 0.5rem;">📣</div>
+      <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--navy, #082D50); margin-bottom: 0.5rem;">
+        No advertising campaigns yet
+      </h3>
+      <p style="font-size: 0.9rem; color: var(--text-muted, #64748B); max-width: 500px; margin: 0 auto 1.5rem auto;">
+        Grow your local enterprise, drive retail foot-traffic, or highlight festive discounts across District Barabanki with our verified community ad slots.
+      </p>
+      <a href="/advertiser/campaigns/new" class="btn btn-primary" style="background: var(--primary-blue, #0878F9); color: white; padding: 0.6rem 1.5rem; border-radius: var(--radius-full, 9999px); text-decoration: none; font-weight: 600;">
+        Create Your First Campaign
+      </a>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

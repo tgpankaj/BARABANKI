@@ -36,6 +36,13 @@ def home_page(
     jobs = db.query(JobListing).filter(JobListing.is_active == True, JobListing.is_approved == True).order_by(JobListing.created_at.desc()).limit(3).all()
     tourism_spots = db.query(TourismSpot).limit(4).all()
 
+    from app.routers.advertising import get_active_ads, record_ad_impression
+    sponsored_ads = get_active_ads(db, placement="homepage_sponsored", limit=2)
+    ip = request.client.host if request.client else None
+    u_id = current_user.id if current_user else None
+    for ad in sponsored_ads:
+        record_ad_impression(ad.id, "homepage_sponsored", ip, u_id, None, db)
+
     stats = {
         "businesses": db.query(Business).count(),
         "news": db.query(NewsArticle).count(),
@@ -56,6 +63,7 @@ def home_page(
             "businesses": businesses,
             "jobs": jobs,
             "tourism_spots": tourism_spots,
+            "sponsored_ads": sponsored_ads,
             "stats": stats,
             "csrf_token": csrf_token,
         },

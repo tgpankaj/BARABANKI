@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Submit Payment Reference — {{ campaign.name }} — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem; max-width: 760px;">
+
+  <!-- Breadcrumb -->
+  <div style="margin-bottom: 1.5rem;">
+    <a href="/advertiser/campaigns/{{ campaign.id }}" style="font-size: 0.85rem; color: var(--primary-blue, #0878F9); text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; margin-bottom: 0.35rem; font-weight: 600;">
+      ← Back to Campaign Details
+    </a>
+    <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--navy, #082D50); margin: 0;">
+      Advertising Payment & UTR Submission
+    </h1>
+    <p style="font-size: 0.9rem; color: var(--text-muted, #64748B); margin: 0.25rem 0 0 0;">
+      Official manual verification workflow for local businesses advertising in Barabanki.
+    </p>
+  </div>
+
+  <!-- Campaign Invoice Summary Box -->
+  <div class="card" style="background: white; border-radius: var(--radius-lg, 12px); border: 1px solid #E2E8F0; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+    <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--navy, #082D50); margin-bottom: 1rem; border-bottom: 1px solid #F1F5F9; padding-bottom: 0.5rem;">
+      Campaign Invoice Summary
+    </h2>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.88rem;">
+      <div>
+        <div style="color: #64748B;">Campaign Name</div>
+        <strong style="color: #082D50;">{{ campaign.name }}</strong>
+      </div>
+      <div>
+        <div style="color: #64748B;">Business Listing</div>
+        <strong style="color: #082D50;">{{ campaign.business.name if campaign.business else 'Business' }}</strong>
+      </div>
+      <div>
+        <div style="color: #64748B;">Selected Package</div>
+        <strong style="color: #082D50;">{{ campaign.pricing_plan|replace('_', ' ')|title }}</strong>
+      </div>
+      <div>
+        <div style="color: #64748B;">Placement Slot</div>
+        <strong style="color: #082D50;">{{ campaign.placement|replace('_', ' ')|title }}</strong>
+      </div>
+    </div>
+
+    <div style="background: #F8FAFC; border-radius: 8px; padding: 1rem; margin-top: 1.25rem; display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-weight: 700; color: #082D50; font-size: 1rem;">Total Amount Payable:</span>
+      <span style="font-size: 1.6rem; font-weight: 800; color: #0878F9;">₹{{ "%.2f"|format(campaign.budget_amount) }}</span>
+    </div>
+  </div>
+
+  <!-- Official Payment Account Details Box -->
+  <div class="card" style="background: #082D50; color: white; border-radius: var(--radius-lg, 12px); padding: 1.5rem; margin-bottom: 1.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+      <div>
+        <span style="font-size: 0.75rem; font-weight: 700; background: #FFC928; color: #082D50; padding: 0.2rem 0.5rem; border-radius: 4px; text-transform: uppercase;">
+          Step 1: Direct Transfer / UPI
+        </span>
+        <h3 style="font-size: 1.2rem; font-weight: 700; margin: 0.5rem 0 0 0; color: white;">
+          Barabanki Connect Official Payment Destination
+        </h3>
+      </div>
+      <div style="text-align: right; font-size: 0.78rem; color: #94A3B8;">
+        District Administration & Civic Portal
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; font-size: 0.88rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
+      <!-- UPI Option -->
+      <div style="background: rgba(255,255,255,0.06); padding: 1rem; border-radius: 8px;">
+        <div style="font-weight: 700; color: #FFC928; margin-bottom: 0.35rem;">📱 Option A: UPI Payment</div>
+        <div style="color: #E2E8F0; font-size: 0.82rem; margin-bottom: 0.5rem;">
+          Pay using any UPI App (GPay, PhonePe, Paytm, BHIM):
+        </div>
+        <div style="background: rgba(0,0,0,0.3); padding: 0.5rem 0.75rem; border-radius: 6px; font-family: monospace; font-size: 0.95rem; font-weight: 700; color: white; user-select: all;">
+          {{ official_upi_id }}
+        </div>
+      </div>
+
+      <!-- Bank Transfer Option -->
+      <div style="background: rgba(255,255,255,0.06); padding: 1rem; border-radius: 8px;">
+        <div style="font-weight: 700; color: #FFC928; margin-bottom: 0.35rem;">🏛️ Option B: NEFT / IMPS Bank Transfer</div>
+        <div style="font-size: 0.8rem; color: #CBD5E1; line-height: 1.4;">
+          <div><strong>Bank:</strong> {{ official_bank_info.bank }}</div>
+          <div><strong>Branch:</strong> {{ official_bank_info.branch }}</div>
+          <div><strong>A/C Name:</strong> {{ official_bank_info.account_name }}</div>
+          <div><strong>A/C No:</strong> {{ official_bank_info.account_number }}</div>
+          <div><strong>IFSC:</strong> {{ official_bank_info.ifsc }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size: 0.78rem; color: #94A3B8; margin-top: 1rem; text-align: center;">
+      ℹ️ Automated credit card charging is not activated. Payments are verified manually by district administrators to prevent fraudulent charges and protect local merchants.
+    </div>
+  </div>
+
+  <!-- Step 2: Submission Form -->
+  <div class="card" style="background: white; border-radius: var(--radius-lg, 12px); border: 1px solid #E2E8F0; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+    <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--navy, #082D50); margin-bottom: 1rem;">
+      Step 2: Enter Transaction Reference / UTR
+    </h2>
+
+    <form action="/advertiser/campaigns/{{ campaign.id }}/payment" method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <input type="hidden" name="amount" value="{{ campaign.budget_amount }}">
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">
+          Bank UTR / UPI Reference Number *
+        </label>
+        <input type="text" name="transaction_reference" required placeholder="e.g., 428912345678 or SBI987654321" style="width: 100%; padding: 0.65rem 0.75rem; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 0.95rem; font-family: monospace; font-weight: 700; text-transform: uppercase;">
+        <div style="font-size: 0.75rem; color: #64748B; margin-top: 0.25rem;">
+          Enter the 12-digit UTR number or bank transaction ID shown in your payment receipt.
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">
+          Payment Method Used *
+        </label>
+        <select name="payment_method" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 0.9rem; background: white;">
+          <option value="upi_qr">UPI / QR Code Transfer</option>
+          <option value="bank_transfer">Direct IMPS / NEFT Bank Transfer</option>
+          <option value="offline_cash">Office Cash Receipt (Barabanki Main Center)</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">
+          Notes / Remarks (Optional)
+        </label>
+        <textarea name="notes" rows="2" placeholder="e.g., Paid via PhonePe from account holder name..." style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 0.9rem;"></textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 1rem;">
+        <a href="/advertiser/campaigns/{{ campaign.id }}" class="btn btn-outline" style="border-radius: var(--radius-full, 9999px); padding: 0.6rem 1.25rem; text-decoration: none;">
+          Cancel
+        </a>
+        <button type="submit" class="btn btn-primary" style="background: var(--primary-blue, #0878F9); color: white; border-radius: var(--radius-full, 9999px); padding: 0.6rem 1.75rem; font-weight: 700; border: none; cursor: pointer;">
+          Submit Reference for Verification →
+        </button>
+      </div>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

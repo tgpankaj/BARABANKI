@@ -20,6 +20,10 @@ from app.models import (
     CivicIssueUpvote,
     IssueStatusHistory,
     Notification,
+    AdCampaign,
+    AdPayment,
+    AdImpression,
+    AdClick,
 )
 
 
@@ -781,6 +785,141 @@ def seed():
                 link="/issues",
                 is_read=False,
             ))
+
+        # 14. Seed Phase 7 Advertising Marketplace Campaigns & Payments
+        existing_campaign = db.query(AdCampaign).first()
+        if not existing_campaign:
+            now = utc_now()
+            zaidpur_biz = db.query(Business).filter(Business.name.ilike("%Zaidpur%")).first()
+            sweets_biz = db.query(Business).filter(Business.name.ilike("%Chhappan%")).first()
+            agro_biz = db.query(Business).filter(Business.name.ilike("%Agro%")).first()
+
+            if zaidpur_biz and admin_user:
+                # Active Homepage Sponsored Campaign
+                camp1 = AdCampaign(
+                    business_id=zaidpur_biz.id,
+                    user_id=admin_user.id,
+                    name="Diwali Handloom Festive Exhibition & Clearance",
+                    objective="store_visit",
+                    headline="Authentic Zaidpur Handloom Stoles & Sarees — Flat 20% Off",
+                    description="Heritage GI-tagged pure cotton & silk fabrics crafted by master weavers of Zaidpur. Direct artisan prices with delivery across Barabanki.",
+                    image_url="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=600&q=80",
+                    destination_url=f"/businesses/{zaidpur_biz.slug}",
+                    contact_action="visit_website",
+                    placement="homepage_sponsored",
+                    target_locality="All Localities",
+                    target_category="Handloom & Textiles",
+                    start_date=now - timedelta(days=2),
+                    end_date=now + timedelta(days=13),
+                    pricing_plan="growth_15days",
+                    budget_amount=999.0,
+                    status="active",
+                    payment_status="verified",
+                    impression_count=142,
+                    click_count=18,
+                )
+                db.add(camp1)
+                db.flush()
+
+                # Verified Payment Record
+                pay1 = AdPayment(
+                    campaign_id=camp1.id,
+                    business_id=zaidpur_biz.id,
+                    user_id=admin_user.id,
+                    amount=999.0,
+                    currency="INR",
+                    payment_method="upi_qr",
+                    gateway_provider="manual_admin_verify",
+                    transaction_reference="SBI4291882001",
+                    status="verified",
+                    verified_by_id=admin_user.id,
+                    verified_at=now - timedelta(days=2),
+                    admin_notes="Bank UTR matched via SBI corporate statement.",
+                )
+                db.add(pay1)
+
+            if sweets_biz and admin_user:
+                # Active Directory Featured Campaign
+                camp2 = AdCampaign(
+                    business_id=sweets_biz.id,
+                    user_id=admin_user.id,
+                    name="Special Awadhi Festive Sweet Gift Boxes",
+                    objective="lead_generation",
+                    headline="Pure Desi Ghee Laddoos & Peda Boxes — Fresh Daily in Nawabganj",
+                    description="Celebrate festivals with authentic Barabanki sweets. Bulk corporate boxes and home delivery available for weddings and celebrations.",
+                    destination_url=f"/businesses/{sweets_biz.slug}",
+                    contact_action="call_now",
+                    contact_value="+91-5248-223456",
+                    placement="directory_featured",
+                    target_locality="Nawabganj",
+                    target_category="Dining & Sweets",
+                    start_date=now - timedelta(days=1),
+                    end_date=now + timedelta(days=6),
+                    pricing_plan="starter_7days",
+                    budget_amount=499.0,
+                    status="active",
+                    payment_status="verified",
+                    impression_count=96,
+                    click_count=11,
+                )
+                db.add(camp2)
+                db.flush()
+
+                pay2 = AdPayment(
+                    campaign_id=camp2.id,
+                    business_id=sweets_biz.id,
+                    user_id=admin_user.id,
+                    amount=499.0,
+                    currency="INR",
+                    payment_method="upi_qr",
+                    gateway_provider="manual_admin_verify",
+                    transaction_reference="UPI98234710293",
+                    status="verified",
+                    verified_by_id=admin_user.id,
+                    verified_at=now - timedelta(days=1),
+                    admin_notes="UPI receipt verified.",
+                )
+                db.add(pay2)
+
+            if agro_biz and mod_user:
+                # Pending Review Campaign
+                camp3 = AdCampaign(
+                    business_id=agro_biz.id,
+                    user_id=mod_user.id,
+                    name="Rabi Season Certified Seeds & Bio-Fertilizers",
+                    objective="brand_awareness",
+                    headline="Certified Wheat & Mustard Seeds with Free Soil Testing Guidance",
+                    description="Government approved bio-fertilizers and high-yield seeds for progressive farmers across Fatehpur and Ramnagar tehsils.",
+                    destination_url=f"/businesses/{agro_biz.slug}",
+                    contact_action="view_listing",
+                    placement="category_banner",
+                    target_locality="Fatehpur",
+                    target_category="Agro & Fertilizers",
+                    start_date=now,
+                    end_date=now + timedelta(days=7),
+                    pricing_plan="starter_7days",
+                    budget_amount=499.0,
+                    status="pending_review",
+                    payment_status="proof_submitted",
+                    impression_count=0,
+                    click_count=0,
+                )
+                db.add(camp3)
+                db.flush()
+
+                pay3 = AdPayment(
+                    campaign_id=camp3.id,
+                    business_id=agro_biz.id,
+                    user_id=mod_user.id,
+                    amount=499.0,
+                    currency="INR",
+                    payment_method="bank_transfer",
+                    gateway_provider="manual_admin_verify",
+                    transaction_reference="PNB7718290021",
+                    status="proof_submitted",
+                    admin_notes="Submitted IMPS reference awaiting bank statement check.",
+                )
+                db.add(pay3)
 
         db.commit()
         print("Barabanki Connect seed data successfully created!")

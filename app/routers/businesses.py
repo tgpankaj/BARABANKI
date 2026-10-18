@@ -50,6 +50,13 @@ def businesses_list_view(
 
     businesses = query.order_by(Business.is_verified.desc(), Business.rating.desc()).offset(offset).limit(page_size).all()
 
+    from app.routers.advertising import get_active_ads, record_ad_impression
+    featured_ads = get_active_ads(db, placement="directory_featured", locality=locality, category=category, limit=2)
+    ip = request.client.host if request.client else None
+    u_id = current_user.id if current_user else None
+    for ad in featured_ads:
+        record_ad_impression(ad.id, "directory_featured", ip, u_id, None, db)
+
     return templates.TemplateResponse(
         request=request,
         name="businesses/list.html",
@@ -57,6 +64,7 @@ def businesses_list_view(
             "active_page": "businesses",
             "current_user": current_user,
             "businesses": businesses,
+            "featured_ads": featured_ads,
             "current_page": page,
             "total_pages": total_pages,
             "current_category": category,

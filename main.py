@@ -26,6 +26,7 @@ from app.routers import (
     admin_router,
     civic_issues_router,
     notifications_router,
+    advertising_router,
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -120,6 +121,7 @@ app.include_router(notifications_router)
 app.include_router(tourism_router)
 app.include_router(creators_router)
 app.include_router(admin_router)
+app.include_router(advertising_router)
 
 
 

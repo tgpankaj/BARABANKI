@@ -55,6 +55,17 @@ from app.schemas.creator import (
     BusinessCollaborationStatusUpdate,
     BusinessCollaborationOut,
 )
+from app.schemas.advertisement import (
+    AdCampaignBase,
+    AdCampaignCreate,
+    AdCampaignUpdate,
+    AdCampaignOut,
+    AdPaymentCreate,
+    AdPaymentOut,
+    AdReviewUpdate,
+    AdReportCreate,
+    AdReportOut,
+)
 
 __all__ = [
     "UserRegister",
@@ -104,5 +115,14 @@ __all__ = [
     "IssueStatusUpdate",
     "IssueStatusHistoryOut",
     "CivicIssueOut",
+    "AdCampaignBase",
+    "AdCampaignCreate",
+    "AdCampaignUpdate",
+    "AdCampaignOut",
+    "AdPaymentCreate",
+    "AdPaymentOut",
+    "AdReviewUpdate",
+    "AdReportCreate",
+    "AdReportOut",
 ]
 

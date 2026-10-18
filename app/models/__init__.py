@@ -11,6 +11,18 @@ from app.models.creator import CreatorProfile, BusinessCollaboration
 from app.models.tourism import TourismSpot
 from app.models.notification import Notification
 from app.models.civic_issue import CivicIssue, CivicIssueUpvote, IssueStatusHistory
+from app.models.advertisement import (
+    AdCampaign,
+    AdPayment,
+    AdImpression,
+    AdClick,
+    AdReport,
+    AD_OBJECTIVES,
+    AD_PLACEMENTS,
+    PRICING_PLANS,
+    CAMPAIGN_STATUSES,
+    PAYMENT_STATUSES,
+)
 
 __all__ = [
     "User",
@@ -34,5 +46,15 @@ __all__ = [
     "CivicIssue",
     "CivicIssueUpvote",
     "IssueStatusHistory",
+    "AdCampaign",
+    "AdPayment",
+    "AdImpression",
+    "AdClick",
+    "AdReport",
+    "AD_OBJECTIVES",
+    "AD_PLACEMENTS",
+    "PRICING_PLANS",
+    "CAMPAIGN_STATUSES",
+    "PAYMENT_STATUSES",
 ]
 

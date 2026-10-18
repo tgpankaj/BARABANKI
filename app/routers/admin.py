@@ -18,6 +18,7 @@ from app.models.report import Report, ModerationAudit
 from app.models.civic_issue import CivicIssue, IssueStatusHistory
 from app.models.notification import Notification
 from app.models.creator import CreatorProfile, BusinessCollaboration, VERIFICATION_BADGES
+from app.models.advertisement import AdCampaign, AdPayment
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
@@ -48,6 +49,9 @@ def admin_dashboard_view(
         "creators": db.query(CreatorProfile).count(),
         "collaborations": db.query(BusinessCollaboration).count(),
         "pending_reports": db.query(Report).filter(Report.status == "pending").count(),
+        "ad_campaigns": db.query(AdCampaign).count(),
+        "pending_campaigns": db.query(AdCampaign).filter(AdCampaign.status == "pending_review").count(),
+        "pending_ad_payments": db.query(AdCampaign).filter(AdCampaign.payment_status == "proof_submitted").count(),
     }
 
     csrf_token = generate_csrf_token(request.client.host if request.client else "bbk_admin")

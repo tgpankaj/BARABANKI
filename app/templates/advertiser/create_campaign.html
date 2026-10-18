@@ -1,0 +1,342 @@
+{% extends "base.html" %}
+
+{% block title %}Create Advertising Campaign — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem; max-width: 900px;">
+
+  <!-- Header -->
+  <div style="margin-bottom: 2rem;">
+    <a href="/advertiser" style="font-size: 0.85rem; color: var(--primary-blue, #0878F9); text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; margin-bottom: 0.5rem; font-weight: 600;">
+      ← Back to Advertiser Dashboard
+    </a>
+    <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--navy, #082D50); margin-bottom: 0.25rem;">
+      Create an Advertising Campaign
+    </h1>
+    <p style="font-size: 0.9rem; color: var(--text-muted, #64748B); margin: 0;">
+      Reach verified residents, students, and businesses in District Barabanki with targeted sponsored placements.
+    </p>
+  </div>
+
+  <form action="/advertiser/campaigns/new" method="POST" id="campaignForm">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+    <!-- Step 1: Business & Objective -->
+    <div class="card" style="background: white; border-radius: var(--radius-lg, 12px); border: 1px solid #E2E8F0; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--navy, #082D50); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+        <span style="display: inline-flex; width: 26px; height: 26px; background: #082D50; color: white; border-radius: 50%; font-size: 0.8rem; align-items: center; justify-content: center;">1</span>
+        Select Business & Campaign Goal
+      </h2>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">
+            Business Listing *
+          </label>
+          <select name="business_id" id="businessSelect" required style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 0.9rem; background: white;">
+            {% for b in businesses %}
+              <option value="{{ b.id }}">{{ b.name }} ({{ b.locality }})</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">
+            Primary Objective *
+          </label>
+          <select name="objective" required style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 0.9rem; background: white;">
+            {% for key, label in ad_objectives.items() %}
+              <option value="{{ key }}">{{ key|replace('_', ' ')|title }} — {{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-top: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">
+          Internal Campaign Name * (For your tracking)
+        </label>
+        <input type="text" name="name" required placeholder="e.g., Diwali Handloom Festive Clearance" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 0.9rem;">
+      </div>
+    </div>
+
+    <!-- Step 2: Ad Creative & Copy -->
+    <div class="card" style="background: white; border-radius: var(--radius-lg, 12px); border: 1px solid #E2E8F0; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--navy, #082D50); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+        <span style="display: inline-flex; width: 26px; height: 26px; background: #082D50; color: white; border-radius: 50%; font-size: 0.8rem; align-items: center; justify-content: center;">2</span>
+        Ad Creative & Resident Call-To-Action
+      </h2>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">
+          Headline * (Max 100 characters)
+        </label>
+        <input type="text" name="headline" id="headlineInput" maxlength="100" required placeholder="e.g., Authentic Zaidpur Handloom Stoles — Flat 20% Off" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 0.9rem;">
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">
+          Ad Copy / Description * (Max 500 characters)
+        </label>
+        <textarea name="description" id="descInput" rows="3" maxlength="500" required placeholder="Highlight key benefits, special offers, warranty, or festive discounts for local customers..." style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 0.9rem; resize: vertical;"></textarea>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">
+            Banner / Product Image URL (Optional)
+          </label>
+          <input type="url" name="image_url" id="imageInput" placeholder="https://... or /static/images/..." style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 0.9rem;">
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">
+            Call to Action Type *
+          </label>
+          <select name="contact_action" id="actionSelect" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 0.9rem; background: white;">
+            <option value="visit_website">Visit Official Website / Store Link</option>
+            <option value="call_now">Call Us Directly (Phone Number)</option>
+            <option value="whatsapp">Chat on WhatsApp</option>
+            <option value="view_listing">View Barabanki Connect Directory Profile</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">
+            Destination Link (https://... or /businesses/...)
+          </label>
+          <input type="text" name="destination_url" id="destUrlInput" placeholder="https://example.com/festive-deal" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 0.9rem;">
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">
+            Contact Number / WhatsApp (Optional)
+          </label>
+          <input type="text" name="contact_value" placeholder="+91 98765 43210" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 0.9rem;">
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Preview Card Mockup -->
+    <div class="card" style="background: #F8FAFC; border-radius: var(--radius-lg, 12px); border: 1px dashed #CBD5E1; padding: 1.25rem; margin-bottom: 1.5rem;">
+      <div style="font-size: 0.8rem; font-weight: 700; color: var(--navy, #082D50); text-transform: uppercase; margin-bottom: 0.75rem; display: flex; justify-content: space-between;">
+        <span>🔍 Live Resident Placement Preview</span>
+        <span style="color: #64748B; font-weight: 500;">Preview updates automatically</span>
+      </div>
+
+      <div style="background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 1.25rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <span style="display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.72rem; font-weight: 700; background: #FFC928; color: #082D50; padding: 0.15rem 0.5rem; border-radius: 4px; text-transform: uppercase;">
+            Sponsored • Ad
+          </span>
+          <span style="font-size: 0.75rem; color: #64748B;">District Barabanki</span>
+        </div>
+        <h3 id="previewHeadline" style="font-size: 1.1rem; font-weight: 700; color: #082D50; margin: 0.25rem 0 0.5rem 0;">
+          Authentic Zaidpur Handloom Stoles — Flat 20% Off
+        </h3>
+        <p id="previewDesc" style="font-size: 0.88rem; color: #475569; margin: 0 0 1rem 0; line-height: 1.4;">
+          Highlight key benefits, special offers, warranty, or festive discounts for local customers...
+        </p>
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #F1F5F9; padding-top: 0.75rem;">
+          <span id="previewBiz" style="font-size: 0.82rem; font-weight: 600; color: #082D50;">
+            Zaidpur Handloom Weavers
+          </span>
+          <span style="display: inline-block; background: #0878F9; color: white; padding: 0.35rem 0.9rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600;">
+            Learn More →
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Placement & Targeting -->
+    <div class="card" style="background: white; border-radius: var(--radius-lg, 12px); border: 1px solid #E2E8F0; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--navy, #082D50); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+        <span style="display: inline-flex; width: 26px; height: 26px; background: #082D50; color: white; border-radius: 50%; font-size: 0.8rem; align-items: center; justify-content: center;">3</span>
+        Placement & Local Audience Targeting
+      </h2>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">
+          Placement Type *
+        </label>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          {% for p_key, p_label in ad_placements.items() %}
+          <label style="border: 1px solid #CBD5E1; border-radius: 8px; padding: 0.75rem; cursor: pointer; display: flex; align-items: flex-start; gap: 0.5rem; background: white;">
+            <input type="radio" name="placement" value="{{ p_key }}" {% if loop.first %}checked{% endif %} style="margin-top: 0.2rem;">
+            <div>
+              <div style="font-size: 0.88rem; font-weight: 700; color: var(--navy, #082D50);">
+                {{ p_key|replace('_', ' ')|title }}
+              </div>
+              <div style="font-size: 0.75rem; color: #64748B; margin-top: 0.15rem;">
+                {{ p_label }}
+              </div>
+            </div>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">
+            Target Locality
+          </label>
+          <select name="target_locality" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 0.9rem; background: white;">
+            <option value="All Localities">All District Localities</option>
+            <option value="Nawabganj">Nawabganj</option>
+            <option value="Zaidpur">Zaidpur</option>
+            <option value="Fatehpur">Fatehpur</option>
+            <option value="Ramnagar">Ramnagar</option>
+            <option value="Haidergarh">Haidergarh</option>
+            <option value="Dewa">Dewa</option>
+            <option value="Rudauli">Rudauli</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">
+            Target Category
+          </label>
+          <select name="target_category" style="width: 100%; padding: 0.6rem 0.75rem; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 0.9rem; background: white;">
+            <option value="All Categories">All Categories</option>
+            <option value="Handloom & Textiles">Handloom & Textiles</option>
+            <option value="Dining & Sweets">Dining & Sweets</option>
+            <option value="Healthcare">Healthcare & Diagnostics</option>
+            <option value="Retail & Groceries">Retail & Groceries</option>
+            <option value="Services">Professional Services</option>
+            <option value="Agro & Fertilizers">Agro & Fertilizers</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4: Schedule & Package Pricing -->
+    <div class="card" style="background: white; border-radius: var(--radius-lg, 12px); border: 1px solid #E2E8F0; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--navy, #082D50); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+        <span style="display: inline-flex; width: 26px; height: 26px; background: #082D50; color: white; border-radius: 50%; font-size: 0.8rem; align-items: center; justify-content: center;">4</span>
+        Schedule & Advertising Plan
+      </h2>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">
+          Campaign Start Date *
+        </label>
+        <input type="date" name="start_date_str" required value="{{ now.strftime('%Y-%m-%d') }}" style="width: 240px; padding: 0.6rem 0.75rem; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 0.9rem;">
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.5rem;">
+          Select Advertising Package *
+        </label>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+          {% for plan_key, plan in pricing_plans.items() %}
+          <label style="border: 2px solid {% if loop.first %}#0878F9{% else %}#E2E8F0{% endif %}; border-radius: 10px; padding: 1rem; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; background: white;" class="plan-card">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <input type="radio" name="pricing_plan" value="{{ plan_key }}" {% if loop.first %}checked{% endif %} class="plan-radio" data-price="{{ plan.price_inr }}" data-days="{{ plan.duration_days }}">
+                <span style="font-size: 0.72rem; font-weight: 700; background: #EEF2F6; color: #082D50; padding: 0.15rem 0.5rem; border-radius: 4px;">
+                  {{ plan.duration_days }} Days
+                </span>
+              </div>
+              <div style="font-size: 1rem; font-weight: 800; color: #082D50;">
+                {{ plan.name }}
+              </div>
+              <div style="font-size: 1.35rem; font-weight: 800; color: #0878F9; margin: 0.35rem 0;">
+                ₹{{ "%.0f"|format(plan.price_inr) }}
+              </div>
+              <p style="font-size: 0.78rem; color: #64748B; margin: 0 0 0.5rem 0; line-height: 1.3;">
+                {{ plan.description }}
+              </p>
+            </div>
+            <div style="font-size: 0.72rem; color: #10B981; font-weight: 600; border-top: 1px solid #F1F5F9; padding-top: 0.4rem;">
+              {{ plan.recommended_for }}
+            </div>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Upfront Cost Summary Banner -->
+      <div style="background: #082D50; color: white; border-radius: 8px; padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; margin-top: 1.25rem;">
+        <div>
+          <div style="font-size: 0.8rem; color: #94A3B8; text-transform: uppercase;">Total Campaign Payable</div>
+          <div style="font-size: 1.5rem; font-weight: 800; color: #FFC928;" id="totalCostDisplay">
+            ₹499.00
+          </div>
+        </div>
+        <div style="text-align: right; font-size: 0.8rem; color: #CBD5E1;">
+          <div>✓ Upfront transparent pricing</div>
+          <div>✓ Admin-reviewed manual UTR workflow</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 5: Policy Check & Submission -->
+    <div style="margin-bottom: 2rem;">
+      <label style="display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.85rem; color: #475569; cursor: pointer;">
+        <input type="checkbox" required style="margin-top: 0.2rem;">
+        <span>
+          I confirm that this advertisement represents an authentic business in District Barabanki, complies with the
+          <a href="/advertising/policy" target="_blank" style="color: #0878F9; font-weight: 600;">Barabanki Connect Advertising Guidelines</a>,
+          and contains no prohibited goods, deceptive claims, or unlicensed promotions.
+        </span>
+      </label>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; gap: 1rem;">
+      <a href="/advertiser" class="btn btn-outline" style="border-radius: var(--radius-full, 9999px); padding: 0.65rem 1.5rem; text-decoration: none;">
+        Cancel
+      </a>
+      <button type="submit" class="btn btn-primary" style="background: var(--primary-blue, #0878F9); color: white; border-radius: var(--radius-full, 9999px); padding: 0.65rem 2rem; font-weight: 700; border: none; cursor: pointer;">
+        Submit Campaign for Review →
+      </button>
+    </div>
+  </form>
+</div>
+
+<script>
+  // Live Preview Updating
+  const headlineInput = document.getElementById('headlineInput');
+  const descInput = document.getElementById('descInput');
+  const previewHeadline = document.getElementById('previewHeadline');
+  const previewDesc = document.getElementById('previewDesc');
+  const businessSelect = document.getElementById('businessSelect');
+  const previewBiz = document.getElementById('previewBiz');
+
+  if (headlineInput) {
+    headlineInput.addEventListener('input', (e) => {
+      previewHeadline.textContent = e.target.value || "Your Ad Headline Here";
+    });
+  }
+  if (descInput) {
+    descInput.addEventListener('input', (e) => {
+      previewDesc.textContent = e.target.value || "Your campaign copy will appear here for local residents...";
+    });
+  }
+  if (businessSelect) {
+    businessSelect.addEventListener('change', (e) => {
+      const selected = businessSelect.options[businessSelect.selectedIndex];
+      previewBiz.textContent = selected.text.split('(')[0].trim();
+    });
+  }
+
+  // Plan Selection & Pricing Calculation
+  const planRadios = document.querySelectorAll('.plan-radio');
+  const totalCostDisplay = document.getElementById('totalCostDisplay');
+
+  planRadios.forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      const price = parseFloat(e.target.dataset.price);
+      totalCostDisplay.textContent = '₹' + price.toFixed(2);
+
+      // Highlight selected card border
+      document.querySelectorAll('.plan-card').forEach(card => {
+        card.style.borderColor = '#E2E8F0';
+      });
+      e.target.closest('.plan-card').style.borderColor = '#0878F9';
+    });
+  });
+</script>
+{% endblock %}

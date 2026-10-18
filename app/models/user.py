@@ -34,6 +34,7 @@ class User(Base):
     event_registrations = relationship("EventRegistration", back_populates="user", cascade="all, delete-orphan")
     reported_issues = relationship("CivicIssue", foreign_keys="CivicIssue.reported_by_id", back_populates="reporter", cascade="all, delete-orphan")
     issue_upvotes = relationship("CivicIssueUpvote", back_populates="user", cascade="all, delete-orphan")
+    ad_campaigns = relationship("AdCampaign", foreign_keys="AdCampaign.user_id", back_populates="user", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<User {self.username} ({self.role})>"

@@ -22,6 +22,7 @@
       <ul class="admin-nav-list">
         <li><a href="/admin" class="admin-nav-link active">📊 Dashboard & KPIs</a></li>
         <li><a href="/admin/moderation" class="admin-nav-link">🚩 Moderation Queue ({{ stats.pending_reports or 0 }})</a></li>
+        <li><a href="/admin/campaigns" class="admin-nav-link">📢 Ad Campaigns & Reviews ({{ stats.pending_campaigns or 0 }})</a></li>
         <li><a href="/admin/listings" class="admin-nav-link">🏬 Business Approvals</a></li>
         <li><a href="/admin/users" class="admin-nav-link">👥 User Accounts</a></li>
         <li><a href="/businesses/new" class="admin-nav-link">+ Add Business</a></li>
@@ -56,6 +57,13 @@
           <div class="card-body" style="padding: 1.25rem;">
             <div style="font-size: 0.8rem; color: var(--text-muted);">Pending Reports</div>
             <div style="font-size: 1.75rem; font-weight: 800; color: var(--danger);">{{ stats.pending_reports or 0 }}</div>
+          </div>
+        </div>
+        <div class="card" style="border-left: 4px solid #8B5CF6;">
+          <div class="card-body" style="padding: 1.25rem;">
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Ad Campaigns</div>
+            <div style="font-size: 1.75rem; font-weight: 800; color: #8B5CF6;">{{ stats.ad_campaigns or 0 }}</div>
+            <div style="font-size: 0.72rem; color: #64748B;">{{ stats.pending_campaigns or 0 }} awaiting review</div>
           </div>
         </div>
       </div>

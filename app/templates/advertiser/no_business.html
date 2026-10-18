@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Register Your Business First — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3rem; padding-bottom: 5rem; max-width: 650px; text-align: center;">
+  <div class="card" style="background: white; border-radius: var(--radius-lg, 12px); border: 1px solid #E2E8F0; padding: 2.5rem 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+    <div style="font-size: 3.5rem; margin-bottom: 1rem;">🏢</div>
+    <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--navy, #082D50); margin-bottom: 0.5rem;">
+      Register Your Business First
+    </h1>
+    <p style="font-size: 0.92rem; color: var(--text-muted, #64748B); line-height: 1.5; margin-bottom: 1.5rem;">
+      To maintain trust and authenticity on Barabanki Connect, all advertisements must be connected to an approved local business listing in District Barabanki.
+    </p>
+
+    <div style="background: #F8FAFC; border-radius: 8px; padding: 1rem; text-align: left; margin-bottom: 1.5rem; font-size: 0.85rem; color: #475569;">
+      <div style="font-weight: 700; color: #082D50; margin-bottom: 0.35rem;">How it works:</div>
+      <ol style="margin: 0; padding-left: 1.25rem; line-height: 1.6;">
+        <li>Create your free business profile (takes 2 minutes).</li>
+        <li>Once submitted, return here to launch targeted ad campaigns.</li>
+        <li>Track real local impressions and clicks from verified residents.</li>
+      </ol>
+    </div>
+
+    <div style="display: flex; justify-content: center; gap: 1rem;">
+      <a href="/businesses/new" class="btn btn-primary" style="background: var(--primary-blue, #0878F9); color: white; border-radius: var(--radius-full, 9999px); padding: 0.65rem 1.75rem; font-weight: 700; text-decoration: none;">
+        + Create Business Listing Now
+      </a>
+      <a href="/businesses" class="btn btn-outline" style="border-radius: var(--radius-full, 9999px); padding: 0.65rem 1.25rem; text-decoration: none;">
+        Browse Directory
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

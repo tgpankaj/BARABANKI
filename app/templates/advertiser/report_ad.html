@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Report Advertisement — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2.5rem; padding-bottom: 4rem; max-width: 650px;">
+
+  <div style="margin-bottom: 1.5rem;">
+    <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--navy, #082D50); margin: 0 0 0.25rem 0;">
+      Report Advertisement
+    </h1>
+    <p style="font-size: 0.88rem; color: var(--text-muted, #64748B); margin: 0;">
+      Help maintain honest and safe advertising in Barabanki. Reports are confidential and reviewed directly by our moderation team.
+    </p>
+  </div>
+
+  <!-- Ad Preview Summary -->
+  <div class="card" style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; font-size: 0.88rem;">
+    <div style="font-size: 0.75rem; color: #64748B; text-transform: uppercase; font-weight: 700;">Reporting Advertisement:</div>
+    <div style="font-weight: 700; color: #082D50; font-size: 1rem; margin-top: 0.25rem;">
+      {{ campaign.headline }}
+    </div>
+    <div style="color: #64748B; font-size: 0.8rem; margin-top: 0.15rem;">
+      Advertiser: {{ campaign.business.name if campaign.business else 'Local Business' }}
+    </div>
+  </div>
+
+  <div class="card" style="background: white; border-radius: var(--radius-lg, 12px); border: 1px solid #E2E8F0; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+    <form action="/ads/{{ campaign.id }}/report" method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">
+          Reason for Reporting *
+        </label>
+        <select name="reason" required style="width: 100%; padding: 0.65rem 0.75rem; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 0.9rem; background: white;">
+          <option value="misleading">Misleading or Deceptive Claims (False pricing / promises)</option>
+          <option value="inappropriate">Inappropriate, Offensive or Obscene Content</option>
+          <option value="fraud">Suspected Fraud or Scam (Phishing / illegal schemes)</option>
+          <option value="counterfeit">Counterfeit or Infringing Goods</option>
+          <option value="other">Other Community Guideline Violation</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">
+          Specific Details / Explanation * (Min 10 characters)
+        </label>
+        <textarea name="details" rows="4" minlength="10" maxlength="1000" required placeholder="Please describe what is misleading or problematic about this advertisement..." style="width: 100%; padding: 0.65rem 0.75rem; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 0.9rem; resize: vertical;"></textarea>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">
+          Your Email Address (Optional, for investigation updates)
+        </label>
+        <input type="email" name="reporter_email" value="{{ current_user.email if current_user else '' }}" placeholder="citizen@example.com" style="width: 100%; padding: 0.65rem 0.75rem; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 0.9rem;">
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 1rem;">
+        <a href="/" class="btn btn-outline" style="border-radius: var(--radius-full, 9999px); padding: 0.6rem 1.25rem; text-decoration: none;">
+          Cancel
+        </a>
+        <button type="submit" class="btn btn-primary" style="background: #DC2626; color: white; border-radius: var(--radius-full, 9999px); padding: 0.6rem 1.75rem; font-weight: 700; border: none; cursor: pointer;">
+          Submit Report
+        </button>
+      </div>
+    </form>
+  </div>
+
+</div>
+{% endblock %}
