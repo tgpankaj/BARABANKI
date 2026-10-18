@@ -1,56 +1,297 @@
 {% extends "base.html" %}
 
-{% block title %}Colleges, Schools & Coaching Centers — Barabanki Connect{% endblock %}
+{% block title %}Education & Student Hub — Barabanki Connect{% endblock %}
 
 {% block content %}
-<div class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
-  <div class="section-header">
-    <div>
-      <h1 class="section-title">Educational Institutions in Barabanki</h1>
-      <p class="section-subtitle">A comprehensive guide to technical colleges, polytechnics, premier schools, and competitive coaching centers.</p>
-    </div>
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+  <!-- Screen 5 Header -->
+  <div style="margin-bottom: 1.5rem;">
+    <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--navy); margin-bottom: 0.35rem;">
+      Education & Student Hub
+    </h1>
+    <p style="font-size: 0.95rem; color: var(--text-muted);">
+      Educational Institutions in Barabanki — Your learning partner for a brighter future.
+    </p>
   </div>
 
-  <!-- Filter tabs -->
-  <div style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem; margin-bottom: 2rem;">
-    <a href="/education" class="btn {% if not current_category %}btn-primary{% else %}btn-outline{% endif %} btn-sm">All Institutes</a>
-    <a href="/education?category=College" class="btn {% if current_category == 'College' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Colleges & Universities</a>
-    <a href="/education?category=Polytechnic / ITI" class="btn {% if current_category == 'Polytechnic / ITI' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Polytechnics & ITIs</a>
-    <a href="/education?category=School" class="btn {% if current_category == 'School' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Schools</a>
-    <a href="/education?category=Coaching Centre" class="btn {% if current_category == 'Coaching Centre' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Coaching Academies</a>
+  <!-- 6 Category Shortcut Pills (Screen 5 Reference) -->
+  <div class="edu-shortcuts-bar">
+    <a href="#exams" class="edu-shortcut-item">
+      <div style="width: 40px; height: 40px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+        📝
+      </div>
+      <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-main);">Exams</div>
+    </a>
+
+    <a href="/jobs" class="edu-shortcut-item">
+      <div style="width: 40px; height: 40px; border-radius: 50%; background: #ccfbf1; color: #0d9488; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+        💼
+      </div>
+      <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-main);">Jobs</div>
+    </a>
+
+    <a href="#scholarships" class="edu-shortcut-item">
+      <div style="width: 40px; height: 40px; border-radius: 50%; background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+        🎓
+      </div>
+      <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-main);">Scholarships</div>
+    </a>
+
+    <a href="#materials" class="edu-shortcut-item">
+      <div style="width: 40px; height: 40px; border-radius: 50%; background: #ede9fe; color: #7c3aed; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+        📚
+      </div>
+      <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-main);">Study Material</div>
+    </a>
+
+    <a href="#quizzes" class="edu-shortcut-item">
+      <div style="width: 40px; height: 40px; border-radius: 50%; background: #fef3c7; color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+        🎯
+      </div>
+      <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-main);">Quizzes</div>
+    </a>
+
+    <a href="#courses" class="edu-shortcut-item">
+      <div style="width: 40px; height: 40px; border-radius: 50%; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+        💻
+      </div>
+      <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-main);">Courses</div>
+    </a>
   </div>
 
-  <div class="grid-cards">
-    {% for inst in institutes %}
-    <div class="card">
-      <div class="card-body">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
-          <span class="badge badge-teal">{{ inst.category }}</span>
-          {% if inst.is_verified %}
-          <span class="badge badge-verified">✓ Verified</span>
-          {% endif %}
-        </div>
-        <h2 class="card-title" style="font-size: 1.2rem;">
-          <a href="/education/{{ inst.slug }}">{{ inst.name }}</a>
+  <!-- Section 1: Upcoming Exam Notifications & Free Study Materials Banner (Screen 5 Reference) -->
+  <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-bottom: 2.5rem;" class="edu-top-grid">
+    <style>
+      @media (min-width: 1024px) {
+        .edu-top-grid { grid-template-columns: 7.5fr 4.5fr !important; }
+      }
+    </style>
+
+    <!-- Upcoming Exam Notifications -->
+    <div class="card" id="exams" style="padding: 1.5rem;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+        <h2 style="font-size: 1.2rem; font-weight: 800; color: var(--navy); margin: 0;">
+          Upcoming Exam Notifications
         </h2>
-        {% if inst.affiliation %}
-        <div style="font-size: 0.85rem; color: var(--primary); font-weight: 600; margin-bottom: 0.5rem;">
-          🎓 Affiliation: {{ inst.affiliation }}
-        </div>
-        {% endif %}
-        <p class="card-text">{{ inst.description }}</p>
-        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: auto;">
-          📍 {{ inst.locality }}, Barabanki
-        </div>
+        <a href="#notifications" style="font-size: 0.82rem; color: var(--primary); font-weight: 600;">View All Notifications &rarr;</a>
       </div>
-      <div class="card-footer">
-        <span style="font-size: 0.8rem; color: var(--text-muted);">{{ inst.phone or 'Contact Available' }}</span>
-        <a href="/education/{{ inst.slug }}" class="btn btn-primary btn-sm">View Courses</a>
+
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <!-- Notification 1 -->
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: #FFFFFF;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div style="width: 40px; height: 40px; border-radius: var(--radius-sm); background: #eaf3fe; color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem;">
+              👮
+            </div>
+            <div>
+              <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">UP Police Constable 2025</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">🗓️ Last Date: 18 May 2025</div>
+            </div>
+          </div>
+          <button class="btn btn-outline-primary btn-sm" style="border-radius: var(--radius-full);" onclick="window.showToast('Redirecting to official UPPRPB portal...', 'info');">Apply Now</button>
+        </div>
+
+        <!-- Notification 2 -->
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: #FFFFFF;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div style="width: 40px; height: 40px; border-radius: var(--radius-sm); background: #fef3c7; color: #d97706; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem;">
+              📋
+            </div>
+            <div>
+              <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">UPSSSC PET 2025</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">🗓️ Last Date: 25 May 2025</div>
+            </div>
+          </div>
+          <button class="btn btn-outline-primary btn-sm" style="border-radius: var(--radius-full);" onclick="window.showToast('Redirecting to UPSSSC portal...', 'info');">Apply Now</button>
+        </div>
+
+        <!-- Notification 3 -->
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: #FFFFFF;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div style="width: 40px; height: 40px; border-radius: var(--radius-sm); background: #ede9fe; color: #7c3aed; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem;">
+              🚆
+            </div>
+            <div>
+              <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Railway Group D 2025</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">🗓️ Last Date: 02 June 2025</div>
+            </div>
+          </div>
+          <button class="btn btn-outline-primary btn-sm" style="border-radius: var(--radius-full);" onclick="window.showToast('Redirecting to Railway Recruitment Board...', 'info');">Apply Now</button>
+        </div>
       </div>
     </div>
-    {% endfor %}
+
+    <!-- Free Study Materials Promo Banner Card (Screen 5 Reference) -->
+    <div class="edu-banner-gradient">
+      <div>
+        <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">📥</div>
+        <h3 style="font-size: 1.45rem; font-weight: 800; line-height: 1.2; margin-bottom: 0.5rem; color: #fff;">
+          Free Study Materials
+        </h3>
+        <p style="font-size: 0.92rem; color: rgba(255,255,255,0.85); line-height: 1.5; margin-bottom: 1.5rem;">
+          Download PDF Notes, NCERT Solved Books, and Previous Year Exam Papers for all competitive boards.
+        </p>
+      </div>
+
+      <button class="btn btn-accent btn-lg" style="border-radius: var(--radius-full); font-weight: 800; width: 100%;" onclick="window.showToast('Opening Barabanki Free Digital Library...', 'success');">
+        Explore Library &rarr;
+      </button>
+    </div>
   </div>
 
-  {% include "components/pagination.html" %}
+  <!-- Section 2: Study Resources Grid (4 Cards from Screen 5 Reference) -->
+  <div id="materials" style="margin-bottom: 2.5rem;">
+    <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--navy); margin-bottom: 1rem;">
+      Study Resources
+    </h2>
+
+    <div class="grid-cards-4">
+      <div class="card" style="padding: 1.25rem; text-align: center;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📖</div>
+        <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem;">NCERT Notes</h3>
+        <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.75rem;">Class 6 to Class 12</p>
+        <button class="btn btn-outline btn-sm" style="border-radius: var(--radius-full); width: 100%;" onclick="window.showToast('Accessing NCERT materials...', 'info');">View Notes</button>
+      </div>
+
+      <div class="card" style="padding: 1.25rem; text-align: center;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📝</div>
+        <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem;">Previous Year Papers</h3>
+        <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.75rem;">All Competitive Exams</p>
+        <button class="btn btn-outline btn-sm" style="border-radius: var(--radius-full); width: 100%;" onclick="window.showToast('Accessing Question Papers...', 'info');">Download Papers</button>
+      </div>
+
+      <div class="card" style="padding: 1.25rem; text-align: center;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📊</div>
+        <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem;">MCQ Practice</h3>
+        <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.75rem;">Test Your Knowledge</p>
+        <button class="btn btn-outline btn-sm" style="border-radius: var(--radius-full); width: 100%;" onclick="window.showToast('Opening Practice MCQs...', 'info');">Start Practice</button>
+      </div>
+
+      <div class="card" id="quizzes" style="padding: 1.25rem; text-align: center;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏆</div>
+        <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem;">Quiz & Contests</h3>
+        <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.75rem;">Improve Your Skills</p>
+        <button class="btn btn-outline btn-sm" style="border-radius: var(--radius-full); width: 100%;" onclick="window.showToast('Opening Quiz Portal...', 'info');">Take Quiz</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Popular Courses (Screen 5 Reference) -->
+  <div id="courses" style="margin-bottom: 2.5rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+      <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--navy); margin: 0;">
+        Popular Skill Courses
+      </h2>
+      <a href="#courses" style="font-size: 0.82rem; color: var(--primary); font-weight: 600;">View All Courses &rarr;</a>
+    </div>
+
+    <div class="grid-cards-4">
+      <!-- Course 1 -->
+      <div class="card">
+        <div class="card-img-wrap" style="aspect-ratio: 16 / 10;">
+          <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=500&q=80" alt="Basic Computer Course" class="card-img">
+          <span class="badge badge-success card-badge-overlay">Free</span>
+        </div>
+        <div class="card-body">
+          <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.25rem;">Basic Computer & MS Office</h3>
+          <p style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 0.5rem;">Foundational computing, internet skills, spreadsheet and office tools.</p>
+          <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.75rem; color: var(--success); font-weight: 700;">100% Free</span>
+            <button class="btn btn-primary btn-sm" onclick="window.showToast('Enrolled in Basic Computer course preview!', 'success');">Enroll</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Course 2 -->
+      <div class="card">
+        <div class="card-img-wrap" style="aspect-ratio: 16 / 10;">
+          <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=500&q=80" alt="Spoken English" class="card-img">
+          <span class="badge badge-success card-badge-overlay">Free</span>
+        </div>
+        <div class="card-body">
+          <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.25rem;">Spoken English & Communication</h3>
+          <p style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 0.5rem;">Fluency, interview readiness, vocabulary and corporate interaction skills.</p>
+          <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.75rem; color: var(--success); font-weight: 700;">100% Free</span>
+            <button class="btn btn-primary btn-sm" onclick="window.showToast('Enrolled in Spoken English preview!', 'success');">Enroll</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Course 3 -->
+      <div class="card">
+        <div class="card-img-wrap" style="aspect-ratio: 16 / 10;">
+          <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=500&q=80" alt="Personality Development" class="card-img">
+          <span class="badge badge-success card-badge-overlay">Free</span>
+        </div>
+        <div class="card-body">
+          <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.25rem;">Personality Development</h3>
+          <p style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 0.5rem;">Confidence building, body language, leadership and public speaking.</p>
+          <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.75rem; color: var(--success); font-weight: 700;">100% Free</span>
+            <button class="btn btn-primary btn-sm" onclick="window.showToast('Enrolled in Personality course preview!', 'success');">Enroll</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Course 4 -->
+      <div class="card">
+        <div class="card-img-wrap" style="aspect-ratio: 16 / 10;">
+          <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=500&q=80" alt="Digital Marketing" class="card-img">
+          <span class="badge badge-success card-badge-overlay">Free</span>
+        </div>
+        <div class="card-body">
+          <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.25rem;">Digital Marketing & Social Media</h3>
+          <p style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 0.5rem;">Learn social growth, local shop promotion, SEO, and freelancing skills.</p>
+          <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.75rem; color: var(--success); font-weight: 700;">100% Free</span>
+            <button class="btn btn-primary btn-sm" onclick="window.showToast('Enrolled in Digital Marketing preview!', 'success');">Enroll</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: Educational Institutes in Barabanki (Preserving Database Listings) -->
+  <div>
+    <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--navy); margin-bottom: 1rem;">
+      Colleges, Polytechnics & Coaching Centers in District Barabanki
+    </h2>
+
+    <div class="grid-cards">
+      {% for inst in institutes %}
+      <div class="card">
+        <div class="card-body">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+            <span class="badge badge-teal">{{ inst.category }}</span>
+            {% if inst.is_verified %}
+            <span class="badge badge-verified">✓ Verified</span>
+            {% endif %}
+          </div>
+          <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.35rem;">
+            <a href="/education/{{ inst.slug }}" style="color: var(--text-main);">{{ inst.name }}</a>
+          </h3>
+          {% if inst.affiliation %}
+          <div style="font-size: 0.8rem; color: var(--primary); font-weight: 600; margin-bottom: 0.5rem;">
+            🎓 Affiliation: {{ inst.affiliation }}
+          </div>
+          {% endif %}
+          <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.45; -webkit-line-clamp: 3; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 0.75rem;">
+            {{ inst.description }}
+          </p>
+          <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: auto;">
+            📍 {{ inst.locality }}, Barabanki
+          </div>
+        </div>
+        <div class="card-footer">
+          <span style="font-size: 0.78rem; color: var(--text-muted);">{{ inst.phone or 'Contact Available' }}</span>
+          <a href="/education/{{ inst.slug }}" class="btn btn-primary btn-sm">View Courses &rarr;</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% include "components/pagination.html" %}
+  </div>
 </div>
 {% endblock %}

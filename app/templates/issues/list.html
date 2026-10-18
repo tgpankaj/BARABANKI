@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}Community &amp; Public Problems — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2.5rem; padding-bottom: 4rem;">
+  <!-- Page Header -->
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+    <div>
+      <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+        <span class="badge badge-accent">District Civic Portal</span>
+        <span style="font-size: 0.85rem; color: var(--text-muted);">Screen 8 &bull; Citizen Grievances</span>
+      </div>
+      <h1 style="font-size: 2.25rem; font-weight: 800; color: var(--navy); margin: 0 0 0.35rem; line-height: 1.2;">
+        Community &amp; Public Problems
+      </h1>
+      <p style="font-size: 1rem; color: var(--text-muted); margin: 0; max-width: 620px;">
+        Track, verify, and resolve neighborhood infrastructure defects, roads, electricity, sanitation, and municipal issues across Barabanki.
+      </p>
+    </div>
+
+    <div>
+      <a href="/issues/new" class="btn btn-primary" style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; padding: 0.65rem 1.25rem;">
+        <span>🚨</span> Report a Problem
+      </a>
+    </div>
+  </div>
+
+  <!-- Civic Stats Cards -->
+  <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+    <div class="card" style="padding: 1.25rem; text-align: center; border-left: 4px solid var(--primary);">
+      <div style="font-size: 1.75rem; font-weight: 800; color: var(--navy);">{{ stats.total }}</div>
+      <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Total Reported</div>
+    </div>
+    <div class="card" style="padding: 1.25rem; text-align: center; border-left: 4px solid #f59e0b;">
+      <div style="font-size: 1.75rem; font-weight: 800; color: #f59e0b;">{{ stats.under_review }}</div>
+      <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Under Review</div>
+    </div>
+    <div class="card" style="padding: 1.25rem; text-align: center; border-left: 4px solid #3b82f6;">
+      <div style="font-size: 1.75rem; font-weight: 800; color: #3b82f6;">{{ stats.in_progress }}</div>
+      <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">In Progress</div>
+    </div>
+    <div class="card" style="padding: 1.25rem; text-align: center; border-left: 4px solid #10b981;">
+      <div style="font-size: 1.75rem; font-weight: 800; color: #10b981;">{{ stats.resolved }}</div>
+      <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Resolved</div>
+    </div>
+  </div>
+
+  <!-- Filters & Search Bar -->
+  <div class="card" style="margin-bottom: 2rem; box-shadow: var(--shadow-sm);">
+    <div class="card-body" style="padding: 1.25rem;">
+      <form action="/issues" method="GET" style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
+        <!-- Search Input -->
+        <div style="flex: 2; min-width: 220px;">
+          <input type="text" name="q" value="{{ search_query }}" class="form-control" placeholder="Search issues by title, street, or description...">
+        </div>
+
+        <!-- Category Dropdown -->
+        <div style="flex: 1; min-width: 170px;">
+          <select name="category" class="form-control" onchange="this.form.submit();">
+            <option value="All" {% if current_category == 'All' %}selected{% endif %}>All Categories</option>
+            {% for cat in categories %}
+            <option value="{{ cat }}" {% if current_category == cat %}selected{% endif %}>{{ cat }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Locality Dropdown -->
+        <div style="flex: 1; min-width: 160px;">
+          <select name="locality" class="form-control" onchange="this.form.submit();">
+            <option value="All" {% if current_locality == 'All' %}selected{% endif %}>All Localities</option>
+            {% for loc in localities %}
+            <option value="{{ loc }}" {% if current_locality == loc %}selected{% endif %}>{{ loc }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Status Filter -->
+        <div style="flex: 1; min-width: 150px;">
+          <select name="status" class="form-control" onchange="this.form.submit();">
+            <option value="All" {% if current_status == 'All' %}selected{% endif %}>All Statuses</option>
+            <option value="Submitted" {% if current_status == 'Submitted' %}selected{% endif %}>Submitted</option>
+            <option value="Under Review" {% if current_status == 'Under Review' %}selected{% endif %}>Under Review</option>
+            <option value="In Progress" {% if current_status == 'In Progress' %}selected{% endif %}>In Progress</option>
+            <option value="Resolved" {% if current_status == 'Resolved' %}selected{% endif %}>Resolved</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="padding: 0.55rem 1rem;">Filter</button>
+        {% if search_query or current_category != 'All' or current_locality != 'All' or current_status != 'All' %}
+        <a href="/issues" class="btn btn-outline" style="padding: 0.55rem 0.75rem;">Reset</a>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+
+  <!-- Issues Grid -->
+  {% if issues and issues|length > 0 %}
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+    {% for issue in issues %}
+    <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.15s ease, box-shadow 0.15s ease;">
+      {% if issue.image_url %}
+      <div style="height: 160px; overflow: hidden; background: #f1f5f9;">
+        <img src="{{ issue.image_url }}" alt="{{ issue.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+      </div>
+      {% endif %}
+
+      <div class="card-body" style="padding: 1.25rem; flex: 1; display: flex; flex-direction: column;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.35rem;">
+          <span class="badge badge-primary">{{ issue.category }}</span>
+
+          {% if issue.status == 'Resolved' %}
+          <span class="badge" style="background: #dcfce7; color: #166534; font-weight: bold;">✓ Resolved</span>
+          {% elif issue.status == 'In Progress' %}
+          <span class="badge" style="background: #dbeafe; color: #1e40af; font-weight: bold;">⚙️ In Progress</span>
+          {% elif issue.status == 'Under Review' %}
+          <span class="badge" style="background: #fef3c7; color: #92400e; font-weight: bold;">🔍 Under Review</span>
+          {% else %}
+          <span class="badge" style="background: #f1f5f9; color: #475569; font-weight: bold;">📝 Submitted</span>
+          {% endif %}
+        </div>
+
+        <h3 style="font-size: 1.15rem; font-weight: 700; margin: 0 0 0.5rem; line-height: 1.35;">
+          <a href="/issues/{{ issue.slug }}" style="color: var(--navy); text-decoration: none;">
+            {{ issue.title }}
+          </a>
+        </h3>
+
+        <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; margin: 0 0 0.75rem; flex: 1;">
+          {{ issue.description[:130] }}{% if issue.description|length > 130 %}...{% endif %}
+        </p>
+
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+          📍 <strong>{{ issue.locality }}</strong>{% if issue.landmark %} &bull; Near {{ issue.landmark }}{% endif %}
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 0.75rem; margin-top: auto;">
+          <form action="/issues/{{ issue.slug }}/upvote" method="POST" style="margin: 0;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+            <button type="submit" class="btn btn-outline btn-sm" style="display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.8rem;">
+              <span>{% if issue.id in user_upvoted_ids %}❤️{% else %}👍{% endif %}</span>
+              <span>Me Too ({{ issue.upvotes }})</span>
+            </button>
+          </form>
+
+          <a href="/issues/{{ issue.slug }}" class="btn btn-outline btn-sm" style="font-size: 0.8rem; color: var(--primary);">
+            View Details &rarr;
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  {% if total_pages > 1 %}
+  <nav class="pagination" style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;" aria-label="Issues Pagination">
+    {% if current_page > 1 %}
+    <a href="/issues?page={{ current_page - 1 }}&category={{ current_category }}&locality={{ current_locality }}&status={{ current_status }}&q={{ search_query }}" class="pagination-link">&laquo; Prev</a>
+    {% endif %}
+    {% for p in range(1, total_pages + 1) %}
+    <a href="/issues?page={{ p }}&category={{ current_category }}&locality={{ current_locality }}&status={{ current_status }}&q={{ search_query }}" class="pagination-link {% if p == current_page %}active{% endif %}">{{ p }}</a>
+    {% endfor %}
+    {% if current_page < total_pages %}
+    <a href="/issues?page={{ current_page + 1 }}&category={{ current_category }}&locality={{ current_locality }}&status={{ current_status }}&q={{ search_query }}" class="pagination-link">Next &raquo;</a>
+    {% endif %}
+  </nav>
+  {% endif %}
+
+  {% else %}
+  <div class="card" style="text-align: center; padding: 3rem 1.5rem;">
+    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">✅</div>
+    <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--navy); margin: 0 0 0.5rem;">No Civic Issues Found</h3>
+    <p style="font-size: 0.95rem; color: var(--text-muted); max-width: 480px; margin: 0 auto 1.5rem;">
+      No reported problems match your selected criteria. Have a local issue to report?
+    </p>
+    <a href="/issues/new" class="btn btn-primary">Report an Issue Now</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,63 +1,302 @@
 {% extends "base.html" %}
 
-{% block title %}Local Creators, Artisans & Weavers — Barabanki Connect{% endblock %}
+{% block title %}Creator Hub & Social Feed — Barabanki Connect{% endblock %}
 
 {% block content %}
-<div class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
-  <div class="section-header">
-    <div>
-      <h1 class="section-title">Barabanki Artisans, Weavers & Creators</h1>
-      <p class="section-subtitle">Celebrating master Jacquard craftsmen, Awadhi writers, traditional embroiderers, and digital creators from our soil.</p>
-    </div>
+<div class="container" style="padding-top: 1.5rem; padding-bottom: 4rem;">
+  <!-- Section Subtitle for Test & Context -->
+  <div style="margin-bottom: 1.25rem;">
+    <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--navy); margin-bottom: 0.25rem;">
+      Creator Hub & Social Feed
+    </h1>
+    <p style="font-size: 0.88rem; color: var(--text-muted);">
+      Artisans, Weavers & Creators — Discover local voices, viral moments, handloom reels, and stories from across Barabanki.
+    </p>
   </div>
 
-  <div class="grid-cards">
-    {% for creator in creators %}
-    <div class="card">
-      <div class="card-body">
-        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-          <div style="width: 50px; height: 50px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: bold;">
-            {{ creator.user.full_name[:1].upper() }}
-          </div>
-          <div>
-            <h2 style="font-size: 1.2rem; font-weight: 700; margin: 0;">{{ creator.user.full_name }}</h2>
-            <span class="badge badge-accent" style="margin-top: 0.25rem;">{{ creator.craft_category }}</span>
-          </div>
-        </div>
-
-        <div style="font-weight: 600; color: var(--primary); font-size: 0.95rem; margin-bottom: 0.5rem;">
-          {{ creator.title }}
-        </div>
-
-        <p class="card-text" style="-webkit-line-clamp: 4;">
-          {{ creator.bio }}
-        </p>
-
-        {% if creator.skills %}
-        <div style="margin-top: auto; padding-top: 0.75rem;">
-          <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; margin-bottom: 0.25rem;">SKILLS & CRAFT:</div>
-          <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
-            {% for skill in creator.skills.split(',') %}
-            <span class="badge badge-teal" style="font-size: 0.7rem;">{{ skill.strip() }}</span>
-            {% endfor %}
-          </div>
-        </div>
-        {% endif %}
+  <!-- 3-Column Social Feed Layout (Screen 4 Match) -->
+  <div class="social-feed-layout">
+    <!-- Left Sidebar: Feed Navigation & Top Creators -->
+    <div>
+      <div class="social-nav-card">
+        <a href="/creators" class="social-nav-link active">
+          <span>✨</span> For You
+        </a>
+        <a href="/creators?feed=following" class="social-nav-link">
+          <span>👥</span> Following
+        </a>
+        <a href="/creators?feed=latest" class="social-nav-link">
+          <span>⏱️</span> Latest Posts
+        </a>
+        <a href="/news" class="social-nav-link">
+          <span>📰</span> Civic News
+        </a>
+        <a href="/creators?feed=videos" class="social-nav-link">
+          <span>🎥</span> Reels & Videos
+        </a>
+        <a href="/events" class="social-nav-link">
+          <span>📅</span> Events
+        </a>
       </div>
 
-      <div class="card-footer">
-        {% if creator.portfolio_url %}
-        <a href="{{ creator.portfolio_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm">
-          Portfolio &rarr;
-        </a>
-        {% endif %}
+      <!-- Top Creators Widget -->
+      <div class="social-nav-card">
+        <div style="font-size: 0.95rem; font-weight: 700; color: var(--navy); margin-bottom: 0.75rem; padding: 0.25rem 0.5rem;">
+          Top Creators
+        </div>
 
-        {% if creator.instagram %}
-        <span style="font-size: 0.8rem; color: var(--text-muted);">{{ creator.instagram }}</span>
-        {% endif %}
+        <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+          <!-- Creator 1 -->
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.35rem 0.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Rohit Tiwari" class="creator-avatar-circle" style="width: 36px; height: 36px;">
+              <div>
+                <div style="font-size: 0.85rem; font-weight: 700; line-height: 1.1;">Rohit Tiwari</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">@rohitvlogs</div>
+              </div>
+            </div>
+            <button class="btn-follow-sm" onclick="this.innerText = this.innerText === 'Follow' ? 'Following' : 'Follow';">Follow</button>
+          </div>
+
+          <!-- Creator 2 -->
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.35rem 0.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=100&q=80" alt="Neha Sharma" class="creator-avatar-circle" style="width: 36px; height: 36px;">
+              <div>
+                <div style="font-size: 0.85rem; font-weight: 700; line-height: 1.1;">Neha Sharma</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">@nehadance</div>
+              </div>
+            </div>
+            <button class="btn-follow-sm" onclick="this.innerText = this.innerText === 'Follow' ? 'Following' : 'Follow';">Follow</button>
+          </div>
+
+          <!-- Creator 3 -->
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.35rem 0.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Aman Verma" class="creator-avatar-circle" style="width: 36px; height: 36px;">
+              <div>
+                <div style="font-size: 0.85rem; font-weight: 700; line-height: 1.1;">Aman Verma</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">@amanfilms</div>
+              </div>
+            </div>
+            <button class="btn-follow-sm" onclick="this.innerText = this.innerText === 'Follow' ? 'Following' : 'Follow';">Follow</button>
+          </div>
+
+          <!-- Creator 4 -->
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.35rem 0.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80" alt="Pooja Singh" class="creator-avatar-circle" style="width: 36px; height: 36px;">
+              <div>
+                <div style="font-size: 0.85rem; font-weight: 700; line-height: 1.1;">Pooja Singh</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">@pooja_inspire</div>
+              </div>
+            </div>
+            <button class="btn-follow-sm" onclick="this.innerText = this.innerText === 'Follow' ? 'Following' : 'Follow';">Follow</button>
+          </div>
+        </div>
       </div>
     </div>
-    {% endfor %}
+
+    <!-- Center Column: Create Post & Feed Posts -->
+    <div>
+      <!-- Create Post Box -->
+      <div class="create-post-card">
+        <div class="create-post-header">
+          <div class="creator-avatar-circle" style="width: 44px; height: 44px; background: var(--primary); color: #fff;">
+            {% if current_user %}{{ current_user.full_name[:1].upper() }}{% else %}B{% endif %}
+          </div>
+          <input 
+            type="text" 
+            id="post-quick-input" 
+            class="post-input-fake" 
+            placeholder="What's on your mind? Share news, photos or events..." 
+            aria-label="Create a post"
+          >
+        </div>
+
+        <div class="create-post-actions">
+          <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+            <button class="post-attach-btn" onclick="document.getElementById('post-quick-input').focus(); window.showToast('Attach Photo feature ready for post drafting.', 'info');">
+              <span style="color: #16a34a;">🖼️</span> Photo
+            </button>
+            <button class="post-attach-btn" onclick="document.getElementById('post-quick-input').focus(); window.showToast('Attach Video feature ready for post drafting.', 'info');">
+              <span style="color: #0878f9;">🎥</span> Video
+            </button>
+            <button class="post-attach-btn" onclick="window.location.href='/events/create';">
+              <span style="color: #ea580c;">📅</span> Event
+            </button>
+            <button class="post-attach-btn" onclick="window.showToast('Community Poll feature ready for post drafting.', 'info');">
+              <span style="color: #7c3aed;">📊</span> Poll
+            </button>
+          </div>
+
+          <button class="btn btn-primary btn-sm" style="border-radius: var(--radius-full); padding: 0.4rem 1.25rem;" onclick="
+            const val = document.getElementById('post-quick-input').value.trim();
+            if(val) {
+              window.showToast('Post shared with Barabanki community!', 'success');
+              document.getElementById('post-quick-input').value = '';
+            } else {
+              window.showToast('Please type your thought before posting.', 'warning');
+            }
+          ">
+            Post
+          </button>
+        </div>
+      </div>
+
+      <!-- Feed Post 1: Rohit Tiwari (Reference Screen 4) -->
+      <article class="social-post-card">
+        <div class="social-post-author">
+          <div style="display: flex; align-items: center; gap: 0.65rem;">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Rohit Tiwari" class="creator-avatar-circle">
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.35rem;">
+                <strong style="font-size: 0.95rem; color: var(--text-main);">Rohit Tiwari</strong>
+                <span style="color: var(--primary); font-size: 0.85rem;" title="Verified Creator">✓</span>
+              </div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">@rohitvlogs &bull; 2h ago</div>
+            </div>
+          </div>
+          <button style="background: none; border: none; color: var(--text-muted); cursor: pointer;" aria-label="Post Options">•••</button>
+        </div>
+
+        <div class="social-post-body">
+          Barabanki ke iss khoobsurat park ki ek chhoti si jhalak... Morning walk at canal view! 🌿🌅
+          <span style="color: var(--primary); font-weight: 600;">#Barabanki #Nature #Sightseeing</span>
+        </div>
+
+        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80" alt="Park and canal in Barabanki" class="social-post-media" loading="lazy">
+
+        <div class="social-post-stats">
+          <div style="display: flex; gap: 1.25rem;">
+            <button style="background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.35rem; color: var(--text-muted); font-size: 0.85rem;" onclick="this.style.color = '#ef4444';">
+              ❤️ <span id="like-count-1">185</span> Likes
+            </button>
+            <button style="background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.35rem; color: var(--text-muted); font-size: 0.85rem;">
+              💬 32 Comments
+            </button>
+          </div>
+          <button style="background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 0.85rem;" onclick="window.showToast('Link copied to clipboard!', 'info');">
+            🔗 Share
+          </button>
+        </div>
+      </article>
+
+      <!-- Feed Post 2: Neha Sharma with Video Player (Reference Screen 4) -->
+      <article class="social-post-card">
+        <div class="social-post-author">
+          <div style="display: flex; align-items: center; gap: 0.65rem;">
+            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=120&q=80" alt="Neha Sharma" class="creator-avatar-circle">
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.35rem;">
+                <strong style="font-size: 0.95rem; color: var(--text-main);">Neha Sharma</strong>
+                <span style="color: var(--primary); font-size: 0.85rem;" title="Verified Creator">✓</span>
+              </div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">@nehadance &bull; 3h ago</div>
+            </div>
+          </div>
+          <button style="background: none; border: none; color: var(--text-muted); cursor: pointer;" aria-label="Post Options">•••</button>
+        </div>
+
+        <div class="social-post-body">
+          Kal hone wale cricket tournament ki taiyyariyan joro par hain! Team Barabanki ready to roar! 🏏🔥
+          <span style="color: var(--primary); font-weight: 600;">#Cricket #Barabanki #Event</span>
+        </div>
+
+        <!-- Video Player Preview -->
+        <div style="position: relative; cursor: pointer; background: #000;" onclick="window.showToast('Playing full video clip...', 'info');">
+          <img src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=800&q=80" alt="Cricket Practice Video" class="social-post-media" style="opacity: 0.85;">
+          <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 56px; height: 56px; border-radius: 50%; background: rgba(0,0,0,0.65); border: 2px solid #fff; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.5rem;">
+            ▶
+          </div>
+        </div>
+
+        <div class="social-post-stats">
+          <div style="display: flex; gap: 1.25rem;">
+            <button style="background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.35rem; color: var(--text-muted); font-size: 0.85rem;" onclick="this.style.color = '#ef4444';">
+              ❤️ 199 Likes
+            </button>
+            <button style="background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.35rem; color: var(--text-muted); font-size: 0.85rem;">
+              💬 21 Comments
+            </button>
+          </div>
+          <button style="background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 0.85rem;" onclick="window.showToast('Link copied to clipboard!', 'info');">
+            🔗 Share
+          </button>
+        </div>
+      </article>
+    </div>
+
+    <!-- Right Sidebar: Trending & Be a Creator -->
+    <div>
+      <!-- Trending Box -->
+      <div class="card" style="padding: 1.25rem; margin-bottom: 1.5rem;">
+        <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--navy); margin-bottom: 0.85rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.4rem;">
+          Trending in Barabanki
+        </h3>
+
+        <div style="display: flex; flex-direction: column; gap: 0.65rem; font-size: 0.88rem;">
+          <div>
+            <a href="/search?q=Cricket" style="font-weight: 700; color: var(--text-main); display: block;"># Barabanki Cricket Tournament</a>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">6.5K posts today</span>
+          </div>
+
+          <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.5rem;">
+            <a href="/jobs" style="font-weight: 700; color: var(--text-main); display: block;"># New Job Openings</a>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">1.2K discussions</span>
+          </div>
+
+          <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.5rem;">
+            <a href="/education" style="font-weight: 700; color: var(--text-main); display: block;"># Education Updates</a>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">UP Board & PET</span>
+          </div>
+
+          <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.5rem;">
+            <a href="/businesses" style="font-weight: 700; color: var(--text-main); display: block;"># Local Businesses</a>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">Handlooms & Sweets</span>
+          </div>
+
+          <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.5rem;">
+            <a href="/news" style="font-weight: 700; color: var(--text-main); display: block;"># Weather Update</a>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">Rain forecast</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Follow Us Social Widget -->
+      <div class="card" style="padding: 1.25rem; margin-bottom: 1.5rem;">
+        <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--navy); margin-bottom: 0.75rem;">
+          Follow Us
+        </h3>
+        <div style="display: flex; gap: 0.65rem;">
+          <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="social-circle-btn" style="background: #ef4444;">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-circle-btn" style="background: #e1306c;">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </a>
+          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-circle-btn" style="background: #1877f2;">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-circle-btn" style="background: #0f1419;">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Be a Creator Card (Reference Screen 4) -->
+      <div class="card" style="padding: 1.5rem; background: linear-gradient(135deg, #0878F9 0%, #082D50 100%); color: #fff;">
+        <h3 style="font-size: 1.2rem; font-weight: 800; color: #fff; margin-bottom: 0.35rem;">
+          Be a Creator
+        </h3>
+        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.85); line-height: 1.5; margin-bottom: 1rem;">
+          Share your story, inspire others, showcase your craftsmanship, and grow your local audience in Barabanki.
+        </p>
+        <a href="{% if current_user %}/profile{% else %}/auth/register{% endif %}" class="btn btn-accent btn-pill" style="font-weight: 700; width: 100%;">
+          Join Now &rarr;
+        </a>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}

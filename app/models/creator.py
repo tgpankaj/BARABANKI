@@ -1,7 +1,6 @@
-from datetime import datetime
 from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
-from app.core.database import Base
+from app.core.database import Base, utc_now
 
 
 class CreatorProfile(Base):
@@ -18,7 +17,8 @@ class CreatorProfile(Base):
     youtube = Column(String(100), nullable=True)
     github = Column(String(100), nullable=True)
     is_featured = Column(Boolean, default=False, index=True, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=utc_now, nullable=False)
+
 
     # Relationships
     user = relationship("User", back_populates="creator_profile")

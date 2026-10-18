@@ -20,6 +20,7 @@ class UserLogin(BaseModel):
 class UserProfileUpdate(BaseModel):
     full_name: Optional[str] = None
     phone: Optional[str] = None
+    locality: Optional[str] = None
     bio: Optional[str] = None
     avatar_url: Optional[str] = None
 
@@ -36,9 +37,26 @@ class UserOut(BaseModel):
     full_name: str
     phone: Optional[str] = None
     role: str
+    locality: Optional[str] = "Barabanki"
     bio: Optional[str] = None
     avatar_url: Optional[str] = None
     is_active: bool
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class UserProfilePublicOut(BaseModel):
+    id: int
+    username: str
+    full_name: str
+    role: str
+    locality: Optional[str] = "Barabanki"
+    bio: Optional[str] = None
+    avatar_url: Optional[str] = None
+    followers_count: int = 0
+    following_count: int = 0
+    posts_count: int = 0
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
@@ -48,3 +66,4 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     user: UserOut
+

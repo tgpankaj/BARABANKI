@@ -7,7 +7,6 @@ from sqlalchemy.pool import StaticPool
 from app.core.database import Base, get_db
 from app.core.security import create_access_token
 from main import app
-from app.seeds.seed_data import seed
 
 # In-memory SQLite database specifically for test isolation
 SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
@@ -26,7 +25,7 @@ def setup_test_db():
     # Seed baseline authentic data into test db
     db = TestingSessionLocal()
     try:
-        from app.models import User, TourismSpot, EducationInstitute
+        from app.models import User
         # Run seed logic against test session
         from app.core.security import get_password_hash
         admin = User(

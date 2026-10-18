@@ -19,16 +19,36 @@ class EventBase(BaseModel):
     organizer_contact: Optional[str] = None
     registration_link: Optional[str] = None
     image_url: Optional[str] = None
+    capacity: Optional[int] = None
 
 
 class EventCreate(EventBase):
     pass
 
 
+class EventRegistrationCreate(BaseModel):
+    notes: Optional[str] = None
+
+
+class EventRegistrationOut(BaseModel):
+    id: int
+    event_id: int
+    user_id: int
+    status: str
+    notes: Optional[str] = None
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class EventOut(EventBase):
     id: int
     slug: str
+    capacity: Optional[int] = None
+    registrations_count: Optional[int] = 0
+    is_registered: Optional[bool] = False
     is_approved: bool
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+

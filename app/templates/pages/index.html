@@ -1,316 +1,506 @@
 {% extends "base.html" %}
 
-{% block title %}Barabanki Connect — Home | Local News, Events, Businesses, Jobs & Heritage{% endblock %}
+{% block title %}Barabanki Connect — Apna Barabanki, Ab Ek Click Door!{% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<section class="hero-section">
-  <div class="container">
-    <div class="hero-content">
-      <div class="hero-badge">
-        <span>✨ Welcome to District Barabanki Portal (UP 41)</span>
-      </div>
-      <h1 class="hero-title">
-        Connecting People, Heritage & Commerce in <span class="text-highlight">Barabanki</span>
-      </h1>
-      <p class="hero-description">
-        Your unified civic platform for local news, cultural fairs, handloom artisans, local business listings, student education guides, and employment vacancies across Nawabganj, Deva, Zaidpur, Ramnagar, and Haidergarh.
-      </p>
+<!-- 1. Hero Section (Matched to Reference Screen 1) -->
+<section class="home-hero">
+  <div class="home-hero-bg-art"></div>
+  <div class="container home-hero-container">
 
-      <!-- Global Search Box -->
-      <form action="/search" method="GET" class="search-box-wrapper" role="search">
-        <input 
-          type="text" 
-          name="q" 
-          class="search-input" 
-          placeholder="Search news, events, shops, jobs, colleges in Barabanki..." 
-          aria-label="Search Barabanki Connect"
-          required
-        >
-        <select name="type" class="search-category-select" aria-label="Search filter category">
-          <option value="all">All Categories</option>
-          <option value="businesses">Businesses & Handlooms</option>
-          <option value="jobs">Local Jobs</option>
-          <option value="news">News & Bulletins</option>
-          <option value="events">Events & Fairs</option>
-          <option value="education">Colleges & Coaching</option>
-          <option value="tourism">Heritage & Places</option>
-        </select>
-        <button type="submit" class="btn btn-primary">Search</button>
-      </form>
 
-      <!-- Quick Action Pills -->
-      <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">
-        <span style="font-weight: 600;">Popular searches:</span>
-        <a href="/search?q=Deva+Sharif" class="badge badge-primary">Deva Sharif</a>
-        <a href="/search?q=Zaidpur+Handloom" class="badge badge-accent">Zaidpur Handlooms</a>
-        <a href="/search?q=Polytechnic" class="badge badge-teal">Colleges</a>
-        <a href="/jobs?type=Full-time" class="badge badge-primary">IT & Web Jobs</a>
-        <a href="/events" class="badge badge-accent">Deva Mela</a>
-      </div>
+    <h1 class="home-hero-title">
+      Apna Barabanki,<br>
+      <span class="text-gold">Ab Ek Click Door!</span>
+    </h1>
 
-      <!-- Stat Counters -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-number">{{ stats.businesses or 4 }}+</div>
-          <div class="stat-label">Local Enterprises</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">{{ stats.news or 4 }}</div>
-          <div class="stat-label">Verified News Articles</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">{{ stats.jobs or 3 }}</div>
-          <div class="stat-label">Active Job Openings</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">{{ stats.institutes or 5 }}</div>
-          <div class="stat-label">Educational Institutes</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Latest News Section -->
-<section class="section">
-  <div class="container">
-    <div class="section-header">
-      <div>
-        <h2 class="section-title">Civic Bulletins & Local News</h2>
-        <p class="section-subtitle">Factual and verified updates from district administrative bodies and local bureaus.</p>
-      </div>
-      <a href="/news" class="btn btn-outline btn-sm">View All News &rarr;</a>
-    </div>
-
-    <div class="grid-cards">
-      {% for article in news_articles %}
-      <article class="card">
-        <div class="card-img-wrap">
-          <img src="{{ article.image_url or '/static/images/placeholder.svg' }}" alt="{{ article.title }}" class="card-img" loading="lazy">
-          <span class="badge badge-primary card-badge-overlay">{{ article.category }}</span>
-        </div>
-        <div class="card-body">
-          <div class="card-meta">
-            <span>📅 {{ article.created_at.strftime('%d %b %Y') }}</span>
-            <span>👁️ {{ article.views_count }} views</span>
-          </div>
-          <h3 class="card-title">
-            <a href="/news/{{ article.slug }}">{{ article.title }}</a>
-          </h3>
-          <p class="card-text">{{ article.summary }}</p>
-        </div>
-        <div class="card-footer">
-          <span style="font-size: 0.75rem; color: var(--text-muted); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 200px;">
-            Source: {{ article.source_attribution }}
-          </span>
-          <a href="/news/{{ article.slug }}" class="btn btn-primary btn-sm">Read More</a>
-        </div>
-      </article>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-
-<!-- Upcoming Events & Festivals Section -->
-<section class="section section-alt">
-  <div class="container">
-    <div class="section-header">
-      <div>
-        <h2 class="section-title">Upcoming Fairs & Events</h2>
-        <p class="section-subtitle">Cultural celebrations, educational symposiums, and exhibitions across Barabanki.</p>
-      </div>
-      <a href="/events" class="btn btn-outline btn-sm">Browse All Events &rarr;</a>
-    </div>
-
-    <div class="grid-cards">
-      {% for event in events %}
-      <div class="card">
-        <div class="card-img-wrap">
-          <img src="{{ event.image_url or '/static/images/placeholder.svg' }}" alt="{{ event.title }}" class="card-img" loading="lazy">
-          <span class="badge badge-accent card-badge-overlay">{{ event.category }}</span>
-        </div>
-        <div class="card-body">
-          <div class="card-meta">
-            <span>🗓️ {{ event.start_date.strftime('%d %b %Y, %I:%M %p') }}</span>
-          </div>
-          <h3 class="card-title">
-            <a href="/events/{{ event.slug }}">{{ event.title }}</a>
-          </h3>
-          <p class="card-text">{{ event.description }}</p>
-          <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: auto;">
-            📍 <strong>{{ event.venue_name }}</strong> ({{ event.locality }})
-          </div>
-        </div>
-        <div class="card-footer">
-          <span style="font-size: 0.8rem; color: var(--text-muted);">Organized by {{ event.organizer_name }}</span>
-          <a href="/events/{{ event.slug }}" class="btn btn-outline btn-sm">View Details</a>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-
-<!-- Featured Local Businesses & Handlooms -->
-<section class="section">
-  <div class="container">
-    <div class="section-header">
-      <div>
-        <h2 class="section-title">Featured Local Businesses & Artisans</h2>
-        <p class="section-subtitle">Discover handcrafted Zaidpur textiles, traditional Awadhi confectioneries, and regional services.</p>
-      </div>
-      <a href="/businesses" class="btn btn-outline btn-sm">Explore Directory &rarr;</a>
-    </div>
-
-    <div class="grid-cards-4">
-      {% for biz in businesses %}
-      <div class="card">
-        <div class="card-body">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
-            <span class="badge badge-teal">{{ biz.category }}</span>
-            {% if biz.is_verified %}
-            <span class="badge badge-verified" title="Verified Local Business">✓ Verified</span>
-            {% endif %}
-            {% if biz.is_demo %}
-            <span class="badge badge-demo" title="Demonstration Listing">Demo</span>
-            {% endif %}
-          </div>
-          <h3 class="card-title" style="font-size: 1.1rem;">
-            <a href="/businesses/{{ biz.slug }}">{{ biz.name }}</a>
-          </h3>
-          <p class="card-text" style="-webkit-line-clamp: 2;">{{ biz.description }}</p>
-          <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: auto;">
-            📍 {{ biz.locality }}, Barabanki
-          </div>
-        </div>
-        <div class="card-footer">
-          <span style="font-weight: 700; color: var(--accent);">⭐ {{ biz.rating }}/5.0</span>
-          <a href="/businesses/{{ biz.slug }}" class="btn btn-outline btn-sm">Contact</a>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-
-<!-- Tourism & Heritage Spotlights with Interactive Map Preview -->
-<section class="section section-alt">
-  <div class="container">
-    <div class="section-header">
-      <div>
-        <h2 class="section-title">Historic & Sacred Landmarks</h2>
-        <p class="section-subtitle">Explore historical monuments, spiritual shrines, and ancient wonders across the district.</p>
-      </div>
-      <a href="/tourism" class="btn btn-outline btn-sm">View Heritage Map &rarr;</a>
-    </div>
-
-    <!-- Map container -->
-    <div class="map-container-wrap">
-      <div id="leaflet-map" aria-label="Interactive map of Barabanki heritage landmarks"></div>
-    </div>
-
-    <div class="grid-cards-4">
-      {% for spot in tourism_spots %}
-      <div class="card">
-        <div class="card-img-wrap">
-          <img src="{{ spot.image_url or '/static/images/placeholder.svg' }}" alt="{{ spot.name }}" class="card-img" loading="lazy">
-          <span class="badge badge-accent card-badge-overlay">{{ spot.category }}</span>
-        </div>
-        <div class="card-body">
-          <h3 class="card-title" style="font-size: 1.05rem;">
-            <a href="/tourism/{{ spot.slug }}">{{ spot.name }}</a>
-          </h3>
-          <p class="card-text" style="-webkit-line-clamp: 2;">{{ spot.short_description }}</p>
-        </div>
-        <div class="card-footer">
-          <span style="font-size: 0.8rem; color: var(--text-muted);">📍 {{ spot.locality }}</span>
-          <a href="/tourism/{{ spot.slug }}" class="btn btn-primary btn-sm">Explore</a>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-
-<!-- Local Employment Opportunities -->
-<section class="section">
-  <div class="container">
-    <div class="section-header">
-      <div>
-        <h2 class="section-title">Latest Local Job Vacancies</h2>
-        <p class="section-subtitle">Career opportunities for graduates, technicians, and educators in Barabanki.</p>
-      </div>
-      <a href="/jobs" class="btn btn-outline btn-sm">View All Jobs &rarr;</a>
-    </div>
-
-    <div class="grid-cards">
-      {% for job in jobs %}
-      <div class="card">
-        <div class="card-body">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
-            <span class="badge badge-primary">{{ job.job_type }}</span>
-            {% if job.is_demo %}
-            <span class="badge badge-demo" title="Demonstration Listing">Demo</span>
-            {% endif %}
-          </div>
-          <h3 class="card-title">
-            <a href="/jobs/{{ job.slug }}">{{ job.title }}</a>
-          </h3>
-          <div style="font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem;">
-            🏢 {{ job.company_name }}
-          </div>
-          <p class="card-text" style="-webkit-line-clamp: 2;">{{ job.description }}</p>
-          <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); margin-top: auto;">
-            <span>📍 {{ job.location }}</span>
-            <span style="font-weight: 600; color: var(--teal);">{{ job.salary_range or 'Competitive' }}</span>
-          </div>
-        </div>
-        <div class="card-footer">
-          <span style="font-size: 0.75rem; color: var(--text-light);">Posted {{ job.created_at.strftime('%d %b %Y') }}</span>
-          <a href="/jobs/{{ job.slug }}" class="btn btn-primary btn-sm">Apply Now</a>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-
-<!-- Community Voice & Engagement Strip -->
-<section class="section section-alt">
-  <div class="container" style="text-align: center; max-width: 720px;">
-    <h2 class="section-title">Have a Voice in Barabanki's Growth</h2>
-    <p class="section-subtitle" style="margin-bottom: 1.5rem;">
-      Join thousands of fellow citizens, students, and entrepreneurs discussing civic topics, sharing student resources, and proposing improvements for our district.
+    <p class="home-hero-subtitle">
+      News, Events, Jobs, Education, Local Businesses aur Community Updates — Sab Kuch Ek Hi Jagah.
+      <span style="opacity: 0.85; font-size: 0.95rem; display: block; margin-top: 0.35rem;">
+        Connecting People, Heritage & Commerce across Nawabganj, Deva Sharif, Zaidpur, Ramnagar, and Haidergarh.
+      </span>
     </p>
-    <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
-      <a href="/community" class="btn btn-primary btn-lg">Join Community Discussions</a>
-      <a href="/businesses/new" class="btn btn-outline btn-lg">List Your Business</a>
+
+    <!-- Hero Search Bar -->
+    <form action="/search" method="GET" class="hero-search-box" role="search">
+      <svg class="hero-search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input 
+        type="text" 
+        name="q" 
+        class="hero-search-input" 
+        placeholder="Barabanki mein kya dhoondh rahe hain?" 
+        aria-label="Search Barabanki Connect"
+        required
+      >
+      <button type="submit" class="hero-search-btn">Search</button>
+    </form>
+  </div>
+</section>
+
+<!-- 2. Breaking News Updates Ticker -->
+<div class="container">
+  <div class="ticker-wrap" aria-label="Latest Updates Ticker">
+    <div class="ticker-badge">
+      <span class="ticker-dot"></span>
+      <span>Breaking News</span>
+    </div>
+    <div class="ticker-scroll">
+      <a href="/news" class="ticker-item">
+        <span>Barabanki mein 15 naye health centres ka udghatan</span>
+      </a>
+      <span class="ticker-separator">•</span>
+      <a href="/education" class="ticker-item">
+        <span>UP Board Result 2025 - Check Now</span>
+      </a>
+      <span class="ticker-separator">•</span>
+      <a href="/events" class="ticker-item">
+        <span>Barabanki Cricket Tournament ka aayojan 12 May se</span>
+      </a>
+      <span class="ticker-separator">•</span>
+      <a href="/services" class="ticker-item">
+        <span>Deva Mela preparations review by District Administration</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- 3. Category Shortcuts (8 Icons Grid from Reference) -->
+<section class="shortcuts-section">
+  <div class="container">
+    <div class="shortcuts-grid">
+      <!-- 1. News -->
+      <a href="/news" class="shortcut-card">
+        <div class="shortcut-icon-box icon-news">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"></path>
+            <path d="M18 14h-8"></path>
+            <path d="M15 18h-5"></path>
+            <path d="M10 6h8v4h-8V6Z"></path>
+          </svg>
+        </div>
+        <div class="shortcut-name">News</div>
+        <div class="shortcut-desc">Latest Updates</div>
+      </a>
+
+      <!-- 2. Events -->
+      <a href="/events" class="shortcut-card">
+        <div class="shortcut-icon-box icon-events">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+        </div>
+        <div class="shortcut-name">Events</div>
+        <div class="shortcut-desc">Join & Participate</div>
+      </a>
+
+      <!-- 3. Creators -->
+      <a href="/creators" class="shortcut-card">
+        <div class="shortcut-icon-box icon-creators">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </div>
+        <div class="shortcut-name">Creators</div>
+        <div class="shortcut-desc">Follow Local Creators</div>
+      </a>
+
+      <!-- 4. Education -->
+      <a href="/education" class="shortcut-card">
+        <div class="shortcut-icon-box icon-education">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+          </svg>
+        </div>
+        <div class="shortcut-name">Education</div>
+        <div class="shortcut-desc">Learn & Grow</div>
+      </a>
+
+      <!-- 5. Businesses -->
+      <a href="/businesses" class="shortcut-card">
+        <div class="shortcut-icon-box icon-business">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+        </div>
+        <div class="shortcut-name">Businesses</div>
+        <div class="shortcut-desc">Shop & Services</div>
+      </a>
+
+      <!-- 6. Public Services -->
+      <a href="/services" class="shortcut-card">
+        <div class="shortcut-icon-box icon-services">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="21" x2="21" y2="21"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+            <polyline points="5 10 5 21"></polyline>
+            <polyline points="19 10 19 21"></polyline>
+            <polyline points="9 10 9 21"></polyline>
+            <polyline points="15 10 15 21"></polyline>
+            <polygon points="12 2 2 7 22 7 12 2"></polygon>
+          </svg>
+        </div>
+        <div class="shortcut-name">Public Services</div>
+        <div class="shortcut-desc">Help & Support</div>
+      </a>
+
+      <!-- 7. Community -->
+      <a href="/community" class="shortcut-card">
+        <div class="shortcut-icon-box icon-community">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+          </svg>
+        </div>
+        <div class="shortcut-name">Community</div>
+        <div class="shortcut-desc">Share & Discuss</div>
+      </a>
+
+      <!-- 8. Jobs -->
+      <a href="/jobs" class="shortcut-card">
+        <div class="shortcut-icon-box icon-jobs">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+          </svg>
+        </div>
+        <div class="shortcut-name">Jobs</div>
+        <div class="shortcut-desc">Find Opportunities</div>
+      </a>
     </div>
   </div>
 </section>
-{% endblock %}
 
-{% block extra_scripts %}
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    // Tourism spots data passed safely from server
-    const spotsData = [
-      {% for spot in tourism_spots %}
-      {
-        name: {{ spot.name | tojson }},
-        category: {{ spot.category | tojson }},
-        address: {{ spot.address | tojson }},
-        latitude: {{ spot.latitude }},
-        longitude: {{ spot.longitude }},
-        url: "/tourism/{{ spot.slug }}"
-      }{% if not loop.last %},{% endif %}
-      {% endfor %}
-    ];
+<!-- 4. Main 2-Column Section (Left: News & Events, Right: Popular Creators) -->
+<div class="container">
+  <div class="home-main-layout">
+    <!-- Left Column: News + Events -->
+    <div>
+      <!-- Section: Latest News & Updates -->
+      <div style="margin-bottom: 2.25rem;">
+        <div class="section-title-row">
+          <h2 class="section-heading-h2">
+            <span>Latest News & Updates</span>
+          </h2>
+          <a href="/news" class="section-view-all">View All &rarr;</a>
+        </div>
 
-    if (spotsData.length > 0 && typeof window.initBarabankiMap === "function") {
-      window.initBarabankiMap("leaflet-map", spotsData, [27.0223, 81.2500], 11);
-    }
-  });
-</script>
+        <div class="grid-cards">
+          <!-- Card 1 (Health) -->
+          <article class="card">
+            <div class="card-img-wrap">
+              <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=600&q=80" alt="बाराबंकी में नए स्वास्थ्य केंद्र का उद्घाटन" class="card-img" loading="lazy">
+              <span class="badge badge-success card-badge-overlay">Health</span>
+            </div>
+            <div class="card-body">
+              <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.35rem;">
+                📅 12 May 2025
+              </div>
+              <h3 style="font-size: 1.05rem; font-weight: 700; line-height: 1.35; margin-bottom: 0.5rem;">
+                <a href="/news" style="color: var(--text-main);">बाराबंकी में नए स्वास्थ्य केंद्र का उद्घाटन</a>
+              </h3>
+              <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.45; -webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden;">
+                ग्रामीण क्षेत्रों में बेहतर चिकित्सा सुविधाएं उपलब्ध कराने के लिए 15 प्राथमिक स्वास्थ्य केंद्रों का संचालन शुरू।
+              </p>
+            </div>
+          </article>
+
+          <!-- Card 2 (Education) -->
+          <article class="card">
+            <div class="card-img-wrap">
+              <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=600&q=80" alt="UP Board Result 2025 घोषित" class="card-img" loading="lazy">
+              <span class="badge badge-primary card-badge-overlay">Education</span>
+            </div>
+            <div class="card-body">
+              <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.35rem;">
+                📅 10 May 2025
+              </div>
+              <h3 style="font-size: 1.05rem; font-weight: 700; line-height: 1.35; margin-bottom: 0.5rem;">
+                <a href="/news" style="color: var(--text-main);">UP Board Result 2025 घोषित</a>
+              </h3>
+              <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.45; -webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden;">
+                बाराबंकी के विद्यार्थियों ने हाईस्कूल और इंटरमीडिएट में उत्कृष्ट प्रदर्शन कर प्रदेश भर में नाम रोशन किया।
+              </p>
+            </div>
+          </article>
+
+          <!-- Card 3 (Sports) -->
+          <article class="card">
+            <div class="card-img-wrap">
+              <img src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=600&q=80" alt="बाराबंकी में क्रिकेट टूर्नामेंट का आयोजन" class="card-img" loading="lazy">
+              <span class="badge badge-accent card-badge-overlay">Sports</span>
+            </div>
+            <div class="card-body">
+              <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.35rem;">
+                📅 09 May 2025
+              </div>
+              <h3 style="font-size: 1.05rem; font-weight: 700; line-height: 1.35; margin-bottom: 0.5rem;">
+                <a href="/news" style="color: var(--text-main);">बाराबंकी में क्रिकेट टूर्नामेंट का आयोजन</a>
+              </h3>
+              <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.45; -webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden;">
+                के.डी. सिंह बाबू स्टेडियम में अंतर-जनपदीय क्रिकेट प्रतियोगिता का शुभारंभ, 16 टीमें लेंगी हिस्सा।
+              </p>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <!-- Section: Upcoming Events -->
+      <div>
+        <div class="section-title-row">
+          <h2 class="section-heading-h2">
+            <span>Upcoming Events</span>
+          </h2>
+          <a href="/events" class="section-view-all">View All &rarr;</a>
+        </div>
+
+        <div class="grid-cards-4">
+          <!-- Event 1 (12 May - Sports) -->
+          <div class="event-card-compact">
+            <div class="event-thumb-wrap">
+              <img src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=500&q=80" alt="Cricket Tournament" class="card-img" loading="lazy">
+              <div class="event-date-flag" style="border-top: 3px solid #F97316;">
+                <div class="event-date-day" style="color: #F97316;">12</div>
+                <div class="event-date-month">MAY</div>
+              </div>
+            </div>
+            <div style="padding: 0.75rem; flex: 1; display: flex; flex-direction: column;">
+              <h4 style="font-size: 0.88rem; font-weight: 700; line-height: 1.25; margin-bottom: 0.35rem;">
+                <a href="/events" style="color: var(--text-main);">Barabanki Cricket Tournament 2025</a>
+              </h4>
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: auto; display: flex; align-items: center; gap: 0.25rem;">
+                <span>🏏</span> Sports &bull; Stadium
+              </div>
+            </div>
+          </div>
+
+          <!-- Event 2 (15 May - Health) -->
+          <div class="event-card-compact">
+            <div class="event-thumb-wrap">
+              <img src="https://images.unsplash.com/photo-1615461066841-6116e61058f4?auto=format&fit=crop&w=500&q=80" alt="Blood Donation Camp" class="card-img" loading="lazy">
+              <div class="event-date-flag" style="border-top: 3px solid #EF4444;">
+                <div class="event-date-day" style="color: #EF4444;">15</div>
+                <div class="event-date-month">MAY</div>
+              </div>
+            </div>
+            <div style="padding: 0.75rem; flex: 1; display: flex; flex-direction: column;">
+              <h4 style="font-size: 0.88rem; font-weight: 700; line-height: 1.25; margin-bottom: 0.35rem;">
+                <a href="/events" style="color: var(--text-main);">Blood Donation Camp</a>
+              </h4>
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: auto; display: flex; align-items: center; gap: 0.25rem;">
+                <span>❤️</span> Health &bull; Hospital
+              </div>
+            </div>
+          </div>
+
+          <!-- Event 3 (18 May - Education) -->
+          <div class="event-card-compact">
+            <div class="event-thumb-wrap">
+              <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=500&q=80" alt="Career Guidance Seminar" class="card-img" loading="lazy">
+              <div class="event-date-flag" style="border-top: 3px solid #EAB308;">
+                <div class="event-date-day" style="color: #EAB308;">18</div>
+                <div class="event-date-month">MAY</div>
+              </div>
+            </div>
+            <div style="padding: 0.75rem; flex: 1; display: flex; flex-direction: column;">
+              <h4 style="font-size: 0.88rem; font-weight: 700; line-height: 1.25; margin-bottom: 0.35rem;">
+                <a href="/events" style="color: var(--text-main);">Career Guidance Seminar</a>
+              </h4>
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: auto; display: flex; align-items: center; gap: 0.25rem;">
+                <span>🎓</span> Education &bull; College
+              </div>
+            </div>
+          </div>
+
+          <!-- Event 4 (20 May - Culture) -->
+          <div class="event-card-compact">
+            <div class="event-thumb-wrap">
+              <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=500&q=80" alt="Cultural Program" class="card-img" loading="lazy">
+              <div class="event-date-flag" style="border-top: 3px solid #3B82F6;">
+                <div class="event-date-day" style="color: #3B82F6;">20</div>
+                <div class="event-date-month">MAY</div>
+              </div>
+            </div>
+            <div style="padding: 0.75rem; flex: 1; display: flex; flex-direction: column;">
+              <h4 style="font-size: 0.88rem; font-weight: 700; line-height: 1.25; margin-bottom: 0.35rem;">
+                <a href="/events" style="color: var(--text-main);">Cultural Program &mdash; Mahotsav</a>
+              </h4>
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: auto; display: flex; align-items: center; gap: 0.25rem;">
+                <span>🎭</span> Culture &bull; Town Hall
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Popular Creators (Reference Match) -->
+    <div>
+      <div class="creator-sidebar-widget">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+          <h3 class="creator-sidebar-header" style="margin-bottom: 0;">Popular Creators</h3>
+          <a href="/creators" style="font-size: 0.82rem; color: var(--primary); font-weight: 600;">View All</a>
+        </div>
+
+        <!-- Creator 1: Rohit Tiwari -->
+        <div class="creator-list-item">
+          <div class="creator-info-box">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Rohit Tiwari" class="creator-avatar-circle">
+            <div>
+              <div class="creator-name">Rohit Tiwari</div>
+              <div class="creator-handle">@rohitvlogs</div>
+            </div>
+          </div>
+          <button class="btn-follow-sm" onclick="this.innerText = this.innerText === 'Follow' ? 'Following' : 'Follow'; window.showToast('Followed Rohit Tiwari!', 'info');">Follow</button>
+        </div>
+
+        <!-- Creator 2: Neha Sharma -->
+        <div class="creator-list-item">
+          <div class="creator-info-box">
+            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=120&q=80" alt="Neha Sharma" class="creator-avatar-circle">
+            <div>
+              <div class="creator-name">Neha Sharma</div>
+              <div class="creator-handle">@nehadance</div>
+            </div>
+          </div>
+          <button class="btn-follow-sm" onclick="this.innerText = this.innerText === 'Follow' ? 'Following' : 'Follow'; window.showToast('Followed Neha Sharma!', 'info');">Follow</button>
+        </div>
+
+        <!-- Creator 3: Aman Verma -->
+        <div class="creator-list-item">
+          <div class="creator-info-box">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80" alt="Aman Verma" class="creator-avatar-circle">
+            <div>
+              <div class="creator-name">Aman Verma</div>
+              <div class="creator-handle">@amanfilms</div>
+            </div>
+          </div>
+          <button class="btn-follow-sm" onclick="this.innerText = this.innerText === 'Follow' ? 'Following' : 'Follow'; window.showToast('Followed Aman Verma!', 'info');">Follow</button>
+        </div>
+
+        <!-- Creator 4: Pooja Singh -->
+        <div class="creator-list-item">
+          <div class="creator-info-box">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80" alt="Pooja Singh" class="creator-avatar-circle">
+            <div>
+              <div class="creator-name">Pooja Singh</div>
+              <div class="creator-handle">@pooja_inspire</div>
+            </div>
+          </div>
+          <button class="btn-follow-sm" onclick="this.innerText = this.innerText === 'Follow' ? 'Following' : 'Follow'; window.showToast('Followed Pooja Singh!', 'info');">Follow</button>
+        </div>
+
+        <!-- Second Group: Popular Creators -->
+        <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+            <div style="font-size: 0.88rem; font-weight: 700; color: var(--navy);">
+              Popular Creators
+            </div>
+            <a href="/creators" style="font-size: 0.75rem; color: var(--primary); font-weight: 600;">View All</a>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; text-align: center;">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80" class="creator-avatar-circle" style="width: 42px; height: 42px; margin-bottom: 0.35rem;">
+              <div style="font-size: 0.72rem; font-weight: 700; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">Mohd. Rafiq</div>
+              <span style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.35rem;">@rafiq_weaves</span>
+              <button class="btn-follow-sm" style="font-size: 0.7rem; padding: 0.2rem 0.5rem; width: 100%; border-radius: var(--radius-sm);" onclick="this.innerText = this.innerText === 'Follow' ? 'Following' : 'Follow'; window.showToast('Followed Mohd. Rafiq!', 'info');">Follow</button>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80" class="creator-avatar-circle" style="width: 42px; height: 42px; margin-bottom: 0.35rem;">
+              <div style="font-size: 0.72rem; font-weight: 700; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">Shikha V.</div>
+              <span style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.35rem;">@shikha_writer</span>
+              <button class="btn-follow-sm" style="font-size: 0.7rem; padding: 0.2rem 0.5rem; width: 100%; border-radius: var(--radius-sm);" onclick="this.innerText = this.innerText === 'Follow' ? 'Following' : 'Follow'; window.showToast('Followed Shikha V.!', 'info');">Follow</button>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=100&q=80" class="creator-avatar-circle" style="width: 42px; height: 42px; margin-bottom: 0.35rem;">
+              <div style="font-size: 0.72rem; font-weight: 700; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">Arun Rawat</div>
+              <span style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.35rem;">@arun_photo</span>
+              <button class="btn-follow-sm" style="font-size: 0.7rem; padding: 0.2rem 0.5rem; width: 100%; border-radius: var(--radius-sm);" onclick="this.innerText = this.innerText === 'Follow' ? 'Following' : 'Follow'; window.showToast('Followed Arun Rawat!', 'info');">Follow</button>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=100&q=80" class="creator-avatar-circle" style="width: 42px; height: 42px; margin-bottom: 0.35rem;">
+              <div style="font-size: 0.72rem; font-weight: 700; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">Kavita S.</div>
+              <span style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.35rem;">@kavita_art</span>
+              <button class="btn-follow-sm" style="font-size: 0.7rem; padding: 0.2rem 0.5rem; width: 100%; border-radius: var(--radius-sm);" onclick="this.innerText = this.innerText === 'Follow' ? 'Following' : 'Follow'; window.showToast('Followed Kavita S.!', 'info');">Follow</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 5. Explore Barabanki Section (Matched to Reference Screen 1) -->
+<div class="container">
+  <section class="explore-barabanki-banner">
+    <div class="container" style="padding-left: 2rem; padding-right: 2rem;">
+      <div class="explore-header-row" style="margin-bottom: 2rem;">
+        <div>
+          <h2 class="explore-title" style="margin-bottom: 0.35rem;">Explore Barabanki</h2>
+          <p class="explore-subtitle">Discover centuries of spiritual brotherhood, sacred shrines, handloom clusters, and culinary delights.</p>
+        </div>
+      </div>
+
+      <div class="explore-cats-grid" style="margin-bottom: 2.25rem;">
+        <!-- 1. Tourist Places -->
+        <a href="/tourism" class="explore-cat-pill">
+          <div class="explore-circle-icon" style="background: rgba(13, 148, 136, 0.4);">
+            🏛️
+          </div>
+          <div class="explore-cat-name">Tourist Places</div>
+        </a>
+
+        <!-- 2. Culture & Heritage -->
+        <a href="/tourism" class="explore-cat-pill">
+          <div class="explore-circle-icon" style="background: rgba(8, 120, 249, 0.4);">
+            🕌
+          </div>
+          <div class="explore-cat-name">Culture & Heritage</div>
+        </a>
+
+        <!-- 3. Food & Restaurants -->
+        <a href="/businesses?category=Dining+%26+Sweets" class="explore-cat-pill">
+          <div class="explore-circle-icon" style="background: rgba(234, 88, 12, 0.4);">
+            🍲
+          </div>
+          <div class="explore-cat-name">Food & Restaurants</div>
+        </a>
+
+        <!-- 4. Shopping -->
+        <a href="/businesses?category=Handloom+%26+Textiles" class="explore-cat-pill">
+          <div class="explore-circle-icon" style="background: rgba(14, 165, 233, 0.4);">
+            🛍️
+          </div>
+          <div class="explore-cat-name">Shopping</div>
+        </a>
+
+        <!-- 5. Nature & Parks -->
+        <a href="/tourism" class="explore-cat-pill">
+          <div class="explore-circle-icon" style="background: rgba(22, 163, 74, 0.4);">
+            🌳
+          </div>
+          <div class="explore-cat-name">Nature & Parks</div>
+        </a>
+      </div>
+
+      <div style="text-align: center;">
+        <a href="/tourism" class="btn btn-outline btn-pill" style="border: 1.5px solid rgba(255, 255, 255, 0.4); color: #FFFFFF; background: rgba(6, 35, 63, 0.5); backdrop-filter: blur(6px); padding: 0.6rem 2rem; font-weight: 700; font-size: 0.92rem; display: inline-flex; align-items: center; gap: 0.5rem; transition: var(--transition);">
+          <span>Discover More</span>
+          <span>&rarr;</span>
+        </a>
+      </div>
+
+    </div>
+  </section>
+</div>
 {% endblock %}

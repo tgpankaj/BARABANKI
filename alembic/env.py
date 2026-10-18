@@ -15,17 +15,25 @@ from app.core.database import Base
 # Import all models to register them on Base.metadata
 from app.models import (
     User,
+    UserFollow,
     NewsArticle,
     Event,
+    EventRegistration,
     Business,
     JobListing,
     EducationInstitute,
     CommunityPost,
     Comment,
+    PostLike,
     Report,
+    ModerationAudit,
     ContactMessage,
     CreatorProfile,
     TourismSpot,
+    Notification,
+    CivicIssue,
+    CivicIssueUpvote,
+    IssueStatusHistory,
 )
 
 # this is the Alembic Config object, which provides

@@ -1,6 +1,5 @@
-from datetime import datetime
 from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime, Float
-from app.core.database import Base
+from app.core.database import Base, utc_now
 
 
 class TourismSpot(Base):
@@ -23,7 +22,8 @@ class TourismSpot(Base):
     is_verified_coordinates = Column(Boolean, default=True, nullable=False)
     image_url = Column(String(500), nullable=True)
     best_time_to_visit = Column(String(120), default="October to March", nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=utc_now, nullable=False)
+
 
     def __repr__(self):
         return f"<TourismSpot {self.name}>"

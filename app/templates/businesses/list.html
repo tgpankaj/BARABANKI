@@ -1,96 +1,282 @@
 {% extends "base.html" %}
 
-{% block title %}Local Business & Artisan Directory — Barabanki Connect{% endblock %}
+{% block title %}Local Business Directory — Barabanki Connect{% endblock %}
 
 {% block content %}
-<div class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
-  <div class="section-header">
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+  <!-- Screen 6 Header -->
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
     <div>
-      <h1 class="section-title">Barabanki Business & Artisan Directory</h1>
-      <p class="section-subtitle">Discover local shops, authentic handloom weavers, healthcare providers, and services across District Barabanki.</p>
+      <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--navy); margin-bottom: 0.35rem;">
+        Local Business Directory
+      </h1>
+      <p style="font-size: 0.95rem; color: var(--text-muted);">
+        Barabanki Business & Artisan Directory — Find and support local businesses in Barabanki.
+      </p>
     </div>
-    <a href="/businesses/new" class="btn btn-primary">+ List Your Business</a>
+    <a href="/businesses/new" class="btn btn-primary" style="border-radius: var(--radius-full); font-weight: 700;">
+      + List Your Business
+    </a>
   </div>
 
-  <!-- Filters Row -->
-  <div style="background-color: var(--bg-card); padding: 1.25rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color); margin-bottom: 2rem;">
-    <form action="/businesses" method="GET" style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;">
-      <div style="flex: 2; min-width: 200px;">
-        <label for="q" class="form-label">Search by Business Name</label>
-        <input type="text" id="q" name="q" value="{{ q or '' }}" class="form-control" placeholder="e.g. Zaidpur Handloom or Sweets">
+  <!-- Search Bar -->
+  <div style="margin-bottom: 2rem;">
+    <form action="/businesses" method="GET" style="display: flex; gap: 0.5rem; max-width: 650px;">
+      <div style="position: relative; flex: 1;">
+        <input 
+          type="text" 
+          name="q" 
+          value="{{ q or '' }}" 
+          class="form-control" 
+          placeholder="Search business, service or category..." 
+          style="border-radius: var(--radius-full); padding-left: 2.5rem; height: 42px;"
+          aria-label="Search businesses"
+        >
+        <svg style="position: absolute; left: 1rem; top: 12px; color: #94a3b8;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
       </div>
-
-      <div style="flex: 1; min-width: 160px;">
-        <label for="category" class="form-label">Category</label>
-        <select id="category" name="category" class="form-control">
-          <option value="">All Categories</option>
-          <option value="Handloom & Textiles" {% if current_category == 'Handloom & Textiles' %}selected{% endif %}>Handloom & Textiles</option>
-          <option value="Dining & Sweets" {% if current_category == 'Dining & Sweets' %}selected{% endif %}>Dining & Sweets</option>
-          <option value="Healthcare" {% if current_category == 'Healthcare' %}selected{% endif %}>Healthcare & Clinics</option>
-          <option value="Agro & Fertilizers" {% if current_category == 'Agro & Fertilizers' %}selected{% endif %}>Agro & Fertilizers</option>
-          <option value="Retail & Groceries" {% if current_category == 'Retail & Groceries' %}selected{% endif %}>Retail & Groceries</option>
-          <option value="Services" {% if current_category == 'Services' %}selected{% endif %}>Services & Tech</option>
-        </select>
-      </div>
-
-      <div style="flex: 1; min-width: 140px;">
-        <label for="locality" class="form-label">Tehsil / Locality</label>
-        <select id="locality" name="locality" class="form-control">
-          <option value="">All Localities</option>
-          <option value="Nawabganj" {% if current_locality == 'Nawabganj' %}selected{% endif %}>Nawabganj (HQ)</option>
-          <option value="Zaidpur" {% if current_locality == 'Zaidpur' %}selected{% endif %}>Zaidpur</option>
-          <option value="Haidergarh" {% if current_locality == 'Haidergarh' %}selected{% endif %}>Haidergarh</option>
-          <option value="Ramnagar" {% if current_locality == 'Ramnagar' %}selected{% endif %}>Ramnagar</option>
-          <option value="Fatehpur" {% if current_locality == 'Fatehpur' %}selected{% endif %}>Fatehpur</option>
-          <option value="Deva" {% if current_locality == 'Deva' %}selected{% endif %}>Deva</option>
-        </select>
-      </div>
-
-      <button type="submit" class="btn btn-primary" style="height: 42px;">Filter</button>
+      <button type="submit" class="btn btn-primary" style="border-radius: var(--radius-full); padding: 0 1.5rem;">Search</button>
       {% if q or current_category or current_locality %}
-      <a href="/businesses" class="btn btn-outline" style="height: 42px;">Reset</a>
+      <a href="/businesses" class="btn btn-outline" style="border-radius: var(--radius-full); padding: 0 1rem;">Reset</a>
       {% endif %}
     </form>
   </div>
 
-  {% if businesses and businesses|length > 0 %}
-  <div class="grid-cards-4">
-    {% for biz in businesses %}
-    <div class="card">
-      <div class="card-body">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
-          <span class="badge badge-teal">{{ biz.category }}</span>
-          {% if biz.is_verified %}
-          <span class="badge badge-verified" title="Verified Business">✓ Verified</span>
-          {% endif %}
-          {% if biz.is_demo %}
-          <span class="badge badge-demo" title="Demonstration Listing">Demo</span>
-          {% endif %}
-        </div>
-        <h2 class="card-title" style="font-size: 1.15rem;">
-          <a href="/businesses/{{ biz.slug }}">{{ biz.name }}</a>
-        </h2>
-        <p class="card-text" style="-webkit-line-clamp: 3;">{{ biz.description }}</p>
-        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: auto;">
-          📍 {{ biz.locality }}, Barabanki
-        </div>
-      </div>
-      <div class="card-footer">
-        <span style="font-weight: 700; color: var(--accent);">⭐ {{ biz.rating }}/5.0</span>
-        <a href="/businesses/{{ biz.slug }}" class="btn btn-primary btn-sm">View Profile</a>
-      </div>
-    </div>
-    {% endfor %}
+  <!-- 10 Category Circular Icons Grid (Screen 6 Reference) -->
+  <div class="biz-cat-grid-10">
+    <!-- 1. Restaurants -->
+    <a href="/businesses?category=Dining+%26+Sweets" class="biz-cat-card">
+      <div class="biz-circle-icon" style="background: #fee2e2; color: #ef4444;">🍲</div>
+      <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Restaurants</div>
+    </a>
+
+    <!-- 2. Hotels -->
+    <a href="/businesses?category=Services" class="biz-cat-card">
+      <div class="biz-circle-icon" style="background: #e0f2fe; color: #0284c7;">🏨</div>
+      <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Hotels</div>
+    </a>
+
+    <!-- 3. Photographers -->
+    <a href="/businesses?category=Services" class="biz-cat-card">
+      <div class="biz-circle-icon" style="background: #dcfce7; color: #16a34a;">📷</div>
+      <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Photographers</div>
+    </a>
+
+    <!-- 4. Event Planners -->
+    <a href="/businesses?category=Services" class="biz-cat-card">
+      <div class="biz-circle-icon" style="background: #ffedd5; color: #ea580c;">🎉</div>
+      <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Event Planners</div>
+    </a>
+
+    <!-- 5. Catering -->
+    <a href="/businesses?category=Dining+%26+Sweets" class="biz-cat-card">
+      <div class="biz-circle-icon" style="background: #ccfbf1; color: #0d9488;">🍽️</div>
+      <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Catering</div>
+    </a>
+
+    <!-- 6. Marriage Halls -->
+    <a href="/businesses?category=Services" class="biz-cat-card">
+      <div class="biz-circle-icon" style="background: #fce7f3; color: #db2777;">🏰</div>
+      <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Marriage Halls</div>
+    </a>
+
+    <!-- 7. Clothing -->
+    <a href="/businesses?category=Handloom+%26+Textiles" class="biz-cat-card">
+      <div class="biz-circle-icon" style="background: #ede9fe; color: #7c3aed;">👗</div>
+      <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Clothing & Weaves</div>
+    </a>
+
+    <!-- 8. Electronics -->
+    <a href="/businesses?category=Retail+%26+Groceries" class="biz-cat-card">
+      <div class="biz-circle-icon" style="background: #e0f2fe; color: #0878f9;">💻</div>
+      <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Electronics</div>
+    </a>
+
+    <!-- 9. Clinics -->
+    <a href="/businesses?category=Healthcare" class="biz-cat-card">
+      <div class="biz-circle-icon" style="background: #dcfce7; color: #15803d;">🏥</div>
+      <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Clinics</div>
+    </a>
+
+    <!-- 10. Repair Services -->
+    <a href="/businesses?category=Services" class="biz-cat-card">
+      <div class="biz-circle-icon" style="background: #e0e7ff; color: #4338ca;">🔧</div>
+      <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">Repair Services</div>
+    </a>
   </div>
-  {% else %}
-  <div class="empty-state">
-    <div class="empty-state-icon">🏬</div>
-    <h3 class="empty-state-title">No businesses found</h3>
-    <p class="empty-state-desc">Try clearing your filters or search terms.</p>
-    <a href="/businesses" class="btn btn-outline">Clear Filters</a>
+
+  <!-- Featured Businesses Section (Screen 6 Reference) -->
+  <div style="margin-bottom: 2.5rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+      <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--navy); margin: 0;">
+        Featured Businesses
+      </h2>
+      <a href="/businesses" style="font-size: 0.85rem; color: var(--primary); font-weight: 600;">View All &rarr;</a>
+    </div>
+
+    <!-- 6 Featured Business Cards (2 Rows of 3) matching Reference Screen 6 -->
+    <div class="grid-cards">
+      <!-- Card 1: Sharma Photography -->
+      <article class="card">
+        <div class="card-img-wrap" style="aspect-ratio: 16 / 10;">
+          <img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=600&q=80" alt="Sharma Photography" class="card-img" loading="lazy">
+          <span class="badge badge-primary card-badge-overlay">Photography</span>
+        </div>
+        <div class="card-body">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0;">Sharma Photography</h3>
+            <span style="font-size: 0.82rem; font-weight: 700; color: var(--accent-dark);">⭐ 4.8 <span style="color: var(--text-muted); font-weight: 400;">(120)</span></span>
+          </div>
+          <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.5rem;">Photography &bull; Civil Lines, Barabanki</div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 0.75rem;">Wedding, portrait, and outdoor cinematic shoot specialists with 10+ years experience.</p>
+          <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.78rem; color: var(--text-light);">📍 Nawabganj</span>
+            <button class="btn btn-primary btn-sm" onclick="window.showToast('Contact: +91-9876543210 (Sharma Photography)', 'info');">View Details</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 2: Royal Caters -->
+      <article class="card">
+        <div class="card-img-wrap" style="aspect-ratio: 16 / 10;">
+          <img src="https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&w=600&q=80" alt="Royal Caters" class="card-img" loading="lazy">
+          <span class="badge badge-accent card-badge-overlay">Catering</span>
+        </div>
+        <div class="card-body">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0;">Royal Caters</h3>
+            <span style="font-size: 0.82rem; font-weight: 700; color: var(--accent-dark);">⭐ 4.6 <span style="color: var(--text-muted); font-weight: 400;">(85)</span></span>
+          </div>
+          <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.5rem;">Catering Services &bull; Barabanki</div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 0.75rem;">Authentic Awadhi vegetarian cuisine, buffet setup, and royal catering for grand occasions.</p>
+          <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.78rem; color: var(--text-light);">📍 Station Road</span>
+            <button class="btn btn-primary btn-sm" onclick="window.showToast('Contact: +91-9876543211 (Royal Caters)', 'info');">View Details</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 3: Dream Events -->
+      <article class="card">
+        <div class="card-img-wrap" style="aspect-ratio: 16 / 10;">
+          <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=600&q=80" alt="Dream Events" class="card-img" loading="lazy">
+          <span class="badge badge-purple card-badge-overlay">Event Planner</span>
+        </div>
+        <div class="card-body">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0;">Dream Events</h3>
+            <span style="font-size: 0.82rem; font-weight: 700; color: var(--accent-dark);">⭐ 4.9 <span style="color: var(--text-muted); font-weight: 400;">(95)</span></span>
+          </div>
+          <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.5rem;">Event Planner & Decor &bull; Barabanki</div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 0.75rem;">Complete theme decoration, sound systems, stage setup, and wedding event management.</p>
+          <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.78rem; color: var(--text-light);">📍 Awas Vikas</span>
+            <button class="btn btn-primary btn-sm" onclick="window.showToast('Contact: +91-9876543212 (Dream Events)', 'info');">View Details</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 4: City Hospital -->
+      <article class="card">
+        <div class="card-img-wrap" style="aspect-ratio: 16 / 10;">
+          <img src="https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&w=600&q=80" alt="City Hospital" class="card-img" loading="lazy">
+          <span class="badge badge-success card-badge-overlay">Hospital</span>
+        </div>
+        <div class="card-body">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0;">City Hospital</h3>
+            <span style="font-size: 0.82rem; font-weight: 700; color: var(--accent-dark);">⭐ 4.3 <span style="color: var(--text-muted); font-weight: 400;">(90)</span></span>
+          </div>
+          <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.5rem;">Multispecialty Healthcare &bull; Barabanki</div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 0.75rem;">24x7 emergency ICU, maternity wing, trauma care, and dedicated digital pathology laboratory.</p>
+          <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.78rem; color: var(--text-light);">📍 Deva Road</span>
+            <button class="btn btn-primary btn-sm" onclick="window.showToast('Emergency Helpline: 05248-226789 (City Hospital)', 'info');">View Details</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 5: Fashion Hub -->
+      <article class="card">
+        <div class="card-img-wrap" style="aspect-ratio: 16 / 10;">
+          <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=600&q=80" alt="Fashion Hub" class="card-img" loading="lazy">
+          <span class="badge badge-teal card-badge-overlay">Clothing Store</span>
+        </div>
+        <div class="card-body">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0;">Fashion Hub</h3>
+            <span style="font-size: 0.82rem; font-weight: 700; color: var(--accent-dark);">⭐ 4.3 <span style="color: var(--text-muted); font-weight: 400;">(54)</span></span>
+          </div>
+          <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.5rem;">Clothing & Ready Wear &bull; Barabanki</div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 0.75rem;">Traditional Zaidpur stoles, wedding sherwanis, trendy casuals, and ethnic wear collections.</p>
+          <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.78rem; color: var(--text-light);">📍 Ghanta Ghar Market</span>
+            <button class="btn btn-primary btn-sm" onclick="window.showToast('Contact: +91-9876543213 (Fashion Hub)', 'info');">View Details</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 6: Quick Service Center -->
+      <article class="card">
+        <div class="card-img-wrap" style="aspect-ratio: 16 / 10;">
+          <img src="https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=600&q=80" alt="Quick Service Center" class="card-img" loading="lazy">
+          <span class="badge badge-primary card-badge-overlay">Repair Services</span>
+        </div>
+        <div class="card-body">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0;">Quick Service Center</h3>
+            <span style="font-size: 0.82rem; font-weight: 700; color: var(--accent-dark);">⭐ 4.1 <span style="color: var(--text-muted); font-weight: 400;">(42)</span></span>
+          </div>
+          <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.5rem;">Electronics & Appliance Repair &bull; Barabanki</div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 0.75rem;">Expert smartphone repair, laptop troubleshooting, AC servicing, and home electronics repair.</p>
+          <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.78rem; color: var(--text-light);">📍 Satrikh Road</span>
+            <button class="btn btn-primary btn-sm" onclick="window.showToast('Contact: +91-9876543214 (Quick Service Center)', 'info');">View Details</button>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <!-- Database Businesses Listing -->
+  {% if businesses and businesses|length > 0 %}
+  <div>
+    <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--navy); margin-bottom: 1rem;">
+      All Registered Local Enterprises
+    </h2>
+
+    <div class="grid-cards-4">
+      {% for biz in businesses %}
+      <div class="card">
+        <div class="card-body">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+            <span class="badge badge-teal">{{ biz.category }}</span>
+            {% if biz.is_verified %}
+            <span class="badge badge-verified">✓ Verified</span>
+            {% endif %}
+          </div>
+          <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.35rem;">
+            <a href="/businesses/{{ biz.slug }}" style="color: var(--text-main);">{{ biz.name }}</a>
+          </h3>
+          <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.45; -webkit-line-clamp: 3; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 0.75rem;">
+            {{ biz.description }}
+          </p>
+          <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: auto;">
+            📍 {{ biz.locality }}, Barabanki
+          </div>
+        </div>
+        <div class="card-footer">
+          <span style="font-weight: 700; color: var(--accent-dark); font-size: 0.82rem;">⭐ {{ biz.rating }}/5.0</span>
+          <a href="/businesses/{{ biz.slug }}" class="btn btn-primary btn-sm">View Profile</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% include "components/pagination.html" %}
   </div>
   {% endif %}
-
-  {% include "components/pagination.html" %}
 </div>
 {% endblock %}

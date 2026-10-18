@@ -1,11 +1,13 @@
 import re
-from datetime import datetime, timedelta
-from app.core.database import SessionLocal, init_db
+from datetime import timedelta
+from app.core.database import SessionLocal, init_db, utc_now
 from app.core.security import get_password_hash
 from app.models import (
     User,
+    UserFollow,
     NewsArticle,
     Event,
+    EventRegistration,
     Business,
     JobListing,
     EducationInstitute,
@@ -13,7 +15,12 @@ from app.models import (
     Comment,
     TourismSpot,
     CreatorProfile,
+    CivicIssue,
+    CivicIssueUpvote,
+    IssueStatusHistory,
+    Notification,
 )
+
 
 
 def slugify(text: str) -> str:
@@ -376,7 +383,7 @@ def seed():
                 db.add(art)
 
         # 7. Seed Events
-        now = datetime.utcnow()
+        now = utc_now()
         event_data = [
             {
                 "title": "Barabanki Annual Deva Mela & Cultural Festival",
@@ -523,8 +530,112 @@ def seed():
                 )
                 db.add(comment)
 
+        # 10. Seed Follow Relationships if not present
+        if citizen_user and artisan_user:
+            existing_follow = db.query(UserFollow).filter(UserFollow.follower_id == citizen_user.id, UserFollow.following_id == artisan_user.id).first()
+            if not existing_follow:
+                db.add(UserFollow(follower_id=citizen_user.id, following_id=artisan_user.id))
+            admin_follow = db.query(UserFollow).filter(UserFollow.follower_id == admin_user.id, UserFollow.following_id == artisan_user.id).first()
+            if not admin_follow:
+                db.add(UserFollow(follower_id=admin_user.id, following_id=artisan_user.id))
+
+        # 11. Seed Baseline Civic Issues (Screen 8)
+        civic_issues_data = [
+            {
+                "title": "Severe potholes and waterlogging near Railway Colony crossing",
+                "category": "Roads & Potholes",
+                "locality": "Barabanki City",
+                "landmark": "Opposite Railway Colony Gate 2",
+                "description": "Monsoon rains have caused deep craters on the main feeder lane. Two-wheelers frequently slip during night hours. Immediate gravel patch and drainage desilting required.",
+                "image_url": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?w=800&q=80",
+                "status": "In Progress",
+                "upvotes": 18,
+            },
+            {
+                "title": "Malfunctioning solar streetlights on Deva Road bypass stretch",
+                "category": "Streetlights",
+                "locality": "Deva Sharif",
+                "landmark": "Near Canal Bridge turning",
+                "description": "Six streetlights along the pilgrim bypass road have remained dark for over ten days, creating pedestrian hazards during evening prayer hours.",
+                "image_url": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=800&q=80",
+                "status": "Under Review",
+                "upvotes": 12,
+            },
+            {
+                "title": "Overflowing community waste bin near Subzi Mandi entrance",
+                "category": "Sanitation & Garbage",
+                "locality": "Nawabganj",
+                "landmark": "Subzi Mandi main square",
+                "description": "Municipal bin requires daily morning collection; currently overflowing onto the footpath attracting stray cattle. Sanitization drive needed.",
+                "image_url": None,
+                "status": "Resolved",
+                "upvotes": 25,
+            },
+        ]
+
+        for item in civic_issues_data:
+            iss_slug = slugify(item["title"])
+            existing_issue = db.query(CivicIssue).filter(CivicIssue.slug == iss_slug).first()
+            if not existing_issue:
+                issue = CivicIssue(
+                    **item,
+                    slug=iss_slug,
+                    reported_by_id=citizen_user.id,
+                )
+                db.add(issue)
+                db.flush()
+
+                # Status History
+                hist = IssueStatusHistory(
+                    issue_id=issue.id,
+                    old_status="None",
+                    new_status="Submitted",
+                    notes="Citizen grievance logged with digital geotag.",
+                    changed_by_id=citizen_user.id,
+                )
+                db.add(hist)
+                if item["status"] != "Submitted":
+                    hist2 = IssueStatusHistory(
+                        issue_id=issue.id,
+                        old_status="Submitted",
+                        new_status=item["status"],
+                        notes="Assigned to municipal inspection cell.",
+                        changed_by_id=mod_user.id,
+                    )
+                    db.add(hist2)
+
+                # Upvote
+                db.add(CivicIssueUpvote(issue_id=issue.id, user_id=citizen_user.id))
+
+        # 12. Seed Event Registration & Capacity
+        first_event = db.query(Event).filter(Event.is_approved == True).first()
+        if first_event:
+            first_event.capacity = 250
+            existing_reg = db.query(EventRegistration).filter(EventRegistration.event_id == first_event.id, EventRegistration.user_id == citizen_user.id).first()
+            if not existing_reg:
+                db.add(EventRegistration(
+                    event_id=first_event.id,
+                    user_id=citizen_user.id,
+                    status="confirmed",
+                    notes="Attending with local youth club delegation",
+                ))
+
+        # 13. Seed Baseline Notification
+        existing_notif = db.query(Notification).filter(Notification.recipient_id == citizen_user.id).first()
+        if not existing_notif:
+            db.add(Notification(
+                recipient_id=citizen_user.id,
+                sender_id=admin_user.id,
+                notification_type="issue_status",
+                title="Welcome to Barabanki Connect",
+                message="Your citizen account is verified. You can report civic problems, register for local events, and participate in community discussions.",
+                link="/issues",
+                is_read=False,
+            ))
+
         db.commit()
         print("Barabanki Connect seed data successfully created!")
+
 
     except Exception as e:
         db.rollback()

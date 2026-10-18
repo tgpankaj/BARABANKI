@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+
+{% block title %}Create New Event — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+  <div style="max-width: 720px; margin: 0 auto;">
+    <!-- Breadcrumb / Back Link -->
+    <div style="margin-bottom: 1rem;">
+      <a href="/events" style="font-size: 0.88rem; color: var(--text-muted); display: inline-flex; align-items: center; gap: 0.35rem;">
+        &larr; Back to Events
+      </a>
+    </div>
+
+    <!-- Screen 10 Header -->
+    <div style="margin-bottom: 1.75rem;">
+      <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--navy); margin-bottom: 0.35rem;">
+        Create New Event
+      </h1>
+      <p style="font-size: 0.92rem; color: var(--text-muted);">
+        List an upcoming sports match, cultural festival, educational workshop, or community drive in Barabanki.
+      </p>
+    </div>
+
+    {% if not current_user %}
+    <div class="card" style="background: #fffbeb; border: 1px solid #fef3c7; padding: 1rem 1.25rem; margin-bottom: 1.5rem; border-radius: var(--radius-md);">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: gap; gap: 1rem;">
+        <div style="font-size: 0.9rem; color: #92400e;">
+          <strong>Notice:</strong> You need an active Barabanki Connect resident or organizer account to publish events to the public portal.
+        </div>
+        <a href="/auth/login" class="btn btn-sm btn-primary" style="white-space: nowrap;">Login to Submit</a>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- 3-Step Visual Stepper Bar -->
+    <div class="stepper-bar">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 0.35rem; z-index: 2;">
+        <div class="stepper-step active" id="step-num-1">1</div>
+        <span style="font-size: 0.75rem; font-weight: 700; color: var(--primary);">Event Details</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 0.35rem; z-index: 2;">
+        <div class="stepper-step" id="step-num-2">2</div>
+        <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Date & Venue</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 0.35rem; z-index: 2;">
+        <div class="stepper-step" id="step-num-3">3</div>
+        <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Review</span>
+      </div>
+    </div>
+
+    <!-- Multi-Step Card Form -->
+    <div class="card" style="box-shadow: var(--shadow-md);">
+      <div class="card-body" style="padding: 2rem;">
+        <form id="create-event-form" action="/events/create" method="POST">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+
+          <!-- Step 1 Container -->
+          <div id="step-content-1">
+            <div class="form-group">
+              <label for="event-title" class="form-label">Event Title <span style="color: #ef4444;">*</span></label>
+              <input type="text" id="event-title" name="title" class="form-control" placeholder="e.g. Barabanki Cricket Tournament 2025" required>
+            </div>
+
+            <div class="form-group">
+              <label for="event-category" class="form-label">Category <span style="color: #ef4444;">*</span></label>
+              <select id="event-category" name="category" class="form-control" required>
+                <option value="">Select category...</option>
+                <option value="Sports">Sports & Athletics</option>
+                <option value="Cultural">Cultural & Folk Fairs</option>
+                <option value="Educational">Educational Seminar / Workshop</option>
+                <option value="Health">Health & Blood Donation</option>
+                <option value="Religious">Religious & Spiritual</option>
+                <option value="Business">Business & Trade Expo</option>
+                <option value="Social">Social & Community Drive</option>
+                <option value="Entertainment">Music & Entertainment</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="event-desc" class="form-label">Description <span style="color: #ef4444;">*</span></label>
+              <textarea id="event-desc" name="description" rows="4" class="form-control" placeholder="Describe your event in detail, agenda, chief guests, rules, etc." required></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="event-img-url" class="form-label">Event Cover Image URL (Optional)</label>
+              <input type="text" id="event-img-url" name="image_url" class="form-control" placeholder="https://images.unsplash.com/... or leave blank for default local artwork">
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+              <button type="button" class="btn btn-primary" onclick="window.goToEventStep(2);">
+                Next: Date & Venue &rarr;
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 2 Container -->
+          <div id="step-content-2" style="display: none;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div class="form-group">
+                <label for="event-start-date" class="form-label">Start Date & Time <span style="color: #ef4444;">*</span></label>
+                <input type="datetime-local" id="event-start-date" name="start_date" class="form-control" required>
+              </div>
+
+              <div class="form-group">
+                <label for="event-end-date" class="form-label">End Date & Time</label>
+                <input type="datetime-local" id="event-end-date" name="end_date" class="form-control">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="event-venue" class="form-label">Venue Name <span style="color: #ef4444;">*</span></label>
+              <input type="text" id="event-venue" name="venue_name" class="form-control" placeholder="e.g. K.D. Singh Babu Stadium / Town Hall" required>
+            </div>
+
+            <div class="form-group">
+              <label for="event-address" class="form-label">Detailed Address & Tehsil <span style="color: #ef4444;">*</span></label>
+              <input type="text" id="event-address" name="address" class="form-control" placeholder="e.g. Civil Lines, Nawabganj, Barabanki, UP 225001" required>
+            </div>
+
+            <div class="form-group">
+              <label for="event-locality" class="form-label">Tehsil / Locality</label>
+              <select id="event-locality" name="locality" class="form-control">
+                <option value="Nawabganj">Nawabganj (Headquarters)</option>
+                <option value="Deva Sharif">Deva Sharif</option>
+                <option value="Fatehpur">Fatehpur</option>
+                <option value="Ramnagar">Ramnagar</option>
+                <option value="Sirauli Gauspur">Sirauli Gauspur</option>
+                <option value="Haidergarh">Haidergarh</option>
+                <option value="Rudauli">Rudauli</option>
+                <option value="Zaidpur">Zaidpur</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="event-organizer-name" class="form-label">Organizer Name / Committee <span style="color: #ef4444;">*</span></label>
+              <input type="text" id="event-organizer-name" name="organizer_name" class="form-control" value="{{ current_user.full_name if current_user else '' }}" placeholder="e.g. Barabanki Sports Club" required>
+            </div>
+
+            <div class="form-group">
+              <label for="event-contact" class="form-label">Organizer Contact (Phone or Email)</label>
+              <input type="text" id="event-contact" name="organizer_contact" class="form-control" placeholder="e.g. +91-9876543210 or events@barabanki.local">
+            </div>
+
+            <div class="form-group">
+              <label for="event-reg-link" class="form-label">Registration / Ticket Link (Optional)</label>
+              <input type="url" id="event-reg-link" name="registration_link" class="form-control" placeholder="https://example.com/register">
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 1.5rem;">
+              <button type="button" class="btn btn-outline" onclick="window.goToEventStep(1);">&larr; Back</button>
+              <button type="button" class="btn btn-primary" onclick="window.goToEventStep(3);">Next: Review &rarr;</button>
+            </div>
+          </div>
+
+          <!-- Step 3 Container -->
+          <div id="step-content-3" style="display: none;">
+            <div style="background-color: var(--bg-body); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem; border: 1px solid var(--border-color);">
+              <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--navy); margin-bottom: 0.75rem;">
+                Event Summary Review
+              </h3>
+              <div style="font-size: 0.9rem; line-height: 1.6; color: var(--text-main);" id="event-review-summary">
+                <div><strong>Title:</strong> <span id="rev-title">Barabanki Cricket Tournament 2025</span></div>
+                <div><strong>Category:</strong> <span id="rev-cat">Sports</span></div>
+                <div><strong>Venue:</strong> <span id="rev-venue">Barabanki Stadium</span></div>
+                <div><strong>Locality:</strong> <span id="rev-locality">Nawabganj</span></div>
+                <div><strong>Start Date:</strong> <span id="rev-date">Upcoming</span></div>
+                <div><strong>Submission Mode:</strong> <span class="badge badge-accent">Community Calendar Queue</span></div>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: flex-start; gap: 0.6rem; margin-bottom: 1.5rem;">
+              <input type="checkbox" id="guidelines-check" required style="margin-top: 0.25rem;">
+              <label for="guidelines-check" style="font-size: 0.85rem; color: var(--text-muted);">
+                I confirm this event complies with Barabanki Connect community guidelines and local administrative safety regulations.
+              </label>
+            </div>
+
+            <div style="display: flex; justify-content: space-between;">
+              <button type="button" class="btn btn-outline" onclick="window.goToEventStep(2);">&larr; Back</button>
+              <button type="submit" class="btn btn-primary" style="background-color: var(--primary);">
+                Submit Event For Publication
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.goToEventStep = function(step) {
+    if (step === 2) {
+      const title = document.getElementById('event-title');
+      const cat = document.getElementById('event-category');
+      const desc = document.getElementById('event-desc');
+      if (!title.value) { title.reportValidity(); return; }
+      if (!cat.value) { cat.reportValidity(); return; }
+      if (!desc.value) { desc.reportValidity(); return; }
+    }
+    if (step === 3) {
+      const sdate = document.getElementById('event-start-date');
+      const venue = document.getElementById('event-venue');
+      const addr = document.getElementById('event-address');
+      const org = document.getElementById('event-organizer-name');
+      if (!sdate.value) { sdate.reportValidity(); return; }
+      if (!venue.value) { venue.reportValidity(); return; }
+      if (!addr.value) { addr.reportValidity(); return; }
+      if (!org.value) { org.reportValidity(); return; }
+
+      document.getElementById('rev-title').innerText = document.getElementById('event-title').value || 'Untitled Event';
+      document.getElementById('rev-cat').innerText = document.getElementById('event-category').value || 'General';
+      document.getElementById('rev-venue').innerText = document.getElementById('event-venue').value || 'To be announced';
+      document.getElementById('rev-locality').innerText = document.getElementById('event-locality').value || 'Barabanki';
+      document.getElementById('rev-date').innerText = document.getElementById('event-start-date').value || 'Upcoming';
+    }
+
+    document.getElementById('step-content-1').style.display = step === 1 ? 'block' : 'none';
+    document.getElementById('step-content-2').style.display = step === 2 ? 'block' : 'none';
+    document.getElementById('step-content-3').style.display = step === 3 ? 'block' : 'none';
+
+    document.getElementById('step-num-1').className = 'stepper-step ' + (step === 1 ? 'active' : (step > 1 ? 'completed' : ''));
+    document.getElementById('step-num-2').className = 'stepper-step ' + (step === 2 ? 'active' : (step > 2 ? 'completed' : ''));
+    document.getElementById('step-num-3').className = 'stepper-step ' + (step === 3 ? 'active' : '');
+
+    window.scrollTo({ top: 120, behavior: 'smooth' });
+  };
+</script>
+{% endblock %}

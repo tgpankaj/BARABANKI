@@ -38,10 +38,17 @@ venv.bak/
 !.env.example
 secrets.json
 
-# SQLite databases
+# SQLite databases & backups
 *.db
 *.sqlite
 *.sqlite3
+backups/
+
+# Backup and temporary files
+*.bak
+*.old
+*.tmp
+*~
 
 # Log files
 *.log

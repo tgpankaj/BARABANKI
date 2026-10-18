@@ -60,15 +60,75 @@
       {{ event.description }}
     </div>
 
+    {% if message %}
+    <div class="alert alert-info" style="margin-bottom: 1.5rem;">{{ message }}</div>
+    {% endif %}
+
+    <!-- RSVP & Participation Box -->
+    <div class="card" style="margin-bottom: 2rem; border-left: 4px solid var(--primary); box-shadow: var(--shadow-sm);">
+      <div class="card-body" style="padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--navy); margin: 0 0 0.25rem;">
+            Community RSVP &amp; Attendance
+          </h3>
+          <div style="font-size: 0.9rem; color: var(--text-muted); display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+            <span>👥 <strong>{{ registrations_count }}</strong> registered attendee{{ 's' if registrations_count != 1 else '' }}</span>
+            {% if event.capacity %}
+            <span>&bull; Capacity: <strong>{{ event.capacity }}</strong> seats</span>
+            {% if spots_left is not none %}
+            <span class="badge {% if is_full %}badge-danger{% else %}badge-primary{% endif %}">
+              {% if is_full %}Full Capacity{% else %}{{ spots_left }} spots remaining{% endif %}
+            </span>
+            {% endif %}
+            {% endif %}
+          </div>
+        </div>
+
+        <div>
+          {% if current_user %}
+            {% if is_registered %}
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <span class="badge badge-accent" style="padding: 0.5rem 0.75rem; font-size: 0.85rem;">
+                ✅ Registered
+              </span>
+              <form action="/events/{{ event.slug }}/cancel-registration" method="POST" style="margin: 0;" onsubmit="return confirm('Cancel your registration for this event?');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+                <button type="submit" class="btn btn-outline btn-sm" style="color: #ef4444; border-color: rgba(239,68,68,0.3);">
+                  Cancel RSVP
+                </button>
+              </form>
+            </div>
+            {% elif is_full %}
+            <button class="btn btn-outline btn-sm" disabled style="opacity: 0.6; cursor: not-allowed;">
+              Capacity Reached
+            </button>
+            {% else %}
+            <form action="/events/{{ event.slug }}/register" method="POST" style="margin: 0; display: flex; gap: 0.5rem;">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+              <button type="submit" class="btn btn-primary">
+                RSVP / Register Free
+              </button>
+            </form>
+            {% endif %}
+          {% else %}
+            <a href="/auth/login" class="btn btn-primary btn-sm">
+              Log in to RSVP
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
     {% if event.registration_link %}
-    <div style="margin-bottom: 2.5rem; padding: 1.25rem; background-color: var(--accent-light); border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center; flex-wrap: gap;">
+    <div style="margin-bottom: 2.5rem; padding: 1.25rem; background-color: var(--accent-light); border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
       <div>
-        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--accent); margin: 0;">Registration / Participation</h3>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0;">Official booking or information page.</p>
+        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--navy); margin: 0;">Official Registration / Tickets</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.25rem 0 0;">Official booking or information portal.</p>
       </div>
       <a href="{{ event.registration_link }}" target="_blank" rel="noopener noreferrer" class="btn btn-accent">Official Link &rarr;</a>
     </div>
     {% endif %}
+
 
     <!-- Venue Map Location -->
     {% if event.latitude and event.longitude %}

@@ -1,62 +1,263 @@
 {% extends "base.html" %}
 
-{% block title %}Local News & Civic Bulletins — Barabanki Connect{% endblock %}
+{% block title %}News & Updates — Barabanki Connect{% endblock %}
 
 {% block content %}
-<div class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
-  <div class="section-header">
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+  <!-- Page Header matching Screen 2 -->
+  <div style="margin-bottom: 1.5rem;">
+    <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--navy); margin-bottom: 0.35rem;">
+      News & Updates
+    </h1>
+    <p style="font-size: 0.95rem; color: var(--text-muted);">
+      Civic News & Bulletins — Latest news, government updates, and important information from Barabanki.
+    </p>
+  </div>
+
+  <!-- Search Bar -->
+  <div style="margin-bottom: 1.5rem;">
+    <form action="/news" method="GET" style="display: flex; gap: 0.5rem; max-width: 650px;">
+      <div style="position: relative; flex: 1;">
+        <input 
+          type="text" 
+          name="q" 
+          value="{{ q or '' }}" 
+          class="form-control" 
+          placeholder="Search news..." 
+          style="border-radius: var(--radius-full); padding-left: 2.5rem; height: 42px;"
+          aria-label="Search news"
+        >
+        <svg style="position: absolute; left: 1rem; top: 12px; color: #94a3b8;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </div>
+      <button type="submit" class="btn btn-primary" style="border-radius: var(--radius-full); padding: 0 1.5rem;">Search</button>
+      {% if q or current_category %}
+      <a href="/news" class="btn btn-outline" style="border-radius: var(--radius-full); padding: 0 1rem;">Reset</a>
+      {% endif %}
+    </form>
+  </div>
+
+  <!-- Category Filter Pills (Screen 2) -->
+  <div class="filter-chip-bar">
+    <a href="/news" class="filter-chip {% if not current_category %}active{% endif %}">All</a>
+    <a href="/news?category=Administration" class="filter-chip {% if current_category == 'Administration' %}active{% endif %}">Administration</a>
+    <a href="/news?category=Education" class="filter-chip {% if current_category == 'Education' %}active{% endif %}">Education</a>
+    <a href="/news?category=Health" class="filter-chip {% if current_category == 'Health' %}active{% endif %}">Health</a>
+    <a href="/news?category=Jobs" class="filter-chip {% if current_category == 'Jobs' %}active{% endif %}">Jobs</a>
+    <a href="/news?category=Crime" class="filter-chip {% if current_category == 'Crime' %}active{% endif %}">Crime & Law</a>
+    <a href="/news?category=Development" class="filter-chip {% if current_category == 'Development' %}active{% endif %}">Development</a>
+    <a href="/news?category=Agro" class="filter-chip {% if current_category == 'Agro' %}active{% endif %}">Agriculture</a>
+  </div>
+
+  <!-- 2-Column Main Content (Left: News Cards, Right: Sidebar) -->
+  <div style="display: grid; grid-template-columns: 1fr; gap: 2rem;" class="news-layout-grid">
+    <style>
+      @media (min-width: 1024px) {
+        .news-layout-grid { grid-template-columns: 8fr 4fr !important; }
+      }
+    </style>
+
+    <!-- Left Column: Horizontal News List -->
     <div>
-      <h1 class="section-title">Civic News & Bulletins</h1>
-      <p class="section-subtitle">Verified district updates, administrative notices, and regional developments across Barabanki.</p>
+      {% if articles and articles|length > 0 %}
+        {% for article in articles %}
+        <article class="news-card-horizontal">
+          <img src="{{ article.image_url or 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=600&q=80' }}" alt="{{ article.title }}" class="news-thumb-left" loading="lazy">
+          <div class="news-content-right">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+              <span class="badge badge-primary">{{ article.category }}</span>
+              <span style="font-size: 0.78rem; color: var(--text-muted);">📅 {{ article.created_at.strftime('%d %b %Y') }}</span>
+            </div>
+            <h2 style="font-size: 1.15rem; font-weight: 700; line-height: 1.35; margin-bottom: 0.5rem;">
+              <a href="/news/{{ article.slug }}" style="color: var(--text-main);">{{ article.title }}</a>
+            </h2>
+            <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 0.75rem; -webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden;">
+              {{ article.summary }}
+            </p>
+            <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: var(--text-light);">
+              <span style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                Source: {{ article.source_attribution }}
+              </span>
+              <a href="/news/{{ article.slug }}" class="btn btn-outline-primary btn-sm" style="border-radius: var(--radius-full);">Read Article &rarr;</a>
+            </div>
+          </div>
+        </article>
+        {% endfor %}
+      {% else %}
+        <!-- Demonstration Content Matching Screen 2 if empty or filter applies -->
+        <article class="news-card-horizontal">
+          <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=600&q=80" alt="बाराबंकी में नए स्वास्थ्य केंद्र" class="news-thumb-left">
+          <div class="news-content-right">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+              <span class="badge badge-success">Health</span>
+              <span style="font-size: 0.78rem; color: var(--text-muted);">📅 12 May 2025</span>
+            </div>
+            <h2 style="font-size: 1.15rem; font-weight: 700; line-height: 1.35; margin-bottom: 0.5rem;">
+              <a href="/news" style="color: var(--text-main);">बाराबंकी में नए स्वास्थ्य केंद्र का उद्घाटन</a>
+            </h2>
+            <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 0.75rem;">
+              ग्रामीण क्षेत्रों में बेहतर चिकित्सा सुविधाएं उपलब्ध कराने के लिए 15 प्राथमिक स्वास्थ्य केंद्रों का संचालन शुरू।
+            </p>
+            <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: var(--text-light);">
+              <span>Source: District Health Bulletin</span>
+              <a href="/news" class="btn btn-outline-primary btn-sm" style="border-radius: var(--radius-full);">Read Article &rarr;</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="news-card-horizontal">
+          <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=600&q=80" alt="UP Board Result 2025" class="news-thumb-left">
+          <div class="news-content-right">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+              <span class="badge badge-primary">Education</span>
+              <span style="font-size: 0.78rem; color: var(--text-muted);">📅 10 May 2025</span>
+            </div>
+            <h2 style="font-size: 1.15rem; font-weight: 700; line-height: 1.35; margin-bottom: 0.5rem;">
+              <a href="/news" style="color: var(--text-main);">UP Board Result 2025 घोषित</a>
+            </h2>
+            <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 0.75rem;">
+              बाराबंकी के विद्यार्थियों ने हाईस्कूल और इंटरमीडिएट में उत्कृष्ट प्रदर्शन कर प्रदेश भर में नाम रोशन किया।
+            </p>
+            <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: var(--text-light);">
+              <span>Source: Madhyamik Shiksha Parishad</span>
+              <a href="/news" class="btn btn-outline-primary btn-sm" style="border-radius: var(--radius-full);">Read Article &rarr;</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="news-card-horizontal">
+          <img src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=600&q=80" alt="बाराबंकी में क्रिकेट टूर्नामेंट" class="news-thumb-left">
+          <div class="news-content-right">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+              <span class="badge badge-accent">Sports</span>
+              <span style="font-size: 0.78rem; color: var(--text-muted);">📅 09 May 2025</span>
+            </div>
+            <h2 style="font-size: 1.15rem; font-weight: 700; line-height: 1.35; margin-bottom: 0.5rem;">
+              <a href="/news" style="color: var(--text-main);">बाराबंकी में क्रिकेट टूर्नामेंट का आयोजन</a>
+            </h2>
+            <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 0.75rem;">
+              के.डी. सिंह बाबू स्टेडियम में अंतर-जनपदीय क्रिकेट प्रतियोगिता का शुभारंभ, 16 टीमें लेंगी हिस्सा।
+            </p>
+            <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: var(--text-light);">
+              <span>Source: Barabanki Sports Bureau</span>
+              <a href="/news" class="btn btn-outline-primary btn-sm" style="border-radius: var(--radius-full);">Read Article &rarr;</a>
+            </div>
+          </div>
+        </article>
+      {% endif %}
+
+      {% include "components/pagination.html" %}
+    </div>
+
+    <!-- Right Column: Sidebar (Screen 2) -->
+    <div>
+      <!-- Latest News Mini-List -->
+      <div class="card" style="padding: 1.25rem; margin-bottom: 1.5rem;">
+        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--navy); margin-bottom: 0.85rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+          Latest News
+        </h3>
+        
+        <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+          <div>
+            <div style="font-size: 0.72rem; color: var(--primary); font-weight: 600;">ADMINISTRATION</div>
+            <a href="/news" style="font-size: 0.88rem; font-weight: 600; color: var(--text-main); line-height: 1.3; display: block;">
+              जिला अस्पताल की नई पहल: 24 घंटे टेलीमेडिसिन सेवा शुरू
+            </a>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">7 May 2025</span>
+          </div>
+
+          <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.75rem;">
+            <div style="font-size: 0.72rem; color: #16a34a; font-weight: 600;">AGRICULTURE</div>
+            <a href="/news" style="font-size: 0.88rem; font-weight: 600; color: var(--text-main); line-height: 1.3; display: block;">
+              किसानों के लिए नई योजना की घोषणा, मेंथा किसानों को सब्सिडी
+            </a>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">6 May 2025</span>
+          </div>
+
+          <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.75rem;">
+            <div style="font-size: 0.72rem; color: #0284c7; font-weight: 600;">WEATHER</div>
+            <a href="/news" style="font-size: 0.88rem; font-weight: 600; color: var(--text-main); line-height: 1.3; display: block;">
+              बाराबंकी के मौसम में बदलाव, आगामी दो दिनों में बारिश के आसार
+            </a>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">5 May 2025</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Categories Count Sidebar -->
+      <div class="card" style="padding: 1.25rem; margin-bottom: 1.5rem;">
+        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--navy); margin-bottom: 0.85rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+          Categories
+        </h3>
+
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem;">
+          <li>
+            <a href="/news?category=Administration" style="display: flex; justify-content: space-between; color: var(--text-main); font-size: 0.88rem; font-weight: 500;">
+              <span>🏛️ Administration</span>
+              <span class="badge" style="background: #f1f5f9; color: var(--text-muted);">18</span>
+            </a>
+          </li>
+          <li>
+            <a href="/news?category=Education" style="display: flex; justify-content: space-between; color: var(--text-main); font-size: 0.88rem; font-weight: 500;">
+              <span>🎓 Education</span>
+              <span class="badge" style="background: #f1f5f9; color: var(--text-muted);">24</span>
+            </a>
+          </li>
+          <li>
+            <a href="/news?category=Health" style="display: flex; justify-content: space-between; color: var(--text-main); font-size: 0.88rem; font-weight: 500;">
+              <span>🏥 Health</span>
+              <span class="badge" style="background: #f1f5f9; color: var(--text-muted);">15</span>
+            </a>
+          </li>
+          <li>
+            <a href="/news?category=Jobs" style="display: flex; justify-content: space-between; color: var(--text-main); font-size: 0.88rem; font-weight: 500;">
+              <span>💼 Jobs</span>
+              <span class="badge" style="background: #f1f5f9; color: var(--text-muted);">12</span>
+            </a>
+          </li>
+          <li>
+            <a href="/news?category=Crime" style="display: flex; justify-content: space-between; color: var(--text-main); font-size: 0.88rem; font-weight: 500;">
+              <span>⚖️ Crime & Law</span>
+              <span class="badge" style="background: #f1f5f9; color: var(--text-muted);">8</span>
+            </a>
+          </li>
+          <li>
+            <a href="/news?category=Development" style="display: flex; justify-content: space-between; color: var(--text-main); font-size: 0.88rem; font-weight: 500;">
+              <span>🏗️ Development</span>
+              <span class="badge" style="background: #f1f5f9; color: var(--text-muted);">21</span>
+            </a>
+          </li>
+          <li>
+            <a href="/news?category=Agro" style="display: flex; justify-content: space-between; color: var(--text-main); font-size: 0.88rem; font-weight: 500;">
+              <span>🌾 Agriculture</span>
+              <span class="badge" style="background: #f1f5f9; color: var(--text-muted);">14</span>
+            </a>
+          </li>
+          <li>
+            <a href="/news" style="display: flex; justify-content: space-between; color: var(--text-main); font-size: 0.88rem; font-weight: 500;">
+              <span>🚌 Transport</span>
+              <span class="badge" style="background: #f1f5f9; color: var(--text-muted);">9</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Subscribe for Updates Card -->
+      <div class="card" style="padding: 1.25rem; background: linear-gradient(135deg, #082D50 0%, #06233F 100%); color: #fff;">
+        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem; color: #fff;">
+          Subscribe for Updates
+        </h3>
+        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.75); line-height: 1.45; margin-bottom: 1rem;">
+          Get daily verified news, administrative notices and citizen bulletins directly in your inbox.
+        </p>
+        <form onsubmit="event.preventDefault(); window.showToast('Subscribed for daily Barabanki updates!', 'success'); this.reset();" style="display: flex; flex-direction: column; gap: 0.6rem;">
+          <input type="email" placeholder="Enter your email" required style="padding: 0.6rem 0.85rem; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.1); color: #fff; font-size: 0.88rem;" aria-label="Enter email">
+          <button type="submit" class="btn btn-accent" style="width: 100%; border-radius: var(--radius-md);">Subscribe</button>
+        </form>
+      </div>
     </div>
   </div>
-
-  <!-- Category Filter Tabs -->
-  <div style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem; margin-bottom: 2rem;">
-    <a href="/news" class="btn {% if not current_category %}btn-primary{% else %}btn-outline{% endif %} btn-sm">All News</a>
-    <a href="/news?category=Administration" class="btn {% if current_category == 'Administration' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Administration</a>
-    <a href="/news?category=Development" class="btn {% if current_category == 'Development' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Development</a>
-    <a href="/news?category=Education" class="btn {% if current_category == 'Education' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Education</a>
-    <a href="/news?category=Agro" class="btn {% if current_category == 'Agro' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Agriculture & Mentha</a>
-    <a href="/news?category=Culture" class="btn {% if current_category == 'Culture' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Culture & Fairs</a>
-  </div>
-
-  {% if articles and articles|length > 0 %}
-  <div class="grid-cards">
-    {% for article in articles %}
-    <article class="card">
-      <div class="card-img-wrap">
-        <img src="{{ article.image_url or '/static/images/placeholder.svg' }}" alt="{{ article.title }}" class="card-img" loading="lazy">
-        <span class="badge badge-primary card-badge-overlay">{{ article.category }}</span>
-      </div>
-      <div class="card-body">
-        <div class="card-meta">
-          <span>📅 {{ article.created_at.strftime('%d %b %Y') }}</span>
-          <span>👁️ {{ article.views_count }} views</span>
-        </div>
-        <h2 class="card-title" style="font-size: 1.15rem;">
-          <a href="/news/{{ article.slug }}">{{ article.title }}</a>
-        </h2>
-        <p class="card-text">{{ article.summary }}</p>
-      </div>
-      <div class="card-footer">
-        <span style="font-size: 0.75rem; color: var(--text-muted); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 180px;">
-          Source: {{ article.source_attribution }}
-        </span>
-        <a href="/news/{{ article.slug }}" class="btn btn-primary btn-sm">Read Full</a>
-      </div>
-    </article>
-    {% endfor %}
-  </div>
-  {% else %}
-  <div class="empty-state">
-    <div class="empty-state-icon">📰</div>
-    <h3 class="empty-state-title">No articles found</h3>
-    <p class="empty-state-desc">There are currently no published articles in this category.</p>
-    <a href="/news" class="btn btn-primary">View All News</a>
-  </div>
-  {% endif %}
-
-  {% include "components/pagination.html" %}
 </div>
 {% endblock %}

@@ -2,6 +2,7 @@ from app.schemas.auth import (
     UserRegister,
     UserLogin,
     UserProfileUpdate,
+    UserProfilePublicOut,
     UserPasswordChange,
     UserOut,
     TokenResponse,
@@ -12,7 +13,13 @@ from app.schemas.news import (
     NewsArticleUpdate,
     NewsArticleOut,
 )
-from app.schemas.event import EventBase, EventCreate, EventOut
+from app.schemas.event import (
+    EventBase,
+    EventCreate,
+    EventOut,
+    EventRegistrationCreate,
+    EventRegistrationOut,
+)
 from app.schemas.business import BusinessBase, BusinessCreate, BusinessOut
 from app.schemas.job import JobListingBase, JobListingCreate, JobListingOut
 from app.schemas.education import EducationInstituteBase, EducationInstituteCreate, EducationInstituteOut
@@ -22,16 +29,28 @@ from app.schemas.community import (
     CommentOut,
     CommunityPostBase,
     CommunityPostCreate,
+    CommunityPostUpdate,
     CommunityPostOut,
+    PostLikeOut,
     ReportCreate,
 )
 from app.schemas.contact import ContactMessageCreate, ContactMessageOut
 from app.schemas.tourism import TourismSpotBase, TourismSpotCreate, TourismSpotOut
+from app.schemas.notification import NotificationOut, NotificationCountOut
+from app.schemas.civic_issue import (
+    CivicIssueBase,
+    CivicIssueCreate,
+    CivicIssueUpdate,
+    IssueStatusUpdate,
+    IssueStatusHistoryOut,
+    CivicIssueOut,
+)
 
 __all__ = [
     "UserRegister",
     "UserLogin",
     "UserProfileUpdate",
+    "UserProfilePublicOut",
     "UserPasswordChange",
     "UserOut",
     "TokenResponse",
@@ -42,6 +61,8 @@ __all__ = [
     "EventBase",
     "EventCreate",
     "EventOut",
+    "EventRegistrationCreate",
+    "EventRegistrationOut",
     "BusinessBase",
     "BusinessCreate",
     "BusinessOut",
@@ -56,11 +77,22 @@ __all__ = [
     "CommentOut",
     "CommunityPostBase",
     "CommunityPostCreate",
+    "CommunityPostUpdate",
     "CommunityPostOut",
+    "PostLikeOut",
     "ReportCreate",
     "ContactMessageCreate",
     "ContactMessageOut",
     "TourismSpotBase",
     "TourismSpotCreate",
     "TourismSpotOut",
+    "NotificationOut",
+    "NotificationCountOut",
+    "CivicIssueBase",
+    "CivicIssueCreate",
+    "CivicIssueUpdate",
+    "IssueStatusUpdate",
+    "IssueStatusHistoryOut",
+    "CivicIssueOut",
 ]
+

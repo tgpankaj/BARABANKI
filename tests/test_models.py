@@ -1,16 +1,11 @@
-from datetime import datetime
 from app.models import (
     User,
     NewsArticle,
-    Event,
     Business,
     JobListing,
-    EducationInstitute,
     CommunityPost,
     Comment,
     TourismSpot,
-    ContactMessage,
-    Report,
 )
 
 

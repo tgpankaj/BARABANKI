@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Internal Server Error (500) — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 5rem 1rem; text-align: center;">
+  <div style="font-size: 5rem; font-weight: 800; color: var(--danger); line-height: 1;">500</div>
+  <h1 style="font-size: 2rem; font-weight: 800; color: var(--navy); margin-top: 1rem; margin-bottom: 0.75rem;">
+    Internal Server Error
+  </h1>
+  <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 520px; margin: 0 auto 2rem;">
+    An unexpected technical error occurred while processing your request. The technical team has been alerted.
+  </p>
+  <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+    <a href="/" class="btn btn-primary" style="font-weight: 700;">&larr; Return to Barabanki Connect Home</a>
+    <a href="/contact" class="btn btn-outline">Contact Civic Support</a>
+  </div>
+</div>
+{% endblock %}

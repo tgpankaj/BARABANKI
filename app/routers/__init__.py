@@ -9,6 +9,8 @@ from app.routers.community import router as community_router
 from app.routers.tourism import router as tourism_router
 from app.routers.creators import router as creators_router
 from app.routers.admin import router as admin_router
+from app.routers.civic_issues import router as civic_issues_router
+from app.routers.notifications import router as notifications_router
 
 __all__ = [
     "web_router",
@@ -22,4 +24,7 @@ __all__ = [
     "tourism_router",
     "creators_router",
     "admin_router",
+    "civic_issues_router",
+    "notifications_router",
 ]
+

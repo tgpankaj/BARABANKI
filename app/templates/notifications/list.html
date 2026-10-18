@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
+  <div style="max-width: 760px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--navy); margin: 0 0 0.25rem;">
+          Notifications
+        </h1>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">
+          Stay updated on comments, likes, followers, event registrations, and civic issue progress.
+        </p>
+      </div>
+
+      {% if unread_count > 0 %}
+      <form action="/notifications/mark-all-read" method="POST" style="margin: 0;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+        <button type="submit" class="btn btn-outline btn-sm">
+          ✓ Mark All as Read ({{ unread_count }})
+        </button>
+      </form>
+      {% endif %}
+    </div>
+
+    {% if notifications and notifications|length > 0 %}
+    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+      {% for notif in notifications %}
+      <div class="card" style="padding: 1.25rem; {% if not notif.is_read %}border-left: 4px solid var(--primary); background: rgba(8, 120, 249, 0.03);{% endif %} transition: background 0.15s ease;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+          <div style="display: flex; gap: 0.85rem; align-items: flex-start;">
+            <!-- Notification Type Icon -->
+            <div style="width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; background: {% if notif.notification_type == 'like' %}#fef2f2{% elif notif.notification_type == 'comment' %}#eff6ff{% elif notif.notification_type == 'follow' %}#fdf4ff{% elif notif.notification_type == 'event_reg' %}#ecfdf5{% elif notif.notification_type == 'issue_status' %}#fffbeb{% else %}#f1f5f9{% endif %};">
+              {% if notif.notification_type == 'like' %}❤️
+              {% elif notif.notification_type == 'comment' %}💬
+              {% elif notif.notification_type == 'follow' %}👤
+              {% elif notif.notification_type == 'event_reg' %}📅
+              {% elif notif.notification_type == 'issue_status' %}🚨
+              {% elif notif.notification_type == 'moderation' %}🛡️
+              {% else %}🔔{% endif %}
+            </div>
+
+            <div>
+              <div style="font-weight: 700; color: var(--navy); font-size: 0.95rem; margin-bottom: 0.2rem;">
+                {{ notif.title }}
+                {% if not notif.is_read %}
+                <span class="badge badge-accent" style="font-size: 0.65rem; margin-left: 0.35rem;">New</span>
+                {% endif %}
+              </div>
+              <p style="font-size: 0.88rem; color: var(--text-main); margin: 0 0 0.35rem; line-height: 1.45;">
+                {{ notif.message }}
+              </p>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">
+                {{ notif.created_at.strftime('%d %b %Y, %I:%M %p') }}
+              </span>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 0.5rem; align-items: center; flex-shrink: 0;">
+            {% if notif.link %}
+            <form action="/notifications/{{ notif.id }}/read" method="POST" style="margin: 0;">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+              <button type="submit" class="btn btn-outline btn-sm" style="font-size: 0.78rem; padding: 0.3rem 0.65rem;">
+                View &rarr;
+              </button>
+            </form>
+            {% elif not notif.is_read %}
+            <form action="/notifications/{{ notif.id }}/read" method="POST" style="margin: 0;">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+              <button type="submit" class="btn btn-outline btn-sm" style="font-size: 0.78rem; padding: 0.3rem 0.65rem;">
+                Mark Read
+              </button>
+            </form>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="card" style="text-align: center; padding: 3.5rem 1.5rem;">
+      <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔔</div>
+      <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--navy); margin: 0 0 0.5rem;">No Notifications Yet</h3>
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">
+        When fellow residents interact with your posts, follow your profile, or when your reported issues progress, you'll see alerts here.
+      </p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

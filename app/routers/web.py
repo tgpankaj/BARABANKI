@@ -1,4 +1,4 @@
-import math
+from typing import Optional
 from fastapi import APIRouter, Request, Depends, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -73,6 +73,40 @@ def about_page(
         name="pages/about.html",
         context={
             "active_page": "about",
+            "current_user": current_user,
+        },
+    )
+
+
+@router.get("/services", response_class=HTMLResponse)
+def services_page(
+    request: Request,
+    current_user = Depends(get_current_user_optional),
+    category: Optional[str] = None,
+):
+    """Public Services & Help Directory page (Screen 7)."""
+    return templates.TemplateResponse(
+        request=request,
+        name="pages/services.html",
+        context={
+            "active_page": "services",
+            "current_user": current_user,
+            "current_category": category or "all",
+        },
+    )
+
+
+@router.get("/mobile-view", response_class=HTMLResponse)
+def mobile_preview_page(
+    request: Request,
+    current_user = Depends(get_current_user_optional),
+):
+    """Interactive Screen 12 Responsive Mobile View simulation page."""
+    return templates.TemplateResponse(
+        request=request,
+        name="pages/mobile_preview.html",
+        context={
+            "active_page": "mobile_view",
             "current_user": current_user,
         },
     )
@@ -257,6 +291,23 @@ def search_page(
                     "description": t.short_description,
                     "subtext": f"Category: {t.category}",
                     "url": f"/tourism/{t.slug}",
+                })
+
+        # Search Community Discussions & Posts
+        if type in ["all", "community"]:
+            post_matches = db.query(CommunityPost).filter(
+                or_(
+                    CommunityPost.title.ilike(pattern),
+                    CommunityPost.content.ilike(pattern),
+                )
+            ).limit(10).all()
+            for p in post_matches:
+                results.append({
+                    "entity_type": "Community",
+                    "title": p.title,
+                    "description": p.content[:160] + "..." if len(p.content) > 160 else p.content,
+                    "subtext": f"{p.category} • {p.upvotes} upvotes",
+                    "url": f"/community/{p.id}",
                 })
 
     return templates.TemplateResponse(

@@ -1,6 +1,6 @@
-from datetime import datetime
-from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime, Float
-from app.core.database import Base
+from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime, Float, ForeignKey, UniqueConstraint
+from sqlalchemy.orm import relationship
+from app.core.database import Base, utc_now
 
 
 class Event(Base):
@@ -23,8 +23,35 @@ class Event(Base):
     organizer_contact = Column(String(100), nullable=True)
     registration_link = Column(String(500), nullable=True)
     image_url = Column(String(500), nullable=True)
+    capacity = Column(Integer, nullable=True)
     is_approved = Column(Boolean, default=True, index=True, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=utc_now, nullable=False)
+
+    # Relationships
+    registrations = relationship("EventRegistration", back_populates="event", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<Event {self.title[:30]}>"
+
+
+class EventRegistration(Base):
+    __tablename__ = "event_registrations"
+
+    id = Column(Integer, primary_key=True, index=True)
+    event_id = Column(Integer, ForeignKey("events.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    status = Column(String(20), default="confirmed", nullable=False)  # confirmed, cancelled
+    notes = Column(String(255), nullable=True)
+    created_at = Column(DateTime, default=utc_now, nullable=False)
+    updated_at = Column(DateTime, default=utc_now, onupdate=utc_now, nullable=False)
+
+    __table_args__ = (
+        UniqueConstraint("event_id", "user_id", name="uq_event_registration"),
+    )
+
+    event = relationship("Event", back_populates="registrations")
+    user = relationship("User", back_populates="event_registrations")
+
+    def __repr__(self):
+        return f"<EventRegistration event={self.event_id} user={self.user_id} [{self.status}]>"
+

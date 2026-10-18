@@ -2,10 +2,18 @@
 <html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Barabanki Connect — The comprehensive community portal for residents, students, businesses, and tourists of District Barabanki, Uttar Pradesh.">
-  <meta name="theme-color" content="#1E3A8A">
-  <title>{% block title %}Barabanki Connect — Local Community, Business & Heritage Portal{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="description" content="Barabanki Connect — Apna Barabanki, Ab Ek Click Door! The comprehensive community portal for residents, students, businesses, and tourists of District Barabanki, Uttar Pradesh.">
+  <meta name="theme-color" content="#06233F">
+  <title>{% block title %}Barabanki Connect — Apna Barabanki, Ab Ek Click Door!{% endblock %}</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/static/images/logo.svg">
+
+  <!-- Google Font: Inter & Noto Sans Devanagari -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Leaflet CSS for OpenStreetMap -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -16,6 +24,9 @@
   {% block extra_head %}{% endblock %}
 </head>
 <body>
+  <!-- Accessibility: Skip to Main Content Link -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
   <!-- Navigation Header -->
   {% include "components/navbar.html" %}
 
@@ -31,6 +42,9 @@
 
   <!-- Global Footer -->
   {% include "components/footer.html" %}
+
+  <!-- Mobile Bottom Sticky App Bar -->
+  {% include "components/bottom_nav.html" %}
 
   <!-- Leaflet JS for OpenStreetMap -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>

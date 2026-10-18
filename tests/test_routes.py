@@ -110,27 +110,28 @@ def test_admin_routes_redirect_anonymous(client):
 
 
 def test_admin_dashboard_accessible_with_token(client, admin_token):
-    resp = client.get("/admin", cookies={"barabanki_session": admin_token})
+    resp = client.get("/admin", headers={"Cookie": f"barabanki_session={admin_token}"})
     assert resp.status_code == 200
     assert "Administrative Dashboard" in resp.text
 
 
 def test_admin_users_view_accessible_with_token(client, admin_token):
-    resp = client.get("/admin/users", cookies={"barabanki_session": admin_token})
+    resp = client.get("/admin/users", headers={"Cookie": f"barabanki_session={admin_token}"})
     assert resp.status_code == 200
     assert "User Accounts & Roles" in resp.text
 
 
 def test_admin_moderation_view_accessible_with_token(client, admin_token):
-    resp = client.get("/admin/moderation", cookies={"barabanki_session": admin_token})
+    resp = client.get("/admin/moderation", headers={"Cookie": f"barabanki_session={admin_token}"})
     assert resp.status_code == 200
     assert "Moderation Queue & Reports" in resp.text
 
 
 def test_admin_listings_view_accessible_with_token(client, admin_token):
-    resp = client.get("/admin/listings", cookies={"barabanki_session": admin_token})
+    resp = client.get("/admin/listings", headers={"Cookie": f"barabanki_session={admin_token}"})
     assert resp.status_code == 200
     assert "Business & Vacancy Verifications" in resp.text
+
 
 
 def test_contact_form_submission(client):
@@ -148,4 +149,34 @@ def test_contact_form_submission(client):
     )
     assert resp.status_code == 200
     assert "Your inquiry has been received" in resp.text
+
+
+def test_public_services_page_renders(client):
+    resp = client.get("/services")
+    assert resp.status_code == 200
+    assert "Public Services & Help Directory" in resp.text
+    assert "Helpline Numbers" in resp.text
+
+
+def test_mobile_view_page_renders(client):
+    resp = client.get("/mobile-view")
+    assert resp.status_code == 200
+    assert "Responsive Mobile View" in resp.text
+    assert "device-frame" in resp.text
+
+
+def test_create_event_page_renders(client):
+    resp = client.get("/events/create")
+    assert resp.status_code == 200
+    assert "Create New Event" in resp.text
+
+
+def test_profile_demo_page_renders(client):
+    resp = client.get("/profile?demo=1")
+    assert resp.status_code == 200
+    assert "User Profile" in resp.text
+    assert "Phase 1 Demo View" in resp.text
+
+
+
 

@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}Screen 12: Responsive Mobile View — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+  <!-- Header Bar -->
+  <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 2rem; gap: 1rem;">
+    <div>
+      <span class="badge badge-primary" style="margin-bottom: 0.5rem;">Screen 12 of 12</span>
+      <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--navy); margin-bottom: 0.25rem;">
+        Responsive Mobile View
+      </h1>
+      <p style="color: var(--text-muted); margin-bottom: 0;">
+        Interactive mobile prototype and real-time viewport simulator for Barabanki Connect.
+      </p>
+    </div>
+
+    <!-- View Controls -->
+    <div style="display: flex; gap: 0.5rem; align-items: center; background: white; padding: 0.35rem 0.5rem; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); border: 1px solid var(--border-color);">
+      <span style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted); margin-right: 0.25rem;">Device Preset:</span>
+      <button type="button" class="btn btn-sm btn-outline active-device" onclick="setDeviceWidth(375, this)" style="font-size: 0.78rem; padding: 0.25rem 0.6rem;">
+        375px (Compact)
+      </button>
+      <button type="button" class="btn btn-sm btn-outline" onclick="setDeviceWidth(393, this)" style="font-size: 0.78rem; padding: 0.25rem 0.6rem;">
+        393px (iPhone 15)
+      </button>
+      <button type="button" class="btn btn-sm btn-outline" onclick="setDeviceWidth(412, this)" style="font-size: 0.78rem; padding: 0.25rem 0.6rem;">
+        412px (Pixel / Galaxy)
+      </button>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 420px 1fr; gap: 2rem; align-items: start;" class="mobile-preview-grid">
+    
+    <!-- Left Column: Specs & Mobile Features -->
+    <div>
+      <div class="card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--primary);">
+        <div class="card-body" style="padding: 1.25rem;">
+          <h2 style="font-size: 1.1rem; font-weight: 700; color: var(--navy); margin-bottom: 0.5rem;">
+            📱 Mobile Design System
+          </h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+            Barabanki Connect is designed mobile-first for the local community, ensuring smooth operation even on entry-level Android devices and 3G/4G connectivity.
+          </p>
+          <ul style="font-size: 0.82rem; color: var(--text-main); margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.4rem;">
+            <li><strong>Sticky Bottom App Bar:</strong> 5 primary navigation anchors with active tactile feedback.</li>
+            <li><strong>Touch-Friendly Hit Targets:</strong> All buttons and interactive cards meet the 48x48px WCAG criterion.</li>
+            <li><strong>Zero Horizontal Overflow:</strong> Rigid viewport constraint with fluid responsive flex and grid.</li>
+            <li><strong>Fast Lightweight SVG Graphics:</strong> Instant rendering without heavy imagery dependencies.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Quick Route Switcher for Phone Simulator -->
+      <div class="card">
+        <div class="card-header" style="background: white; padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--border-color);">
+          <strong style="color: var(--navy); font-size: 0.95rem;">Switch Screen in Phone</strong>
+        </div>
+        <div class="card-body" style="padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+          <button type="button" class="btn btn-sm btn-outline" style="text-align: left; justify-content: flex-start; display: flex; align-items: center; gap: 0.5rem;" onclick="loadInPhone('/')">
+            <span>🏠</span> <span>1. Home Page</span>
+          </button>
+          <button type="button" class="btn btn-sm btn-outline" style="text-align: left; justify-content: flex-start; display: flex; align-items: center; gap: 0.5rem;" onclick="loadInPhone('/news')">
+            <span>📰</span> <span>2. News & Updates</span>
+          </button>
+          <button type="button" class="btn btn-sm btn-outline" style="text-align: left; justify-content: flex-start; display: flex; align-items: center; gap: 0.5rem;" onclick="loadInPhone('/events')">
+            <span>📅</span> <span>3. Events Calendar</span>
+          </button>
+          <button type="button" class="btn btn-sm btn-outline" style="text-align: left; justify-content: flex-start; display: flex; align-items: center; gap: 0.5rem;" onclick="loadInPhone('/creators')">
+            <span>🎨</span> <span>4. Creator Hub / Social Feed</span>
+          </button>
+          <button type="button" class="btn btn-sm btn-outline" style="text-align: left; justify-content: flex-start; display: flex; align-items: center; gap: 0.5rem;" onclick="loadInPhone('/education')">
+            <span>🎓</span> <span>5. Education & Student Hub</span>
+          </button>
+          <button type="button" class="btn btn-sm btn-outline" style="text-align: left; justify-content: flex-start; display: flex; align-items: center; gap: 0.5rem;" onclick="loadInPhone('/businesses')">
+            <span>🏪</span> <span>6. Business Directory</span>
+          </button>
+          <button type="button" class="btn btn-sm btn-outline" style="text-align: left; justify-content: flex-start; display: flex; align-items: center; gap: 0.5rem;" onclick="loadInPhone('/services')">
+            <span>🏛️</span> <span>7. Public Services & Help</span>
+          </button>
+          <button type="button" class="btn btn-sm btn-outline" style="text-align: left; justify-content: flex-start; display: flex; align-items: center; gap: 0.5rem;" onclick="loadInPhone('/community')">
+            <span>📢</span> <span>8. Community & Issues</span>
+          </button>
+          <button type="button" class="btn btn-sm btn-outline" style="text-align: left; justify-content: flex-start; display: flex; align-items: center; gap: 0.5rem;" onclick="loadInPhone('/auth/profile?demo=1')">
+            <span>👤</span> <span>9. Profile Page</span>
+          </button>
+          <button type="button" class="btn btn-sm btn-outline" style="text-align: left; justify-content: flex-start; display: flex; align-items: center; gap: 0.5rem;" onclick="loadInPhone('/events/create')">
+            <span>➕</span> <span>10. Create Event Form</span>
+          </button>
+          <button type="button" class="btn btn-sm btn-outline" style="text-align: left; justify-content: flex-start; display: flex; align-items: center; gap: 0.5rem;" onclick="loadInPhone('/auth/login')">
+            <span>🔐</span> <span>11. Login / Register</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Column: Realistic Smartphone Device Mockup -->
+    <div style="display: flex; flex-direction: column; align-items: center;">
+      <div id="device-frame" style="width: 375px; height: 750px; background: #000; border-radius: 46px; padding: 12px; box-shadow: 0 25px 50px -12px rgba(8, 45, 80, 0.4), 0 0 0 2px #334155, 0 0 0 6px #0f172a; position: relative; transition: width 0.3s ease;">
+        <!-- Camera Notch / Dynamic Island -->
+        <div style="position: absolute; top: 18px; left: 50%; transform: translateX(-50%); width: 110px; height: 26px; background: #000; border-radius: 20px; z-index: 100; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <div style="width: 10px; height: 10px; border-radius: 50%; background: #1e293b;"></div>
+          <div style="width: 8px; height: 8px; border-radius: 50%; background: #0284c7;"></div>
+        </div>
+
+        <!-- Inner Screen -->
+        <div style="width: 100%; height: 100%; background: #F4F7FB; border-radius: 36px; overflow: hidden; position: relative; display: flex; flex-direction: column;">
+          <!-- Simulated Mobile Status Bar -->
+          <div style="height: 38px; background: #06233F; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 1.25rem 0 1.5rem; font-size: 0.72rem; font-weight: 600; z-index: 50; flex-shrink: 0;">
+            <span>9:41</span>
+            <div style="display: flex; align-items: center; gap: 0.35rem;">
+              <span>5G</span>
+              <svg width="14" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L12 22l7.03-4.39C20.26 16.07 21 14.12 21 12c0-4.97-4.03-9-9-9z"/></svg>
+              <span>100%</span>
+            </div>
+          </div>
+
+          <!-- Embedded Live Route Frame -->
+          <iframe 
+            id="phone-screen-iframe" 
+            src="/" 
+            title="Barabanki Connect Mobile Experience"
+            style="width: 100%; flex: 1; border: none; background: #F4F7FB;"
+          ></iframe>
+        </div>
+      </div>
+      <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-muted); text-align: center;">
+        Interactive Smartphone Frame • Scroll and tap inside to test
+      </div>
+    </div>
+
+    <!-- Right Column: Verification & Mobile Highlights -->
+    <div>
+      <div class="card" style="margin-bottom: 1.5rem;">
+        <div class="card-header" style="background: white; padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--border-color);">
+          <strong style="color: var(--navy); font-size: 0.95rem;">📱 Mobile Feature Highlights</strong>
+        </div>
+        <div class="card-body" style="padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem;">
+          <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+            <div style="width: 32px; height: 32px; border-radius: 8px; background: #e0f2fe; color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">
+              1
+            </div>
+            <div>
+              <strong style="color: var(--navy); font-size: 0.88rem; display: block;">Bottom App Bar</strong>
+              <span style="font-size: 0.8rem; color: var(--text-muted);">Thumb-reachable navigation for one-handed community browsing.</span>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+            <div style="width: 32px; height: 32px; border-radius: 8px; background: #fef3c7; color: #b45309; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">
+              2
+            </div>
+            <div>
+              <strong style="color: var(--navy); font-size: 0.88rem; display: block;">Instant Emergency SOS</strong>
+              <span style="font-size: 0.8rem; color: var(--text-muted);">One-touch phone dialing for 112, 108, 1090 from the Services tab.</span>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+            <div style="width: 32px; height: 32px; border-radius: 8px; background: #dcfce7; color: #15803d; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">
+              3
+            </div>
+            <div>
+              <strong style="color: var(--navy); font-size: 0.88rem; display: block;">Touch-Friendly Cards</strong>
+              <span style="font-size: 0.8rem; color: var(--text-muted);">Horizontal cards with clear elevation, tags, and readable typography.</span>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+            <div style="width: 32px; height: 32px; border-radius: 8px; background: #f3e8ff; color: #7e22ce; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">
+              4
+            </div>
+            <div>
+              <strong style="color: var(--navy); font-size: 0.88rem; display: block;">Fast Local Search</strong>
+              <span style="font-size: 0.8rem; color: var(--text-muted);">Unified search bar accessible from header across all categories.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="background: linear-gradient(135deg, var(--navy), var(--dark-navy)); color: white;">
+        <div class="card-body" style="padding: 1.5rem; text-align: center;">
+          <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--accent); margin-bottom: 0.5rem;">
+            Open on Your Phone
+          </h3>
+          <p style="font-size: 0.82rem; color: #cbd5e1; margin-bottom: 1rem;">
+            You can also test the real responsive layout directly on any physical phone or by resizing your browser window.
+          </p>
+          <a href="/" target="_blank" class="btn btn-warning" style="font-weight: 700; font-size: 0.85rem; width: 100%;">
+            Open Portal in Full Screen ↗
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function loadInPhone(route) {
+    const iframe = document.getElementById('phone-screen-iframe');
+    if (iframe) {
+      iframe.src = route;
+    }
+  }
+
+  function setDeviceWidth(width, btn) {
+    const frame = document.getElementById('device-frame');
+    if (frame) {
+      frame.style.width = width + 'px';
+    }
+    document.querySelectorAll('.active-device').forEach(el => el.classList.remove('active-device'));
+    if (btn) btn.classList.add('active-device');
+  }
+</script>
+{% endblock %}

@@ -1,61 +1,224 @@
 {% extends "base.html" %}
 
-{% block title %}Community Forum & Civic Discussions — Barabanki Connect{% endblock %}
+{% block title %}Community & Public Problems — Barabanki Connect{% endblock %}
 
 {% block content %}
-<div class="container" style="padding-top: 3rem; padding-bottom: 4rem;">
-  <div class="section-header">
+<div class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
+  <!-- Screen 8 Header -->
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
     <div>
-      <h1 class="section-title">Barabanki Citizen & Student Forum</h1>
-      <p class="section-subtitle">Engage in constructive public dialogue, raise neighborhood ideas, and collaborate on local initiatives.</p>
+      <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--navy); margin-bottom: 0.35rem;">
+        Community & Public Problems
+      </h1>
+      <p style="font-size: 0.95rem; color: var(--text-muted);">
+        Citizen & Student Forum — Report local issues, track municipal progress, and help make Barabanki better.
+      </p>
     </div>
-    <a href="/community/new" class="btn btn-primary">+ Start a Discussion</a>
+    <a href="/community/new" class="btn btn-primary" style="border-radius: var(--radius-full); font-weight: 700;">
+      + Report an Issue
+    </a>
   </div>
 
-  <!-- Filter tabs -->
-  <div style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem; margin-bottom: 2rem;">
-    <a href="/community" class="btn {% if not current_category %}btn-primary{% else %}btn-outline{% endif %} btn-sm">All Threads</a>
-    <a href="/community?category=Civic Issue" class="btn {% if current_category == 'Civic Issue' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Civic Issues</a>
-    <a href="/community?category=Student Hub" class="btn {% if current_category == 'Student Hub' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Student Hub</a>
-    <a href="/community?category=Discussion" class="btn {% if current_category == 'Discussion' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">General Discussion</a>
+  <!-- Category Filter Pills (Screen 8 Reference) -->
+  <div class="filter-chip-bar">
+    <a href="/community" class="filter-chip {% if not current_category %}active{% endif %}">All</a>
+    <a href="/community?category=Road+Issues" class="filter-chip {% if current_category == 'Road Issues' %}active{% endif %}">Road Issues</a>
+    <a href="/community?category=Water" class="filter-chip {% if current_category == 'Water' %}active{% endif %}">Water & Drainage</a>
+    <a href="/community?category=Garbage" class="filter-chip {% if current_category == 'Garbage' %}active{% endif %}">Garbage & Sanitation</a>
+    <a href="/community?category=Street+Lights" class="filter-chip {% if current_category == 'Street Lights' %}active{% endif %}">Street Lights</a>
+    <a href="/community?category=Discussion" class="filter-chip {% if current_category == 'Discussion' %}active{% endif %}">General Discussion</a>
   </div>
 
-  {% if posts and posts|length > 0 %}
+  <!-- Issues List Cards (Screen 8 Reference Match) -->
   <div style="display: flex; flex-direction: column; gap: 1.25rem;">
-    {% for post in posts %}
-    <div class="card">
-      <div class="card-body">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-          <span class="badge badge-primary">{{ post.category }}</span>
-          <span style="font-size: 0.8rem; color: var(--text-light);">
-            Posted by <strong>{{ post.author.full_name }}</strong> &bull; {{ post.created_at.strftime('%d %b %Y') }}
-          </span>
-        </div>
-        <h2 class="card-title" style="font-size: 1.25rem; margin-bottom: 0.5rem;">
-          <a href="/community/{{ post.slug }}">{{ post.title }}</a>
-        </h2>
-        <p class="card-text" style="-webkit-line-clamp: 2; margin-bottom: 1rem;">
-          {{ post.content }}
-        </p>
-        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
-          <div style="display: flex; gap: 1rem; align-items: center; font-size: 0.85rem; color: var(--text-muted);">
-            <span>👍 <strong>{{ post.upvotes }}</strong> Upvotes</span>
-            <span>💬 <strong>{{ post.comments|length }}</strong> Comments</span>
+    <!-- Issue 1: Road Damage (In Review) -->
+    <article class="problem-card">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+        <div style="flex: 1;">
+          <!-- Author Info -->
+          <div style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.5rem;">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Rohit Kumar" class="creator-avatar-circle" style="width: 38px; height: 38px;">
+            <div>
+              <div style="font-size: 0.92rem; font-weight: 700; color: var(--text-main);">Rohit Kumar</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">2h ago &bull; Deva Road, Near Canal Bridge, Barabanki</div>
+            </div>
           </div>
-          <a href="/community/{{ post.slug }}" class="btn btn-outline btn-sm">Join Discussion &rarr;</a>
+
+          <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--navy); margin-bottom: 0.35rem;">
+            Road Damage
+          </h2>
+          <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 0.75rem;">
+            Road surface badly broken with deep potholes following recent rainfall. Commuters and school buses facing severe difficulty and accident risks.
+          </p>
+
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <button class="btn btn-outline btn-sm" style="border-radius: var(--radius-full);" onclick="
+              const cnt = this.querySelector('.up-cnt');
+              cnt.innerText = parseInt(cnt.innerText) + 1;
+              this.style.color = 'var(--primary)';
+              this.style.borderColor = 'var(--primary)';
+              window.showToast('Upvoted issue! Priority increased.', 'success');
+            ">
+              👍 <span class="up-cnt">12</span> Upvotes
+            </button>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">💬 4 Comments</span>
+            <span style="font-size: 0.8rem; color: var(--text-light);">Token #BBK-2025-081</span>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.75rem; flex-shrink: 0;">
+          <span class="status-badge-review">In Review</span>
+          <img src="https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=160&q=80" alt="Potholes on Deva road" style="width: 90px; height: 75px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--border-color);" loading="lazy">
         </div>
       </div>
-    </div>
-    {% endfor %}
+    </article>
+
+    <!-- Issue 2: Waterlogging (In Progress) -->
+    <article class="problem-card">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+        <div style="flex: 1;">
+          <div style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.5rem;">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80" alt="Priya Singh" class="creator-avatar-circle" style="width: 38px; height: 38px;">
+            <div>
+              <div style="font-size: 0.92rem; font-weight: 700; color: var(--text-main);">Priya Singh</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">5h ago &bull; Near Old Bus Stand, Station Road, Barabanki</div>
+            </div>
+          </div>
+
+          <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--navy); margin-bottom: 0.35rem;">
+            Waterlogging
+          </h2>
+          <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 0.75rem;">
+            Drainage blockage leading to knee-deep stagnant water near market entrance. Pumping team needed urgently to prevent dengue vector breeding.
+          </p>
+
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <button class="btn btn-outline btn-sm" style="border-radius: var(--radius-full);" onclick="
+              const cnt = this.querySelector('.up-cnt');
+              cnt.innerText = parseInt(cnt.innerText) + 1;
+              this.style.color = 'var(--primary)';
+              this.style.borderColor = 'var(--primary)';
+              window.showToast('Upvoted issue! Priority increased.', 'success');
+            ">
+              👍 <span class="up-cnt">18</span> Upvotes
+            </button>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">💬 7 Comments</span>
+            <span style="font-size: 0.8rem; color: var(--text-light);">Token #BBK-2025-079</span>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.75rem; flex-shrink: 0;">
+          <span class="status-badge-progress">In Progress</span>
+          <img src="https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=160&q=80" alt="Waterlogging photo" style="width: 90px; height: 75px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--border-color);" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- Issue 3: Garbage Clearance (Resolved) -->
+    <article class="problem-card">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+        <div style="flex: 1;">
+          <div style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.5rem;">
+            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80" alt="Amit Verma" class="creator-avatar-circle" style="width: 38px; height: 38px;">
+            <div>
+              <div style="font-size: 0.92rem; font-weight: 700; color: var(--text-main);">Amit Verma</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">1d ago &bull; Civil Lines, Behind Post Office, Barabanki</div>
+            </div>
+          </div>
+
+          <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--navy); margin-bottom: 0.35rem;">
+            Garbage Dump Cleared
+          </h2>
+          <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 0.75rem;">
+            Overflowing commercial bins reported yesterday. Municipal sanitary truck arrived this morning and completely sanitized the area. Thanks Nagar Palika!
+          </p>
+
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <button class="btn btn-outline btn-sm" style="border-radius: var(--radius-full);" onclick="
+              const cnt = this.querySelector('.up-cnt');
+              cnt.innerText = parseInt(cnt.innerText) + 1;
+              window.showToast('Upvoted resolution!', 'success');
+            ">
+              👍 <span class="up-cnt">24</span> Upvotes
+            </button>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">💬 11 Comments</span>
+            <span style="font-size: 0.8rem; color: #16a34a; font-weight: 600;">✓ Verified Cleaned</span>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.75rem; flex-shrink: 0;">
+          <span class="status-badge-resolved">Resolved</span>
+          <img src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=160&q=80" alt="Garbage cleared area" style="width: 90px; height: 75px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--border-color);" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- Issue 4: Broken Street Lights (In Review) -->
+    <article class="problem-card">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+        <div style="flex: 1;">
+          <div style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.5rem;">
+            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80" alt="Sunita Gupta" class="creator-avatar-circle" style="width: 38px; height: 38px;">
+            <div>
+              <div style="font-size: 0.92rem; font-weight: 700; color: var(--text-main);">Sunita Gupta</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">2d ago &bull; Shastri Nagar, Street No. 4, Barabanki</div>
+            </div>
+          </div>
+
+          <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--navy); margin-bottom: 0.35rem;">
+            Broken Street Lights
+          </h2>
+          <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 0.75rem;">
+            Four LED street lights are non-functional for past 5 days causing complete darkness at night. Women and elderly residents face safety issues.
+          </p>
+
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <button class="btn btn-outline btn-sm" style="border-radius: var(--radius-full);" onclick="
+              const cnt = this.querySelector('.up-cnt');
+              cnt.innerText = parseInt(cnt.innerText) + 1;
+              this.style.color = 'var(--primary)';
+              this.style.borderColor = 'var(--primary)';
+              window.showToast('Upvoted issue! Priority increased.', 'success');
+            ">
+              👍 <span class="up-cnt">14</span> Upvotes
+            </button>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">💬 5 Comments</span>
+            <span style="font-size: 0.8rem; color: var(--text-light);">Token #BBK-2025-072</span>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.75rem; flex-shrink: 0;">
+          <span class="status-badge-review">In Review</span>
+          <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=160&q=80" alt="Street lights pole" style="width: 90px; height: 75px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--border-color);" loading="lazy">
+        </div>
+      </div>
+    </article>
+
+    <!-- Database Posts if present -->
+    {% if posts and posts|length > 0 %}
+      {% for post in posts %}
+      <article class="problem-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+          <span class="badge badge-primary">{{ post.category }}</span>
+          <span style="font-size: 0.78rem; color: var(--text-muted);">
+            By <strong>{{ post.author.full_name }}</strong> &bull; {{ post.created_at.strftime('%d %b %Y') }}
+          </span>
+        </div>
+        <h2 style="font-size: 1.15rem; font-weight: 700;">
+          <a href="/community/{{ post.slug }}" style="color: var(--text-main);">{{ post.title }}</a>
+        </h2>
+        <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.45;">{{ post.content }}</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 0.65rem; margin-top: 0.35rem;">
+          <div style="display: flex; gap: 1rem; font-size: 0.82rem; color: var(--text-muted);">
+            <span>👍 {{ post.upvotes }} Upvotes</span>
+            <span>💬 {{ post.comments|length }} Comments</span>
+          </div>
+          <a href="/community/{{ post.slug }}" class="btn btn-outline-primary btn-sm" style="border-radius: var(--radius-full);">Join Discussion &rarr;</a>
+        </div>
+      </article>
+      {% endfor %}
+    {% endif %}
   </div>
-  {% else %}
-  <div class="empty-state">
-    <div class="empty-state-icon">💬</div>
-    <h3 class="empty-state-title">No discussion threads yet</h3>
-    <p class="empty-state-desc">Be the first to start a conversation for our Barabanki community!</p>
-    <a href="/community/new" class="btn btn-primary">Create Discussion</a>
-  </div>
-  {% endif %}
 
   {% include "components/pagination.html" %}
 </div>

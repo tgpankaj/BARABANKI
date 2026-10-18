@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-10-18
+
+### Cleaned & Audited
+- **Phase 5 Codebase Audit & Refactoring**:
+  - Established dedicated Git branch `phase-5-audit-cleanup` preserving all existing working tree modifications.
+  - Performed static code analysis and eliminated all unused imports (`F401`), unused variables (`F841`), and undefined symbols (`F821`) across all models, routers, schemas, scripts, and tests.
+  - Consolidated duplicate response imports in `app/routers/auth.py`.
+  - Audited all 48 HTML templates: verified that every single template is actively referenced, verified all form actions match registered FastAPI routes, and resolved in-page navigation anchors in `education/list.html`.
+  - Audited static images and JavaScript files: verified that all static assets referenced in templates exist on disk.
+  - Updated `docker-compose.yml` PostgreSQL data volume path to standard `/var/lib/postgresql/data` and removed obsolete backup file `docker-compose.yml.bak`.
+  - Hardened `.gitignore` to comprehensively ignore backup directories (`backups/`), database files (`*.db`), and temporary files (`*.bak`, `*.old`, `*.tmp`, `*~`).
+  - Verified 100% test pass rate across all 85 tests (7 test modules, 0 failures, 0 warnings).
+
 ## [1.0.0] - 2026-10-17
 
 ### Added

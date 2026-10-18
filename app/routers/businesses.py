@@ -98,9 +98,12 @@ def business_create_action(
     website: Optional[str] = Form(None),
     opening_hours: Optional[str] = Form("10:00 AM - 08:00 PM"),
     csrf_token: str = Form(None),
-    current_user = Depends(get_current_user),
+    current_user = Depends(get_current_user_optional),
     db: Session = Depends(get_db),
 ):
+    if not current_user:
+        return RedirectResponse(url="/auth/login", status_code=303)
+
     session_id = request.client.host if request.client else "bbk_guest"
     if not validate_csrf_token(csrf_token, session_id):
         return RedirectResponse(url="/businesses/new", status_code=303)

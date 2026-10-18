@@ -1,6 +1,5 @@
-from datetime import datetime
 from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime
-from app.core.database import Base
+from app.core.database import Base, utc_now
 
 
 class EducationInstitute(Base):
@@ -20,7 +19,8 @@ class EducationInstitute(Base):
     courses_offered = Column(Text, nullable=False)  # Comma-separated or bullet list
     admission_info = Column(Text, nullable=True)
     is_verified = Column(Boolean, default=True, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=utc_now, nullable=False)
+
 
     def __repr__(self):
         return f"<EducationInstitute {self.name}>"

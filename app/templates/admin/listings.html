@@ -112,6 +112,50 @@
           </tbody>
         </table>
       </div>
+
+      <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Community Events & Fairs</h2>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Event Title</th>
+              <th>Category</th>
+              <th>Venue / Locality</th>
+              <th>Start Date</th>
+              <th>Approval</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for ev in events %}
+            <tr>
+              <td>
+                <div style="font-weight: 700;">{{ ev.title }}</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">By: {{ ev.organizer_name }}</div>
+              </td>
+              <td><span class="badge badge-accent">{{ ev.category }}</span></td>
+              <td>{{ ev.venue_name }} ({{ ev.locality }})</td>
+              <td>{{ ev.start_date.strftime('%d %b %Y, %I:%M %p') if ev.start_date else 'TBA' }}</td>
+              <td>
+                {% if ev.is_approved %}
+                <span class="badge badge-verified">✓ Published</span>
+                {% else %}
+                <span class="badge badge-demo">Pending Review</span>
+                {% endif %}
+              </td>
+              <td>
+                <form action="/admin/events/{{ ev.id }}/toggle-approve" method="POST" style="margin: 0;">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+                  <button type="submit" class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                    {% if ev.is_approved %}Unpublish{% else %}Approve & Publish{% endif %}
+                  </button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>

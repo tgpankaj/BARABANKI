@@ -34,6 +34,9 @@ services:
       - DEBUG=False
       - HOST=0.0.0.0
       - PORT=8000
+      - COOKIE_SECURE=False
+      - RATE_LIMIT_ENABLED=True
+      - ALLOWED_ORIGINS=["http://localhost:8000","http://127.0.0.1:8000"]
     ports:
       - "8000:8000"
     volumes:

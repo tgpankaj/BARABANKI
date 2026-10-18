@@ -1,89 +1,261 @@
 {% extends "base.html" %}
 
-{% block title %}Content Moderation Queue — Barabanki Admin{% endblock %}
+{% block title %}Content Moderation &amp; Civic Audits — Barabanki Admin{% endblock %}
 
 {% block content %}
 <div class="container" style="padding-top: 2.5rem; padding-bottom: 4rem;">
   <div class="section-header">
     <div>
-      <h1 class="section-title">Moderation Queue & Reports</h1>
-      <p class="section-subtitle">Review flagged posts, comments, and community reports to maintain a respectful civic platform.</p>
+      <h1 class="section-title">Moderation Queue & Reports & Civic Audits</h1>
+      <p class="section-subtitle">Review flagged posts, reports, civic issues lifecycle, and system audit logs.</p>
     </div>
     <a href="/admin" class="btn btn-outline btn-sm">&larr; Back to Dashboard</a>
   </div>
+
+  {% if message %}
+  <div class="alert alert-info" style="margin-bottom: 1.5rem;">{{ message }}</div>
+  {% endif %}
 
   <div class="admin-layout">
     <aside class="admin-sidebar">
       <h3 style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-light); margin-bottom: 0.75rem; letter-spacing: 0.05em;">Administration</h3>
       <ul class="admin-nav-list">
-        <li><a href="/admin" class="admin-nav-link">📊 Dashboard & KPIs</a></li>
-        <li><a href="/admin/moderation" class="admin-nav-link active">🚩 Moderation Queue</a></li>
+        <li><a href="/admin" class="admin-nav-link">📊 Dashboard &amp; KPIs</a></li>
+        <li><a href="/admin/moderation" class="admin-nav-link active">🚩 Moderation &amp; Audits</a></li>
         <li><a href="/admin/listings" class="admin-nav-link">🏬 Business Approvals</a></li>
         <li><a href="/admin/users" class="admin-nav-link">👥 User Accounts</a></li>
       </ul>
     </aside>
 
-    <div>
-      {% if reports and reports|length > 0 %}
-      <div class="table-responsive">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Report ID</th>
-              <th>Target</th>
-              <th>Reason</th>
-              <th>Details</th>
-              <th>Status</th>
-              <th>Date</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for rep in reports %}
-            <tr>
-              <td>#{{ rep.id }}</td>
-              <td>
-                <span class="badge badge-primary">{{ rep.target_type }} #{{ rep.target_id }}</span>
-              </td>
-              <td style="font-weight: 600;">{{ rep.reason }}</td>
-              <td style="font-size: 0.85rem; color: var(--text-muted); max-width: 200px;">
-                {{ rep.details or 'No additional details provided' }}
-              </td>
-              <td>
-                {% if rep.status == 'pending' %}
-                <span class="badge badge-demo">Pending</span>
-                {% elif rep.status == 'resolved' %}
-                <span class="badge badge-verified">Resolved</span>
-                {% else %}
-                <span class="badge badge-accent">Dismissed</span>
-                {% endif %}
-              </td>
-              <td style="font-size: 0.8rem; color: var(--text-light);">{{ rep.created_at.strftime('%d %b %Y') }}</td>
-              <td>
-                <div style="display: flex; gap: 0.35rem;">
-                  <form action="/admin/moderation/{{ rep.id }}/resolve" method="POST" style="margin:0;">
+    <div style="display: flex; flex-direction: column; gap: 2.5rem;">
+      <!-- Section 1: User Reports Queue -->
+      <section>
+        <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--navy); margin-bottom: 1rem;">
+          User Flagged Reports ({{ reports|length }})
+        </h2>
+
+        {% if reports and reports|length > 0 %}
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Target</th>
+                <th>Reason</th>
+                <th>Details</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for rep in reports %}
+              <tr>
+                <td>#{{ rep.id }}</td>
+                <td>
+                  <span class="badge badge-primary">{{ rep.target_type }} #{{ rep.target_id }}</span>
+                </td>
+                <td style="font-weight: 600;">{{ rep.reason }}</td>
+                <td style="font-size: 0.85rem; color: var(--text-muted); max-width: 180px;">
+                  {{ rep.details or 'No additional details provided' }}
+                </td>
+                <td>
+                  {% if rep.status == 'pending' %}
+                  <span class="badge badge-demo">Pending</span>
+                  {% elif rep.status == 'resolved' %}
+                  <span class="badge badge-verified">Resolved</span>
+                  {% else %}
+                  <span class="badge badge-accent">Dismissed</span>
+                  {% endif %}
+                </td>
+                <td style="font-size: 0.8rem; color: var(--text-light);">{{ rep.created_at.strftime('%d %b %Y') }}</td>
+                <td>
+                  {% if rep.status == 'pending' %}
+                  <div style="display: flex; gap: 0.35rem;">
+                    <form action="/admin/moderation/{{ rep.id }}/resolve" method="POST" style="margin:0;">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+                      <button type="submit" class="btn btn-primary btn-sm" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">Resolve</button>
+                    </form>
+                    <form action="/admin/moderation/{{ rep.id }}/dismiss" method="POST" style="margin:0;">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+                      <button type="submit" class="btn btn-outline btn-sm" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">Dismiss</button>
+                    </form>
+                  </div>
+                  {% else %}
+                  <span style="font-size: 0.8rem; color: var(--text-muted);">{{ rep.action_taken or 'Closed' }}</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="card" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">
+          No user reports pending in queue.
+        </div>
+        {% endif %}
+      </section>
+
+      <!-- Section 2: Civic Issues Management -->
+      <section>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--navy); margin: 0;">
+            Civic Issues &amp; Grievances
+          </h2>
+          <a href="/issues" class="btn btn-outline btn-sm" target="_blank">View Public Portal &rarr;</a>
+        </div>
+
+        {% if civic_issues and civic_issues|length > 0 %}
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Category / Locality</th>
+                <th>Status</th>
+                <th>Me Too</th>
+                <th>Update Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for issue in civic_issues %}
+              <tr>
+                <td>#{{ issue.id }}</td>
+                <td>
+                  <a href="/issues/{{ issue.slug }}" style="font-weight: 700; color: var(--navy); text-decoration: none;" target="_blank">
+                    {{ issue.title[:35] }}...
+                  </a>
+                </td>
+                <td style="font-size: 0.85rem;">
+                  <span class="badge badge-primary">{{ issue.category }}</span>
+                  <div style="color: var(--text-muted); font-size: 0.75rem; margin-top: 2px;">{{ issue.locality }}</div>
+                </td>
+                <td>
+                  <span class="badge {% if issue.status == 'Resolved' %}badge-verified{% elif issue.status == 'In Progress' %}badge-accent{% else %}badge-demo{% endif %}">
+                    {{ issue.status }}
+                  </span>
+                </td>
+                <td style="font-weight: 600;">👍 {{ issue.upvotes }}</td>
+                <td>
+                  <form action="/admin/issues/{{ issue.id }}/status" method="POST" style="margin: 0; display: flex; gap: 0.35rem; align-items: center;">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
-                    <button type="submit" class="btn btn-primary btn-sm" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">Resolve</button>
+                    <select name="new_status" class="form-control" style="font-size: 0.75rem; padding: 0.2rem 0.4rem; height: auto;">
+                      <option value="Under Review" {% if issue.status == 'Under Review' %}selected{% endif %}>Under Review</option>
+                      <option value="In Progress" {% if issue.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                      <option value="Resolved" {% if issue.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                      <option value="Rejected" {% if issue.status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary btn-sm" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">Set</button>
                   </form>
-                  <form action="/admin/moderation/{{ rep.id }}/dismiss" method="POST" style="margin:0;">
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="card" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">
+          No civic issues currently recorded.
+        </div>
+        {% endif %}
+      </section>
+
+      <!-- Section 3: Community Posts Moderation -->
+      <section>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--navy); margin: 0;">
+            Community Feed Moderation
+          </h2>
+          <a href="/community" class="btn btn-outline btn-sm" target="_blank">View Community Feed &rarr;</a>
+        </div>
+
+        {% if posts and posts|length > 0 %}
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Current Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for post in posts %}
+              <tr>
+                <td>#{{ post.id }}</td>
+                <td>
+                  <a href="/community/{{ post.slug }}" style="font-weight: 700; color: var(--navy); text-decoration: none;" target="_blank">
+                    {{ post.title[:40] }}...
+                  </a>
+                </td>
+                <td style="font-size: 0.85rem;">{{ post.author.full_name }}</td>
+                <td>
+                  <span class="badge {% if post.status == 'published' %}badge-verified{% elif post.status == 'flagged' %}badge-accent{% else %}badge-demo{% endif %}">
+                    {{ post.status }}
+                  </span>
+                </td>
+                <td>
+                  <form action="/admin/posts/{% if post.id %}{{ post.id }}{% endif %}/status" method="POST" style="margin: 0; display: flex; gap: 0.35rem; align-items: center;">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
-                    <button type="submit" class="btn btn-outline btn-sm" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">Dismiss</button>
+                    <select name="new_status" class="form-control" style="font-size: 0.75rem; padding: 0.2rem 0.4rem; height: auto;">
+                      <option value="published" {% if post.status == 'published' %}selected{% endif %}>Publish</option>
+                      <option value="hidden" {% if post.status == 'hidden' %}selected{% endif %}>Hide</option>
+                      <option value="flagged" {% if post.status == 'flagged' %}selected{% endif %}>Flag</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary btn-sm" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">Apply</button>
                   </form>
-                </div>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-      {% else %}
-      <div class="empty-state">
-        <div class="empty-state-icon">✅</div>
-        <h3 class="empty-state-title">All Caught Up!</h3>
-        <p class="empty-state-desc">There are no pending reports or moderation flags at this time.</p>
-        <a href="/admin" class="btn btn-primary">Return to Admin Overview</a>
-      </div>
-      {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% endif %}
+      </section>
+
+      <!-- Section 4: Moderation Audit Trail -->
+      <section>
+        <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--navy); margin-bottom: 1rem;">
+          Recent Moderation Audit Logs
+        </h2>
+
+        {% if audits and audits|length > 0 %}
+        <div class="table-responsive">
+          <table class="table" style="font-size: 0.85rem;">
+            <thead>
+              <tr>
+                <th>Log ID</th>
+                <th>Action</th>
+                <th>Entity Target</th>
+                <th>Moderator</th>
+                <th>Reason / Summary</th>
+                <th>Timestamp</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for a in audits %}
+              <tr>
+                <td>#{{ a.id }}</td>
+                <td><span class="badge badge-primary">{{ a.action }}</span></td>
+                <td>{{ a.entity_type }} #{{ a.entity_id }}</td>
+                <td>{{ a.moderator.full_name if a.moderator else 'System Admin' }}</td>
+                <td style="color: var(--text-muted); max-width: 260px;">{{ a.reason or a.details or '-' }}</td>
+                <td style="color: var(--text-light);">{{ a.created_at.strftime('%d %b %Y, %I:%M %p') }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="card" style="padding: 1.5rem; text-align: center; color: var(--text-muted);">
+          No audit entries recorded yet.
+        </div>
+        {% endif %}
+      </section>
     </div>
   </div>
 </div>

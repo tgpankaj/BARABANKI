@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Page Not Found (404) — Barabanki Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 5rem 1rem; text-align: center;">
+  <div style="font-size: 5rem; font-weight: 800; color: var(--primary); line-height: 1;">404</div>
+  <h1 style="font-size: 2rem; font-weight: 800; color: var(--navy); margin-top: 1rem; margin-bottom: 0.75rem;">
+    Page Not Found
+  </h1>
+  <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 520px; margin: 0 auto 2rem;">
+    The page or listing you are looking for may have been moved, renamed, or is currently unavailable in District Barabanki.
+  </p>
+  <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+    <a href="/" class="btn btn-primary" style="font-weight: 700;">&larr; Return to Barabanki Connect Home</a>
+    <a href="/search" class="btn btn-outline">Search Directory</a>
+  </div>
+</div>
+{% endblock %}
