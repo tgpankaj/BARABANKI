@@ -1,9 +1,14 @@
 from pathlib import Path
 from typing import Any, Union
-from pydantic import field_validator
+from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+
+class ConfigurationError(ValueError):
+    """Raised when application configuration is invalid for the specified environment."""
+    pass
 
 
 class Settings(BaseSettings):
@@ -77,6 +82,19 @@ class Settings(BaseSettings):
                     pass
             return [origin.strip() for origin in v_clean.split(",") if origin.strip()]
         return v
+
+    @model_validator(mode="after")
+    def validate_production_database(self) -> "Settings":
+        if self.is_production:
+            db = (self.DATABASE_URL or "").strip().lower()
+            if not db or db.startswith("sqlite"):
+                raise ConfigurationError(
+                    "PRODUCTION MISCONFIGURATION: SQLite cannot be used in production mode on Render / cloud environments. "
+                    "Render web services operate on ephemeral disks where SQLite data is lost across restarts and multi-worker locks fail. "
+                    "Please configure a valid PostgreSQL connection string (such as Neon PostgreSQL) via the DATABASE_URL environment variable.\n"
+                    "Example: postgresql+psycopg2://user:password@ep-cool-base-123456.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
+                )
+        return self
 
     @property
     def is_production(self) -> bool:

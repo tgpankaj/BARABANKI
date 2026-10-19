@@ -1,6 +1,9 @@
 import re
 from datetime import timedelta
-from app.core.database import SessionLocal, init_db, utc_now
+from sqlalchemy import or_
+from sqlalchemy.orm import Session
+from app.core.config import settings
+from app.core.database import SessionLocal, utc_now
 from app.core.security import get_password_hash
 from app.models import (
     User,
@@ -36,114 +39,132 @@ def slugify(text: str) -> str:
     return text.strip("-")
 
 
-def seed():
+def get_or_create_user(db: Session, username: str, email: str, defaults: dict) -> User:
+    """Find existing user by username OR email to avoid unique constraint violations, or create new."""
+    user = db.query(User).filter(or_(User.username == username, User.email == email)).first()
+    if not user:
+        user = User(
+            username=username,
+            email=email,
+            **defaults,
+        )
+        db.add(user)
+        db.flush()
+    return user
+
+
+def seed(db_session: Session = None):
     """Populate database with verified Barabanki baseline data and clearly labelled demo items."""
-    init_db()
-    db = SessionLocal()
+    owns_session = False
+    if db_session is None:
+        db = SessionLocal()
+        owns_session = True
+    else:
+        db = db_session
 
     try:
-        # 1. Seed Users if not already present
-        admin_user = db.query(User).filter(User.email == "admin@barabanki.local").first()
-        if not admin_user:
-            admin_user = User(
-                username="admin",
-                email="admin@barabanki.local",
-                hashed_password=get_password_hash("Admin@123456"),
-                full_name="Barabanki Admin",
-                phone="+91-5248-222001",
-                role="admin",
-                bio="Chief Administrator for the Barabanki Connect Community Portal.",
-                is_active=True,
-            )
-            db.add(admin_user)
+        # 1. Seed Users if not already present (idempotent lookup by username OR email)
+        admin_user = get_or_create_user(
+            db,
+            username="admin",
+            email=settings.ADMIN_EMAIL,
+            defaults={
+                "hashed_password": get_password_hash(settings.ADMIN_PASSWORD),
+                "full_name": "Barabanki Admin",
+                "phone": "+91-5248-222001",
+                "role": "admin",
+                "bio": "Chief Administrator for the Barabanki Connect Community Portal.",
+                "is_active": True,
+            },
+        )
 
-        mod_user = db.query(User).filter(User.email == "moderator@barabanki.local").first()
-        if not mod_user:
-            mod_user = User(
-                username="moderator",
-                email="moderator@barabanki.local",
-                hashed_password=get_password_hash("Moderator@123456"),
-                full_name="Civic Moderator",
-                phone="+91-5248-222002",
-                role="moderator",
-                bio="Community guidelines enforcer and local content moderator.",
-                is_active=True,
-            )
-            db.add(mod_user)
+        mod_user = get_or_create_user(
+            db,
+            username="moderator",
+            email="moderator@barabanki.local",
+            defaults={
+                "hashed_password": get_password_hash("Moderator@123456"),
+                "full_name": "Civic Moderator",
+                "phone": "+91-5248-222002",
+                "role": "moderator",
+                "bio": "Community guidelines enforcer and local content moderator.",
+                "is_active": True,
+            },
+        )
 
-        citizen_user = db.query(User).filter(User.email == "citizen@barabanki.local").first()
-        if not citizen_user:
-            citizen_user = User(
-                username="aarav_sharma",
-                email="citizen@barabanki.local",
-                hashed_password=get_password_hash("Citizen@123456"),
-                full_name="Aarav Sharma",
-                phone="+91-9876543210",
-                role="resident",
-                bio="B.Tech IT student and passionate technology explorer from Barabanki.",
-                is_active=True,
-            )
-            db.add(citizen_user)
+        citizen_user = get_or_create_user(
+            db,
+            username="aarav_sharma",
+            email="citizen@barabanki.local",
+            defaults={
+                "hashed_password": get_password_hash("Citizen@123456"),
+                "full_name": "Aarav Sharma",
+                "phone": "+91-9876543210",
+                "role": "resident",
+                "bio": "B.Tech IT student and passionate technology explorer from Barabanki.",
+                "is_active": True,
+            },
+        )
 
-        artisan_user = db.query(User).filter(User.email == "artisan@barabanki.local").first()
-        if not artisan_user:
-            artisan_user = User(
-                username="mohd_rafiq",
-                email="artisan@barabanki.local",
-                hashed_password=get_password_hash("Artisan@123456"),
-                full_name="Mohammad Rafiq Ansari",
-                phone="+91-9839001122",
-                role="creator",
-                locality="Zaidpur",
-                bio="3rd generation Jacquard and Handloom weaver from Zaidpur, Barabanki.",
-                is_active=True,
-            )
-            db.add(artisan_user)
+        artisan_user = get_or_create_user(
+            db,
+            username="mohd_rafiq",
+            email="artisan@barabanki.local",
+            defaults={
+                "hashed_password": get_password_hash("Artisan@123456"),
+                "full_name": "Mohammad Rafiq Ansari",
+                "phone": "+91-9839001122",
+                "role": "creator",
+                "locality": "Zaidpur",
+                "bio": "3rd generation Jacquard and Handloom weaver from Zaidpur, Barabanki.",
+                "is_active": True,
+            },
+        )
 
-        rohit_user = db.query(User).filter(User.username == "rohitvlogs").first()
-        if not rohit_user:
-            rohit_user = User(
-                username="rohitvlogs",
-                email="rohit@barabanki.local",
-                hashed_password=get_password_hash("Creator@123456"),
-                full_name="Rohit Tiwari",
-                phone="+91-9839112233",
-                role="creator",
-                locality="Nawabganj",
-                bio="Documenting rustic heritage, ancient baobabs, and daily cultural moments of Barabanki.",
-                is_active=True,
-            )
-            db.add(rohit_user)
+        rohit_user = get_or_create_user(
+            db,
+            username="rohitvlogs",
+            email="rohit@barabanki.local",
+            defaults={
+                "hashed_password": get_password_hash("Creator@123456"),
+                "full_name": "Rohit Tiwari",
+                "phone": "+91-9839112233",
+                "role": "creator",
+                "locality": "Nawabganj",
+                "bio": "Documenting rustic heritage, ancient baobabs, and daily cultural moments of Barabanki.",
+                "is_active": True,
+            },
+        )
 
-        neha_user = db.query(User).filter(User.username == "nehadance").first()
-        if not neha_user:
-            neha_user = User(
-                username="nehadance",
-                email="neha@barabanki.local",
-                hashed_password=get_password_hash("Creator@123456"),
-                full_name="Neha Sharma",
-                phone="+91-9839223344",
-                role="creator",
-                locality="Nawabganj",
-                bio="Trained Kathak dancer and Awadhi folk revivalist teaching youth across Barabanki.",
-                is_active=True,
-            )
-            db.add(neha_user)
+        neha_user = get_or_create_user(
+            db,
+            username="nehadance",
+            email="neha@barabanki.local",
+            defaults={
+                "hashed_password": get_password_hash("Creator@123456"),
+                "full_name": "Neha Sharma",
+                "phone": "+91-9839223344",
+                "role": "creator",
+                "locality": "Nawabganj",
+                "bio": "Trained Kathak dancer and Awadhi folk revivalist teaching youth across Barabanki.",
+                "is_active": True,
+            },
+        )
 
-        aman_user = db.query(User).filter(User.username == "aman_dev").first()
-        if not aman_user:
-            aman_user = User(
-                username="aman_dev",
-                email="aman@barabanki.local",
-                hashed_password=get_password_hash("Creator@123456"),
-                full_name="Aman Verma",
-                phone="+91-9839334455",
-                role="creator",
-                locality="Fatehpur",
-                bio="Open-source civic technologist and polytechnic mentor in Barabanki.",
-                is_active=True,
-            )
-            db.add(aman_user)
+        aman_user = get_or_create_user(
+            db,
+            username="aman_dev",
+            email="aman@barabanki.local",
+            defaults={
+                "hashed_password": get_password_hash("Creator@123456"),
+                "full_name": "Aman Verma",
+                "phone": "+91-9839334455",
+                "role": "creator",
+                "locality": "Fatehpur",
+                "bio": "Open-source civic technologist and polytechnic mentor in Barabanki.",
+                "is_active": True,
+            },
+        )
 
         db.commit()
         db.refresh(admin_user)
@@ -234,9 +255,6 @@ def seed():
             if not existing_c:
                 c_obj = CreatorProfile(**c_data)
                 db.add(c_obj)
-            else:
-                for k, v in c_data.items():
-                    setattr(existing_c, k, v)
 
         db.commit()
 
@@ -763,7 +781,8 @@ def seed():
         # 12. Seed Event Registration & Capacity
         first_event = db.query(Event).filter(Event.is_approved == True).first()
         if first_event:
-            first_event.capacity = 250
+            if first_event.capacity is None:
+                first_event.capacity = 250
             existing_reg = db.query(EventRegistration).filter(EventRegistration.event_id == first_event.id, EventRegistration.user_id == citizen_user.id).first()
             if not existing_reg:
                 db.add(EventRegistration(
@@ -930,7 +949,8 @@ def seed():
         print(f"Error seeding database: {e}")
         raise
     finally:
-        db.close()
+        if owns_session:
+            db.close()
 
 
 if __name__ == "__main__":

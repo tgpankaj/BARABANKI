@@ -2,7 +2,7 @@ import logging
 from datetime import datetime, timezone
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
-from app.core.config import settings
+from app.core.config import settings, ConfigurationError
 
 import re
 from urllib.parse import urlparse
@@ -33,8 +33,8 @@ if db_url.startswith("postgres://"):
 # Configure engine based on dialect
 if db_url.startswith("sqlite"):
     if settings.is_production:
-        logger.warning(
-            "PRODUCTION ADVISORY: SQLite detected in production mode. "
+        raise ConfigurationError(
+            "PRODUCTION MISCONFIGURATION: SQLite detected in production mode. "
             "For multi-instance durability and persistent data on Render, configure Neon PostgreSQL via DATABASE_URL."
         )
     engine = create_engine(

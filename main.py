@@ -41,10 +41,14 @@ async def lifespan(app: FastAPI):
 
     db = SessionLocal()
     try:
-        admin_exists = db.query(User).filter(User.email == "admin@barabanki.local").first()
-        if not admin_exists:
+        has_users = db.query(User.id).first() is not None
+        if not has_users:
             logger.info("Empty database detected. Seeding authentic Barabanki baseline data...")
-            seed()
+            seed(db_session=db)
+        else:
+            logger.info("Existing database verified. Skipping initial seed.")
+    except Exception as exc:
+        logger.error(f"Startup database check/seed encountered an issue: {exc}", exc_info=True)
     finally:
         db.close()
 
