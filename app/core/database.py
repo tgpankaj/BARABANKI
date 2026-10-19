@@ -4,6 +4,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
 from app.core.config import settings
 
+import re
+from urllib.parse import urlparse
+
 logger = logging.getLogger(__name__)
 
 
@@ -12,21 +15,46 @@ def utc_now():
     return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
+def get_masked_db_url(url: str) -> str:
+    """Safely mask password in database connection strings for logs and error reporting."""
+    if not url:
+        return ""
+    try:
+        # Match user:password@host
+        return re.sub(r":([^:@]+)@", ":****@", url)
+    except Exception:
+        return "masked_database_url"
+
+
 db_url = settings.DATABASE_URL
+if db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql+psycopg2://", 1)
 
 # Configure engine based on dialect
 if db_url.startswith("sqlite"):
+    if settings.is_production:
+        logger.warning(
+            "PRODUCTION ADVISORY: SQLite detected in production mode. "
+            "For multi-instance durability and persistent data on Render, configure Neon PostgreSQL via DATABASE_URL."
+        )
     engine = create_engine(
         db_url,
         connect_args={"check_same_thread": False},
         echo=False,
     )
 else:
+    connect_args = {}
+    # Automatically enforce SSL for Neon managed databases if not already specified in URL
+    if "neon.tech" in db_url.lower() and "sslmode" not in db_url.lower():
+        connect_args["sslmode"] = "require"
+
     engine = create_engine(
         db_url,
-        pool_size=10,
-        max_overflow=20,
+        pool_size=5,
+        max_overflow=10,
+        pool_recycle=300,
         pool_pre_ping=True,
+        connect_args=connect_args,
         echo=False,
     )
 
@@ -89,6 +117,7 @@ def init_db():
     """Create all tables in the database if they do not exist."""
     # Import all models to ensure they are registered with Base.metadata
     from app import models  # noqa: F401
+    logger.info("Initializing database: %s", get_masked_db_url(db_url))
     Base.metadata.create_all(bind=engine)
     run_safe_migrations(engine)
     logger.info("Database tables initialized successfully.")

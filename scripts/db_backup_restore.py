@@ -18,6 +18,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE_DIR))
 
 from app.core.config import settings
+from app.core.database import get_masked_db_url
 
 BACKUP_DIR = BASE_DIR / "backups"
 
@@ -127,8 +128,10 @@ def main():
                 sys.exit(1)
             backup_sqlite(source_file)
         else:
-            print("[*] PostgreSQL detected. Command for PostgreSQL backup:")
-            print(f"  pg_dump {db_url} -F c -b -v -f backups/barabanki_pg_backup_$(date +%Y%m%d_%H%M%S).dump")
+            masked = get_masked_db_url(db_url)
+            print("[*] PostgreSQL detected. Command for PostgreSQL backup (credentials masked):")
+            print(f'  pg_dump "{masked}" -F c -b -v -f backups/barabanki_pg_backup_$(date +%Y%m%d_%H%M%S).dump')
+            print("  (Tip: Set PGPASSWORD environment variable or use ~/.pgpass to avoid exposing passwords)")
         return
 
     if args.restore:
@@ -140,8 +143,9 @@ def main():
             if not success:
                 sys.exit(1)
         else:
-            print("[*] PostgreSQL detected. Command for PostgreSQL restore:")
-            print(f"  pg_restore -d {db_url} -v {backup_file}")
+            masked = get_masked_db_url(db_url)
+            print("[*] PostgreSQL detected. Command for PostgreSQL restore (credentials masked):")
+            print(f'  pg_restore -d "{masked}" -v {backup_file}')
         return
 
     parser.print_help()

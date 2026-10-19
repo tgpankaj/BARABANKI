@@ -46,7 +46,7 @@ def upgrade() -> None:
             if "twitter_x" not in creator_cols:
                 batch_op.add_column(sa.Column("twitter_x", sa.String(length=255), nullable=True))
             if "is_verified" not in creator_cols:
-                batch_op.add_column(sa.Column("is_verified", sa.Boolean(), server_default=sa.text("0"), nullable=False))
+                batch_op.add_column(sa.Column("is_verified", sa.Boolean(), server_default=sa.text("false"), nullable=False))
             if "verification_badge" not in creator_cols:
                 batch_op.add_column(sa.Column("verification_badge", sa.String(length=60), nullable=True))
             if "verification_notes" not in creator_cols:

@@ -83,6 +83,10 @@ async def add_security_headers(request: Request, call_next):
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     response.headers["Permissions-Policy"] = "geolocation=(self), camera=(), microphone=()"
 
+    # Strict-Transport-Security (HSTS) in production or over HTTPS
+    if settings.is_production or request.headers.get("x-forwarded-proto") == "https":
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+
     # Static Assets Cache-Control
     if request.url.path.startswith("/static/"):
         response.headers["Cache-Control"] = f"public, max-age={settings.STATIC_CACHE_MAX_AGE}"
@@ -163,7 +167,8 @@ def health_check(db: Session = Depends(get_db)):
         from sqlalchemy import text
         db.execute(text("SELECT 1"))
     except Exception as e:
-        db_status = f"unreachable: {str(e)}"
+        logger.error(f"Database health check failed: {e}")
+        db_status = "unreachable"
 
     return {
         "status": "healthy" if db_status == "connected" else "degraded",

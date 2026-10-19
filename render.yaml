@@ -1,28 +1,46 @@
+# ------------------------------------------------------------------------------
+# Barabanki Connect — Render Blueprint Specification
+# Production FastAPI Web Service deployed with Neon Managed PostgreSQL
+# ------------------------------------------------------------------------------
+
 services:
   - type: web
     name: barabanki-connect
     runtime: python
     plan: free
     region: singapore
-    buildCommand: pip install -r requirements.txt
-    startCommand: python -m uvicorn main:app --host 0.0.0.0 --port $PORT
+    autoDeploy: true
+    healthCheckPath: /health
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: python -m alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port $PORT --workers 2 --proxy-headers
     envVars:
       - key: PYTHON_VERSION
-        value: "3.12.6"
+        value: "3.11.9"
       - key: ENVIRONMENT
         value: production
       - key: DEBUG
         value: "False"
-      - key: DATABASE_URL
-        fromDatabase:
-          name: barabanki-db
-          property: connectionString
       - key: SECRET_KEY
         generateValue: true
-
-databases:
-  - name: barabanki-db
-    databaseName: barabanki_connect
-    user: barabanki_user
-    plan: free
-    region: singapore
+      - key: CSRF_SECRET
+        generateValue: true
+      - key: COOKIE_SECURE
+        value: "True"
+      - key: DATABASE_URL
+        sync: false
+        # Populate with your Neon connection string in Render Dashboard:
+        # postgresql+psycopg2://user:password@ep-cool-base-123456.ap-southeast-1.aws.neon.tech/neondb?sslmode=require
+      - key: ALLOWED_ORIGINS
+        value: '["https://barabanki-connect.onrender.com", "https://barabanki-connect.in", "https://www.barabanki-connect.in"]'
+      - key: RATE_LIMIT_ENABLED
+        value: "True"
+      - key: RATE_LIMIT_AUTH_PER_MINUTE
+        value: "20"
+      - key: RATE_LIMIT_SUBMIT_PER_MINUTE
+        value: "40"
+      - key: STATIC_CACHE_MAX_AGE
+        value: "86400"
+      - key: STORAGE_BACKEND
+        value: "url"
+      - key: DEFAULT_PAGE_SIZE
+        value: "12"

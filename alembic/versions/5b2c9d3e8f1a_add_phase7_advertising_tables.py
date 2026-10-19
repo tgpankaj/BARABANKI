@@ -48,7 +48,7 @@ def upgrade() -> None:
             sa.Column("review_feedback", sa.Text(), nullable=True),
             sa.Column("reviewed_by_id", sa.Integer(), nullable=True),
             sa.Column("reviewed_at", sa.DateTime(), nullable=True),
-            sa.Column("is_paused", sa.Boolean(), server_default=sa.text("0"), nullable=False),
+            sa.Column("is_paused", sa.Boolean(), server_default=sa.text("false"), nullable=False),
             sa.Column("payment_status", sa.String(length=30), server_default="pending", nullable=False),
             sa.Column("impression_count", sa.Integer(), server_default=sa.text("0"), nullable=False),
             sa.Column("click_count", sa.Integer(), server_default=sa.text("0"), nullable=False),

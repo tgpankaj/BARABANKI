@@ -1,0 +1,60 @@
+# Git and version control
+.git/
+.gitignore
+.gitattributes
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Environment files and secrets
+.env
+!.env.example
+secrets.json
+
+# Local databases and backups
+*.db
+*.sqlite
+*.sqlite3
+backups/
+
+# Logs and testing caches
+*.log
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE and editor settings
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS temporary files
+.DS_Store
+Thumbs.db
+Desktop.ini
